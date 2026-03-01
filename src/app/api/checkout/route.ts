@@ -1,0 +1,92 @@
+import { createClient } from '@/lib/supabase/server';
+import { NextResponse } from 'next/server';
+import type { OrderItem } from '@/types/database';
+import { triggerEmail } from '@/lib/email';
+
+function getClientIp(request: Request): string | null {
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0]?.trim() ?? null;
+  const realIp = request.headers.get('x-real-ip');
+  if (realIp) return realIp;
+  return null;
+}
+
+function getUserAgent(request: Request): string | null {
+  return request.headers.get('user-agent');
+}
+
+export async function POST(request: Request) {
+  const body = await request.json().catch(() => ({}));
+  const {
+    items,
+    customer_email: bodyEmail,
+    billing_address,
+    shipping_address,
+    payment_method,
+  } = body as {
+    items?: OrderItem[];
+    customer_email?: string;
+    billing_address?: unknown;
+    shipping_address?: unknown;
+    payment_method?: string;
+  };
+
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return NextResponse.json({ error: 'Items required' }, { status: 400 });
+  }
+
+  const total_amount = items.reduce(
+    (sum, i) => sum + Number(i.price) * (i.quantity || 1),
+    0
+  );
+  const ip_address = getClientIp(request);
+  const user_agent = getUserAgent(request);
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const customer_email =
+    (bodyEmail as string)?.trim() ||
+    (user?.email ?? null);
+
+  const { data: order, error } = await supabase
+    .from('orders')
+    .insert({
+      user_id: user?.id ?? null,
+      customer_email: customer_email || null,
+      items,
+      status: 'Pending Payment',
+      total_amount,
+      payment_method: payment_method ?? null,
+      billing_address: billing_address ?? null,
+      shipping_address: shipping_address ?? null,
+      ip_address: ip_address ?? null,
+      user_agent: user_agent ?? null,
+      internal_notes: [],
+    })
+    .select('id')
+    .single();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? (request.url ? new URL(request.url).origin : '');
+  const payload = {
+    order_id: order.id,
+    customer_email: customer_email ?? undefined,
+    total_amount,
+    items,
+    shipping_address: shipping_address ?? undefined,
+  };
+
+  if (baseUrl) {
+    void triggerEmail(baseUrl, 'order_placed', payload);
+    void triggerEmail(baseUrl, 'admin_new_order', payload);
+    const highValueThreshold = Number(process.env.EMAIL_HIGH_VALUE_THRESHOLD ?? 0);
+    if (highValueThreshold > 0 && total_amount >= highValueThreshold) {
+      void triggerEmail(baseUrl, 'admin_high_value_order', payload);
+    }
+  }
+
+  return NextResponse.json({ orderId: order.id });
+}

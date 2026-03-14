@@ -1,0 +1,6 @@
+Order Allow,Deny
+Allow from all
+<FilesMatch "\.(csv|zip)$">
+Order Deny,Allow
+Allow from all
+</FilesMatch>

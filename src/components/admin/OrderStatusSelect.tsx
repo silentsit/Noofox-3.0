@@ -89,7 +89,7 @@ export function OrderStatusSelect({ orderId, currentStatus }: OrderStatusSelectP
       </select>
       <button
         type="submit"
-        className="ml-1 rounded bg-surface-200 px-2 py-1 text-xs font-medium text-surface-700 hover:bg-surface-300"
+        className="ml-1 rounded bg-surface-100 px-2 py-1 text-xs font-medium text-surface-700 hover:bg-surface-100"
       >
         Update
       </button>

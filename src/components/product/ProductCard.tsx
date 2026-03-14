@@ -2,8 +2,11 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 import type { Product } from '@/types/database';
 import { useCart } from '@/context/CartContext';
+import { getProductImageUrl } from '@/lib/productImage';
+import { ShoppingCart } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
@@ -11,61 +14,84 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
-  const imageUrl = product.images?.[0] ?? '/placeholder-product.jpg';
+  const imageUrl = getProductImageUrl(product.images, 0);
   const price = Number(product.price);
+  const [qty, setQty] = useState(1);
+  const [added, setAdded] = useState(false);
 
-  function handleBuyNow(e: React.MouseEvent) {
+  function handleAddToCart(e: React.MouseEvent) {
     e.preventDefault();
     addItem({
       product_id: product.id,
       name: product.name,
       price,
-      quantity: 1,
+      quantity: qty,
       image_url: imageUrl,
     });
-    window.location.href = '/checkout';
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
   }
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-xl border border-surface-200 bg-white shadow-sm transition-shadow hover:shadow-md">
-      <Link href={`/product/${product.id}`} className="block flex-1">
-        <div className="relative aspect-square w-full bg-surface-100">
-          {imageUrl.startsWith('http') || imageUrl.startsWith('/') ? (
-            <Image
-              src={imageUrl}
-              alt={product.name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-              unoptimized={imageUrl.startsWith('http') && !imageUrl.includes('supabase')}
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center text-surface-400">
-              No image
-            </div>
-          )}
-        </div>
-        <div className="flex flex-1 flex-col p-4">
-          <h2 className="font-semibold text-surface-900 line-clamp-2">
-            {product.name}
-          </h2>
-          {product.description && (
-            <p className="mt-1 text-sm text-surface-600 line-clamp-2">
-              {product.description}
-            </p>
-          )}
-          <p className="mt-2 text-lg font-semibold text-primary-600">
-            ${price.toFixed(2)}
-          </p>
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-surface-200 bg-white shadow-sm transition-all hover:shadow-md">
+      <Link href={`/product/${product.id}`} className="block">
+        <div className="relative aspect-[4/3] w-full bg-surface-100 overflow-hidden">
+          <Image
+            src={imageUrl}
+            alt={product.name}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+            unoptimized={imageUrl.startsWith('http')}
+          />
         </div>
       </Link>
-      <div className="border-t border-surface-100 p-4">
+      <div className="flex flex-1 flex-col p-5">
+        <Link href={`/product/${product.id}`}>
+          <h2 className="font-semibold text-surface-900 line-clamp-2 hover:text-brand-600 transition-colors">
+            {product.name}
+          </h2>
+        </Link>
+        {product.description && (
+          <p className="mt-1.5 text-sm text-surface-500 line-clamp-2">
+            {product.description}
+          </p>
+        )}
+
+        <div className="mt-4 flex items-center justify-between">
+          <p className="text-xl font-bold text-brand-600">
+            ${price.toFixed(2)}
+          </p>
+          <div className="flex items-center gap-1 rounded-lg border border-surface-200 bg-surface-50">
+            <button
+              type="button"
+              onClick={() => setQty(Math.max(1, qty - 1))}
+              className="px-2.5 py-1 text-surface-500 hover:text-surface-900 transition-colors text-sm font-medium"
+            >
+              −
+            </button>
+            <span className="min-w-[2rem] text-center text-sm font-medium text-surface-900">{qty}</span>
+            <button
+              type="button"
+              onClick={() => setQty(qty + 1)}
+              className="px-2.5 py-1 text-surface-500 hover:text-surface-900 transition-colors text-sm font-medium"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
         <button
           type="button"
-          onClick={handleBuyNow}
-          className="w-full rounded-lg bg-primary-600 py-2.5 font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          onClick={handleAddToCart}
+          className={`mt-4 flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold transition-all ${
+            added
+              ? 'bg-green-600 text-white'
+              : 'bg-brand-600 text-white hover:bg-brand-700'
+          }`}
         >
-          Buy Now
+          <ShoppingCart className="h-4 w-4" />
+          {added ? 'Added!' : 'Add to Cart'}
         </button>
       </div>
     </article>

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 
-/** Email/password and Google OAuth registration via @supabase/supabase-js. After confirm, auth/callback runs guest order reconciliation. */
 export default function SignUpPage() {
   const supabase = createClient();
   const [email, setEmail] = useState('');
@@ -46,12 +45,12 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="mx-auto max-w-md px-4 py-16 sm:px-6 lg:px-8">
-      <div className="rounded-2xl border border-surface-200 bg-white p-8 shadow-sm">
-        <h1 className="text-2xl font-semibold tracking-tight text-surface-900">
+    <div className="bg-surface-50 min-h-screen flex items-center justify-center px-4 py-16">
+      <div className="w-full max-w-md rounded-2xl border border-surface-200 bg-white p-8 shadow-sm">
+        <h1 className="text-2xl font-bold tracking-tight text-surface-900">
           Create an account
         </h1>
-        <p className="mt-2 text-sm text-surface-600">
+        <p className="mt-2 text-sm text-surface-500">
           Use email or Google to get started.
         </p>
 
@@ -59,8 +58,8 @@ export default function SignUpPage() {
           <div
             className={`mt-4 rounded-lg p-3 text-sm ${
               message.type === 'error'
-                ? 'bg-red-50 text-red-800'
-                : 'bg-green-50 text-green-800'
+                ? 'bg-red-50 text-red-700 border border-red-200'
+                : 'bg-green-50 text-green-700 border border-green-200'
             }`}
           >
             {message.text}
@@ -78,7 +77,7 @@ export default function SignUpPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="mt-1 block w-full rounded-lg border border-surface-300 bg-white px-3 py-2.5 text-surface-900 placeholder-surface-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               required
             />
           </div>
@@ -92,7 +91,7 @@ export default function SignUpPage() {
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="mt-1 block w-full rounded-lg border border-surface-300 bg-white px-3 py-2.5 text-surface-900 placeholder-surface-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               required
               minLength={6}
             />
@@ -100,7 +99,7 @@ export default function SignUpPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-primary-600 py-2.5 font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+            className="w-full rounded-lg bg-brand-600 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50 transition-colors"
           >
             {loading ? 'Creating account…' : 'Sign up with Email'}
           </button>
@@ -112,14 +111,14 @@ export default function SignUpPage() {
               <div className="w-full border-t border-surface-200" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-2 text-surface-500">Or continue with</span>
+              <span className="bg-white px-3 text-surface-500">Or continue with</span>
             </div>
           </div>
           <button
             type="button"
             onClick={handleGoogleSignUp}
             disabled={loading}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-surface-300 bg-white py-2.5 font-medium text-surface-700 hover:bg-surface-50 disabled:opacity-50"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-surface-300 bg-white py-2.5 font-medium text-surface-700 hover:bg-surface-50 disabled:opacity-50 transition-colors"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden>
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -131,9 +130,9 @@ export default function SignUpPage() {
           </button>
         </div>
 
-        <p className="mt-6 text-center text-sm text-surface-600">
+        <p className="mt-6 text-center text-sm text-surface-500">
           Already have an account?{' '}
-          <Link href="/login" className="font-medium text-primary-600 hover:text-primary-700">
+          <Link href="/login" className="font-medium text-brand-600 hover:text-brand-700">
             Sign in
           </Link>
         </p>

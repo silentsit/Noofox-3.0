@@ -34,7 +34,7 @@ function CheckoutErrorToast() {
 
   return (
     <div
-      className="mb-6 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800"
+      className="mb-6 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700"
       role="alert"
       aria-live="polite"
     >
@@ -49,7 +49,7 @@ function CheckoutErrorToast() {
           setDismissed(true);
           router.replace('/checkout', { scroll: false });
         }}
-        className="shrink-0 text-red-600 hover:text-red-800 font-medium text-sm"
+        className="shrink-0 text-red-600 hover:text-red-700 font-medium text-sm"
         aria-label="Dismiss"
       >
         Dismiss
@@ -103,7 +103,7 @@ function CheckoutContent() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <h1 className="text-2xl font-semibold text-surface-900">Checkout</h1>
-      <p className="mt-1 text-surface-600">
+      <p className="mt-1 text-surface-500">
         Review your order and choose a payment method.
       </p>
 
@@ -112,7 +112,7 @@ function CheckoutContent() {
       </Suspense>
 
       {placeError && (
-        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800" role="alert">
+        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">
           {placeError}
         </div>
       )}
@@ -148,8 +148,8 @@ function CheckoutContent() {
                 onClick={() => setPaymentMode('card')}
                 className={`flex-1 rounded-md py-2.5 text-sm font-medium transition-colors ${
                   paymentMode === 'card'
-                    ? 'bg-primary-600 text-white'
-                    : 'text-surface-600 hover:bg-surface-100'
+                    ? 'bg-brand-600 text-surface-900'
+                    : 'text-surface-500 hover:bg-surface-50'
                 }`}
               >
                 Credit / Debit Card
@@ -159,8 +159,8 @@ function CheckoutContent() {
                 onClick={() => setPaymentMode('crypto')}
                 className={`flex-1 rounded-md py-2.5 text-sm font-medium transition-colors ${
                   paymentMode === 'crypto'
-                    ? 'bg-primary-600 text-white'
-                    : 'text-surface-600 hover:bg-surface-100'
+                    ? 'bg-brand-600 text-surface-900'
+                    : 'text-surface-500 hover:bg-surface-50'
                 }`}
               >
                 Crypto
@@ -182,7 +182,7 @@ function CheckoutContent() {
                     href={CHANGEHERO_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary-600 bg-primary-600 px-6 py-3.5 font-semibold text-white shadow-lg transition hover:border-primary-700 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-brand-600 bg-brand-600 px-6 py-3.5 font-semibold text-surface-900 shadow-lg transition hover:border-brand-700 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
                   >
                     External On-Ramp — Pay with Card via ChangeHero
                   </a>
@@ -195,11 +195,11 @@ function CheckoutContent() {
             )}
 
             {paymentMode === 'crypto' && (
-              <div className="mt-6 rounded-lg border border-surface-200 bg-surface-50 p-6">
+              <div className="mt-6 rounded-lg border border-surface-200 bg-white p-6">
                 <p className="text-sm font-medium text-surface-700">
                   Crypto payment
                 </p>
-                <p className="mt-2 text-sm text-surface-600">
+                <p className="mt-2 text-sm text-surface-500">
                   Placeholder for 3rd-party Web3 gateway integration. Connect wallet
                   and confirm transaction will appear here.
                 </p>
@@ -220,11 +220,11 @@ function CheckoutContent() {
               Cart summary
             </h2>
             {items.length === 0 ? (
-              <div className="mt-4 text-center text-surface-600">
+              <div className="mt-4 text-center text-surface-500">
                 <p>Your cart is empty.</p>
                 <Link
                   href="/"
-                  className="mt-2 inline-block font-medium text-primary-600 hover:text-primary-700"
+                  className="mt-2 inline-block font-medium text-brand-600 hover:text-brand-700"
                 >
                   Continue shopping
                 </Link>
@@ -235,7 +235,7 @@ function CheckoutContent() {
                   {items.map((item) => (
                     <li
                       key={item.product_id}
-                      className="flex gap-3 border-b border-surface-100 pb-3 last:border-0"
+                      className="flex gap-3 border-b border-surface-200 pb-3 last:border-0"
                     >
                       <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-surface-100">
                         {item.image_url && (item.image_url.startsWith('http') || item.image_url.startsWith('/')) ? (
@@ -247,7 +247,7 @@ function CheckoutContent() {
                             unoptimized={item.image_url.startsWith('http')}
                           />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center text-surface-400 text-xs">
+                          <div className="flex h-full w-full items-center justify-center text-surface-500 text-xs">
                             —
                           </div>
                         )}
@@ -256,7 +256,7 @@ function CheckoutContent() {
                         <p className="font-medium text-surface-900 truncate">
                           {item.name}
                         </p>
-                        <p className="text-sm text-surface-600">
+                        <p className="text-sm text-surface-500">
                           ${Number(item.price).toFixed(2)} ×{' '}
                           <select
                             value={item.quantity}
@@ -290,7 +290,7 @@ function CheckoutContent() {
                 </ul>
                 <div className="mt-4 flex items-center justify-between border-t border-surface-200 pt-4">
                   <span className="font-semibold text-surface-900">Total</span>
-                  <span className="text-xl font-semibold text-primary-600">
+                  <span className="text-xl font-semibold text-brand-600">
                     ${total.toFixed(2)}
                   </span>
                 </div>
@@ -305,7 +305,7 @@ function CheckoutContent() {
                   type="button"
                   onClick={handlePlaceOrder}
                   disabled={placing}
-                  className="mt-4 w-full rounded-lg bg-primary-600 py-3 font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+                  className="mt-4 w-full rounded-lg bg-brand-600 py-3 font-medium text-surface-900 hover:bg-brand-700 disabled:opacity-50"
                 >
                   {placing ? 'Placing order…' : 'Place order'}
                 </button>

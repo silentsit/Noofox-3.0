@@ -23,8 +23,8 @@ export function DashboardNav() {
                 href={href}
                 className={`border-b-2 py-4 text-sm font-medium transition-colors ${
                   isActive
-                    ? 'border-primary-600 text-primary-600'
-                    : 'border-transparent text-surface-600 hover:text-surface-900'
+                    ? 'border-brand-600 text-brand-600'
+                    : 'border-transparent text-surface-500 hover:text-surface-900'
                 }`}
               >
                 {label}

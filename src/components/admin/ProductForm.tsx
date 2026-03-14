@@ -66,7 +66,7 @@ export function ProductForm({ className = '', product }: ProductFormProps) {
       {message && (
         <div
           className={`rounded-lg p-3 text-sm ${
-            message.type === 'error' ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
+            message.type === 'error' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'
           }`}
         >
           {message.text}
@@ -82,7 +82,7 @@ export function ProductForm({ className = '', product }: ProductFormProps) {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           required
         />
       </div>
@@ -98,7 +98,7 @@ export function ProductForm({ className = '', product }: ProductFormProps) {
           min="0"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
-          className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           required
         />
       </div>
@@ -112,7 +112,7 @@ export function ProductForm({ className = '', product }: ProductFormProps) {
           rows={4}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         />
       </div>
 
@@ -126,7 +126,7 @@ export function ProductForm({ className = '', product }: ProductFormProps) {
           value={imagesStr}
           onChange={(e) => setImagesStr(e.target.value)}
           placeholder="https://example.com/image1.jpg"
-          className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 font-mono text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 font-mono text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         />
       </div>
 
@@ -140,7 +140,7 @@ export function ProductForm({ className = '', product }: ProductFormProps) {
           min="0"
           value={stockCount}
           onChange={(e) => setStockCount(e.target.value)}
-          className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         />
       </div>
 
@@ -148,7 +148,7 @@ export function ProductForm({ className = '', product }: ProductFormProps) {
         <button
           type="submit"
           disabled={saving}
-          className="rounded-lg bg-primary-600 px-4 py-2.5 font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+          className="rounded-lg bg-brand-600 px-4 py-2.5 font-medium text-white hover:bg-brand-700 disabled:opacity-50"
         >
           {saving ? 'Saving…' : product ? 'Update product' : 'Create product'}
         </button>

@@ -70,14 +70,14 @@ export default function DashboardProfilePage() {
 
   if (loading) {
     return (
-      <div className="text-surface-600">Loading…</div>
+      <div className="text-surface-500">Loading…</div>
     );
   }
 
   return (
     <div>
       <h1 className="text-2xl font-semibold text-surface-900">Profile & shipping</h1>
-      <p className="mt-1 text-surface-600">
+      <p className="mt-1 text-surface-500">
         Update your name and default shipping address.
       </p>
 
@@ -85,7 +85,7 @@ export default function DashboardProfilePage() {
         {message && (
           <div
             className={`rounded-lg p-3 text-sm ${
-              message.type === 'error' ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
+              message.type === 'error' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'
             }`}
           >
             {message.text}
@@ -101,7 +101,7 @@ export default function DashboardProfilePage() {
             type="text"
             value={profile.full_name ?? ''}
             onChange={(e) => setProfile((p) => ({ ...p, full_name: e.target.value }))}
-            className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           />
         </div>
 
@@ -109,7 +109,7 @@ export default function DashboardProfilePage() {
           <legend className="text-sm font-medium text-surface-900">Shipping address</legend>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label htmlFor="line1" className="block text-sm text-surface-600">Address line 1</label>
+              <label htmlFor="line1" className="block text-sm text-surface-500">Address line 1</label>
               <input
                 id="line1"
                 type="text"
@@ -132,7 +132,7 @@ export default function DashboardProfilePage() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label htmlFor="line2" className="block text-sm text-surface-600">Address line 2</label>
+              <label htmlFor="line2" className="block text-sm text-surface-500">Address line 2</label>
               <input
                 id="line2"
                 type="text"
@@ -155,7 +155,7 @@ export default function DashboardProfilePage() {
               />
             </div>
             <div>
-              <label htmlFor="city" className="block text-sm text-surface-600">City</label>
+              <label htmlFor="city" className="block text-sm text-surface-500">City</label>
               <input
                 id="city"
                 type="text"
@@ -178,7 +178,7 @@ export default function DashboardProfilePage() {
               />
             </div>
             <div>
-              <label htmlFor="postal_code" className="block text-sm text-surface-600">Postal code</label>
+              <label htmlFor="postal_code" className="block text-sm text-surface-500">Postal code</label>
               <input
                 id="postal_code"
                 type="text"
@@ -201,7 +201,7 @@ export default function DashboardProfilePage() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label htmlFor="country" className="block text-sm text-surface-600">Country</label>
+              <label htmlFor="country" className="block text-sm text-surface-500">Country</label>
               <input
                 id="country"
                 type="text"
@@ -229,7 +229,7 @@ export default function DashboardProfilePage() {
         <button
           type="submit"
           disabled={saving}
-          className="rounded-lg bg-primary-600 px-4 py-2.5 font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+          className="rounded-lg bg-brand-600 px-4 py-2.5 font-medium text-surface-900 hover:bg-brand-700 disabled:opacity-50"
         >
           {saving ? 'Saving…' : 'Save changes'}
         </button>

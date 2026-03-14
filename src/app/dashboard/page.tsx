@@ -26,7 +26,7 @@ export default async function DashboardPage() {
     <div className="space-y-10">
       <div>
         <h1 className="text-2xl font-semibold text-surface-900">Dashboard</h1>
-        <p className="mt-1 text-surface-600">
+        <p className="mt-1 text-surface-500">
           Welcome back{fullName ? `, ${fullName}` : ''}.
         </p>
       </div>
@@ -64,11 +64,11 @@ export default async function DashboardPage() {
             </div>
           </div>
         ) : (
-          <p className="mt-4 text-surface-600">No orders yet.</p>
+          <p className="mt-4 text-surface-500">No orders yet.</p>
         )}
         <Link
           href="/dashboard/orders"
-          className="mt-4 inline-block text-sm font-medium text-primary-600 hover:text-primary-700"
+          className="mt-4 inline-block text-sm font-medium text-brand-600 hover:text-brand-700"
         >
           View order history →
         </Link>
@@ -95,7 +95,7 @@ export default async function DashboardPage() {
                   </p>
                   <Link
                     href={`/dashboard/orders?highlight=${order.id}`}
-                    className="text-sm text-primary-600 hover:text-primary-700"
+                    className="text-sm text-brand-600 hover:text-brand-700"
                   >
                     View
                   </Link>
@@ -104,11 +104,11 @@ export default async function DashboardPage() {
             ))}
           </ul>
         ) : (
-          <p className="mt-4 text-surface-600">No orders yet.</p>
+          <p className="mt-4 text-surface-500">No orders yet.</p>
         )}
         <Link
           href="/dashboard/orders"
-          className="mt-4 inline-block text-sm font-medium text-primary-600 hover:text-primary-700"
+          className="mt-4 inline-block text-sm font-medium text-brand-600 hover:text-brand-700"
         >
           View all orders →
         </Link>
@@ -121,12 +121,12 @@ export default async function DashboardPage() {
         <h2 id="profile-heading" className="text-lg font-semibold text-surface-900">
           Profile & shipping
         </h2>
-        <p className="mt-2 text-surface-600">
+        <p className="mt-2 text-surface-500">
           Edit your profile and default shipping address.
         </p>
         <Link
           href="/dashboard/profile"
-          className="mt-4 inline-block rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+          className="mt-4 inline-block rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-surface-900 hover:bg-brand-700"
         >
           Edit profile
         </Link>

@@ -3,17 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #18181b;
-  --background: #fafafa;
-  --primary: #0ea5e9;
-  --primary-foreground: #fff;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground: #fafafa;
-    --background: #18181b;
-  }
+  --foreground: #1e293b;
+  --background: #ffffff;
 }
 
 body {
@@ -25,5 +16,12 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+@layer base {
+  ::selection {
+    background-color: rgba(20, 134, 245, 0.2);
+    color: #0f172a;
   }
 }

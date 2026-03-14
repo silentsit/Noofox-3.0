@@ -20,37 +20,37 @@ export default async function AdminLayout({
   if (profile?.role !== 'admin') redirect('/dashboard');
 
   return (
-    <div className="min-h-screen bg-surface-100">
-      <header className="sticky top-0 z-40 border-b border-surface-200 bg-white">
+    <div className="min-h-screen bg-white">
+      <header className="sticky top-0 z-40 border-b border-surface-200 bg-surface-900">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link
             href="/admin"
-            className="text-lg font-semibold text-surface-900"
+            className="text-lg font-semibold text-white"
           >
             Admin · Mission Control
           </Link>
           <nav className="flex gap-4">
             <Link
               href="/admin"
-              className="text-sm font-medium text-surface-600 hover:text-surface-900"
+              className="text-sm font-medium text-surface-400 hover:text-white"
             >
               Dashboard
             </Link>
             <Link
               href="/admin/orders"
-              className="text-sm font-medium text-surface-600 hover:text-surface-900"
+              className="text-sm font-medium text-surface-400 hover:text-white"
             >
               Orders
             </Link>
             <Link
               href="/admin/products"
-              className="text-sm font-medium text-surface-600 hover:text-surface-900"
+              className="text-sm font-medium text-surface-400 hover:text-white"
             >
               Products
             </Link>
             <Link
               href="/"
-              className="text-sm font-medium text-primary-600 hover:text-primary-700"
+              className="text-sm font-medium text-brand-600 hover:text-brand-700"
             >
               Store
             </Link>

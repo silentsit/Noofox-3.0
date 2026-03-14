@@ -51,7 +51,7 @@ export default async function AdminDashboardPage() {
     <div className="space-y-10">
       <div>
         <h1 className="text-2xl font-semibold text-surface-900">Mission Control</h1>
-        <p className="mt-1 text-surface-600">
+        <p className="mt-1 text-surface-500">
           Overview of sales, orders, and user growth.
         </p>
       </div>
@@ -88,7 +88,7 @@ export default async function AdminDashboardPage() {
       <div className="flex gap-4">
         <Link
           href="/admin/orders"
-          className="rounded-lg bg-primary-600 px-4 py-2.5 font-medium text-white hover:bg-primary-700"
+          className="rounded-lg bg-brand-600 px-4 py-2.5 font-medium text-surface-900 hover:bg-brand-700"
         >
           Manage orders
         </Link>

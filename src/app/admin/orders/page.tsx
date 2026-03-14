@@ -14,14 +14,14 @@ export default async function AdminOrdersPage() {
   return (
     <div>
       <h1 className="text-2xl font-semibold text-surface-900">Order management</h1>
-      <p className="mt-1 text-surface-600">
+      <p className="mt-1 text-surface-500">
         Update status and tracking ID for all orders.
       </p>
 
       <div className="mt-8 overflow-hidden rounded-2xl border border-surface-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-surface-200">
-            <thead className="bg-surface-50">
+            <thead className="bg-white">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-surface-500 sm:px-6">
                   Order ID
@@ -49,7 +49,7 @@ export default async function AdminOrdersPage() {
                   <td className="whitespace-nowrap px-4 py-4 font-mono text-sm text-surface-900 sm:px-6">
                     {order.id.slice(0, 8)}…
                   </td>
-                  <td className="whitespace-nowrap px-4 py-4 text-sm text-surface-600 sm:px-6">
+                  <td className="whitespace-nowrap px-4 py-4 text-sm text-surface-500 sm:px-6">
                     {(order as { customer_email?: string }).customer_email ?? (order.user_id ? order.user_id.slice(0, 8) + '…' : 'Guest')}
                   </td>
                   <td className="whitespace-nowrap px-4 py-4 sm:px-6">
@@ -61,7 +61,7 @@ export default async function AdminOrdersPage() {
                   <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-surface-900 sm:px-6">
                     ${Number(order.total_amount).toFixed(2)}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-4 text-sm text-surface-600 sm:px-6">
+                  <td className="whitespace-nowrap px-4 py-4 text-sm text-surface-500 sm:px-6">
                     {new Date(order.created_at).toLocaleString()}
                   </td>
                 </tr>
@@ -70,7 +70,7 @@ export default async function AdminOrdersPage() {
           </table>
         </div>
         {(!orders || orders.length === 0) && (
-          <div className="px-6 py-12 text-center text-surface-600">
+          <div className="px-6 py-12 text-center text-surface-500">
             No orders yet.
           </div>
         )}
@@ -113,7 +113,7 @@ function TrackingIdInput({ orderId, value }: { orderId: string; value: string | 
       />
       <button
         type="submit"
-        className="rounded bg-surface-200 px-2 py-1 text-xs font-medium text-surface-700 hover:bg-surface-300"
+        className="rounded bg-surface-100 px-2 py-1 text-xs font-medium text-surface-700 hover:bg-surface-100"
       >
         Save
       </button>

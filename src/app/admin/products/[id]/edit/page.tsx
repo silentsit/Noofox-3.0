@@ -19,12 +19,12 @@ export default async function EditProductPage({
     <div>
       <Link
         href="/admin/products"
-        className="text-sm font-medium text-primary-600 hover:text-primary-700"
+        className="text-sm font-medium text-brand-600 hover:text-brand-700"
       >
         ← Products
       </Link>
       <h1 className="mt-4 text-2xl font-semibold text-surface-900">Edit product</h1>
-      <p className="mt-1 text-surface-600">{product.name}</p>
+      <p className="mt-1 text-surface-500">{product.name}</p>
       <ProductForm className="mt-8 max-w-2xl" product={product} />
     </div>
   );

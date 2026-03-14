@@ -17,12 +17,12 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Noofox | Modern E-Commerce',
+  title: 'Noofox | Premium Nootropics & Cognitive Enhancers',
   description:
-    'Shop the best products with instant checkout. Pay with card or crypto.',
+    'Premium nootropics delivered worldwide. Pay with crypto or card. Free shipping on every order.',
   openGraph: {
-    title: 'Noofox | Modern E-Commerce',
-    description: 'Shop the best products with instant checkout.',
+    title: 'Noofox | Premium Nootropics & Cognitive Enhancers',
+    description: 'Premium nootropics delivered worldwide. Pay with crypto or card.',
   },
 };
 
@@ -37,11 +37,11 @@ export default function RootLayout({
       className={`${inter.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-screen flex flex-col bg-surface-50 text-surface-900 antialiased">
+      <body className="min-h-screen flex flex-col bg-white text-surface-800 antialiased">
         <CartProvider>
           <a
             href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:bg-primary-600 focus:px-3 focus:py-2 focus:text-white focus:outline-none"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:bg-brand-600 focus:px-3 focus:py-2 focus:text-white focus:outline-none"
           >
             Skip to main content
           </a>

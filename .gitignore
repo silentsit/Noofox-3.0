@@ -37,3 +37,6 @@ next-env.d.ts
 
 # typewind
 .typewind
+
+# local reference only (do not push to GitHub)
+/legacy-wp-data/

@@ -1,0 +1,9 @@
+{
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.next/**": true,
+    "**/.git/objects/**": true,
+    "**/legacy-wp-data/plugins/**": true,
+    "**/legacy-wp-data/themes/**": true
+  }
+}

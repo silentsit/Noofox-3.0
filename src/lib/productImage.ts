@@ -24,7 +24,7 @@ export function getProductImageUrl(
   return `${PRODUCT_IMAGE_ORIGIN}/placeholder-product.jpg`;
 }
 
-/** Catalog product image: use first from product.images or null (no external origin). */
+/** Catalog product image: use first from product.images or placeholder (no external origin). */
 export function getCatalogProductImageUrl(
   product: { images?: string[] } | null | undefined,
   index: number = 0

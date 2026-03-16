@@ -76,6 +76,38 @@ export interface Database {
           updated_at?: string;
         };
       };
+      blog_posts: {
+        Row: {
+          id: string;
+          title: string;
+          slug: string;
+          content: string;
+          author_id: string | null;
+          published: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          slug: string;
+          content?: string;
+          author_id?: string | null;
+          published?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          slug?: string;
+          content?: string;
+          author_id?: string | null;
+          published?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       orders: {
         Row: {
           id: string;

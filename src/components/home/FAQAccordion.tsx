@@ -49,7 +49,7 @@ export function FAQAccordion() {
           <button
             type="button"
             onClick={() => setOpenIndex(openIndex === i ? null : i)}
-            className="flex w-full items-center justify-between px-6 py-5 text-left font-medium text-surface-900 hover:text-brand-600 transition-colors"
+            className="flex min-h-[48px] w-full items-center justify-between px-4 py-4 text-left font-medium text-surface-900 hover:text-brand-600 transition-colors sm:px-6 sm:py-5 touch-manipulation"
             aria-expanded={openIndex === i}
           >
             {faq.question}

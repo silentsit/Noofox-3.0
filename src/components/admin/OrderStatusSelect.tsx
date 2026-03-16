@@ -37,10 +37,16 @@ export function OrderStatusSelect({ orderId, currentStatus }: OrderStatusSelectP
     if (order && REVERSE_STOCK_STATUSES.includes(status) && wasReversible) {
       const items = (order.items as { product_id: string; quantity: number }[]) ?? [];
       for (const item of items) {
-        await supabase.rpc('increment_product_stock', {
-          p_product_id: item.product_id,
-          p_delta: item.quantity ?? 1,
-        });
+        const productId = item.product_id ?? '';
+        if (productId.includes('::')) continue;
+        try {
+          await supabase.rpc('increment_product_stock', {
+            p_product_id: productId,
+            p_delta: item.quantity ?? 1,
+          });
+        } catch {
+          // Legacy products table only; catalog items use slug::variantId
+        }
       }
     }
 

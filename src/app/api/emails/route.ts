@@ -1,15 +1,45 @@
 import { NextResponse } from 'next/server';
+import { Resend } from 'resend';
 import { getAdminEmails } from '@/lib/email';
 import type { EmailPayload } from '@/lib/email';
 
-/**
- * Placeholder: wire to Resend, SendGrid, or Supabase Edge Function.
- * Returns true if send would succeed (for now we only log).
- */
+const resendApiKey = process.env.RESEND_API_KEY;
+const fromEmail = process.env.EMAIL_FROM ?? 'Noofox <onboarding@resend.dev>';
+
+function htmlWrap(subject: string, body: string): string {
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(subject)}</title></head><body style="font-family:sans-serif;line-height:1.5;color:#181c29;max-width:560px;margin:0 auto;padding:24px"><p style="white-space:pre-wrap">${escapeHtml(body)}</p><p style="margin-top:24px;font-size:12px;color:#6b7280">Noofox – Premium nootropics</p></body></html>`;
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 async function sendEmail(to: string, subject: string, body: string): Promise<boolean> {
-  // TODO: e.g. await resend.emails.send({ from, to, subject, html: body });
-  console.log('[emails]', { to: to.slice(0, 20) + '…', subject });
-  return true;
+  if (!resendApiKey) {
+    console.warn('[emails] RESEND_API_KEY not set; skipping send', { to: to.slice(0, 20) + '…', subject });
+    return false;
+  }
+  try {
+    const resend = new Resend(resendApiKey);
+    const { error } = await resend.emails.send({
+      from: fromEmail,
+      to: [to],
+      subject,
+      html: htmlWrap(subject, body),
+    });
+    if (error) {
+      console.error('[emails] Resend error', error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('[emails] Send failed', err);
+    return false;
+  }
 }
 
 export async function POST(request: Request) {
@@ -138,6 +168,16 @@ export async function POST(request: Request) {
       const body = `High-value order #${shortId} – $${totalAmount.toFixed(2)} from ${customerEmail}.`;
       for (const to of admins) {
         if (await sendEmail(to, subject, body)) sent = true;
+      }
+      break;
+    }
+    case 'password_reset_link': {
+      const to = (payload.customer_email as string)?.trim();
+      const resetLink = (payload.reset_link as string) ?? '';
+      if (to && resetLink) {
+        const subject = 'Reset your Noofox password';
+        const body = `Use this link to reset your password: ${resetLink}\n\nIf you didn't request this, you can ignore this email.`;
+        sent = await sendEmail(to, subject, body);
       }
       break;
     }

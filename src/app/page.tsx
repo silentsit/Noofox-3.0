@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
-import { ProductCard } from '@/components/product/ProductCard';
+import { HomeFeaturedCard } from '@/components/product/HomeFeaturedCard';
 import { FAQAccordion } from '@/components/home/FAQAccordion';
-import { Package, CreditCard, Truck, Sparkles, Bitcoin, Shield, Clock, Headphones } from 'lucide-react';
+import { Package, CreditCard, Truck, Sparkles, Bitcoin, Shield, Headphones } from 'lucide-react';
+import { getFeaturedCatalogProducts } from '@/lib/catalog';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,45 +44,34 @@ const trustBadges = [
 ];
 
 export default async function HomePage() {
-  let featured: import('@/types/database').Product[] = [];
-  try {
-    const supabase = await createClient();
-    const { data: products } = await supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(10);
-    featured = products ?? [];
-  } catch (_e) {
-    // Supabase unavailable: show page with placeholders
-  }
+  const featured = await getFeaturedCatalogProducts(8);
 
   return (
     <>
       {/* Hero — dark */}
       <section
-        className="relative overflow-hidden bg-gradient-to-b from-surface-950 via-surface-900 to-surface-950 px-4 py-24 sm:py-32 lg:py-40"
+        className="relative overflow-hidden bg-gradient-to-b from-surface-950 via-surface-900 to-surface-950 px-4 py-16 sm:py-24 lg:py-32 xl:py-40"
         aria-label="Hero"
       >
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-900/20 via-transparent to-transparent" />
-        <div className="relative mx-auto max-w-4xl text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl text-balance">
+        <div className="relative mx-auto max-w-4xl min-w-0 text-center px-1">
+          <h1 className="text-3xl font-bold tracking-tight text-white xs:text-4xl sm:text-5xl lg:text-6xl text-balance">
             Unlock Your Mind&apos;s Full Potential
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-surface-400">
+          <p className="mx-auto mt-4 sm:mt-6 max-w-2xl text-base sm:text-lg text-surface-400 px-1">
             Premium nootropics delivered worldwide. Pay with crypto or use our USD on-ramp.
             Free shipping on every order.
           </p>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <div className="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             <Link
               href="#featured"
-              className="rounded-xl bg-brand-600 px-8 py-3.5 font-semibold text-white hover:bg-brand-700 transition-colors shadow-lg shadow-brand-600/25"
+              className="min-h-[48px] inline-flex items-center justify-center rounded-xl bg-brand-600 px-6 sm:px-8 py-3.5 font-semibold text-white hover:bg-brand-700 transition-colors shadow-lg shadow-brand-600/25"
             >
               Shop Now
             </Link>
             <Link
               href="#how-it-works"
-              className="rounded-xl border border-surface-600 px-8 py-3.5 font-semibold text-surface-300 hover:border-surface-400 hover:text-white transition-colors"
+              className="min-h-[48px] inline-flex items-center justify-center rounded-xl border border-surface-600 px-6 sm:px-8 py-3.5 font-semibold text-surface-300 hover:border-surface-400 hover:text-white transition-colors"
             >
               Learn More
             </Link>
@@ -90,10 +79,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Our Products — white bg */}
+      {/* Our Products — light grey bg, white cards (whalefriend-style) */}
       <section
         id="featured"
-        className="bg-white px-4 py-20 sm:px-6 lg:px-8"
+        className="bg-surface-100 px-4 py-20 sm:px-6 lg:px-8"
         aria-labelledby="featured-heading"
       >
         <div className="mx-auto max-w-7xl">
@@ -108,7 +97,7 @@ export default async function HomePage() {
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {featured.length > 0 ? (
               featured.map((product) => (
-                <ProductCard key={product.id} product={product as import('@/types/database').Product} />
+                <HomeFeaturedCard key={product.slug} product={product} />
               ))
             ) : (
               <>
@@ -130,7 +119,7 @@ export default async function HomePage() {
           <div className="mt-12 text-center">
             <Link
               href="/shop"
-              className="inline-flex rounded-xl bg-brand-600 px-8 py-3.5 font-semibold text-white hover:bg-brand-700 transition-colors shadow-lg shadow-brand-600/25"
+              className="min-h-[48px] inline-flex items-center justify-center rounded-xl bg-brand-600 px-6 sm:px-8 py-3.5 font-semibold text-white hover:bg-brand-700 transition-colors shadow-lg shadow-brand-600/25"
             >
               Start Shopping
             </Link>
@@ -153,11 +142,11 @@ export default async function HomePage() {
               Get started in minutes with our streamlined ordering process.
             </p>
           </div>
-          <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 sm:mt-14 grid grid-cols-1 gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {howItWorksSteps.map((step, i) => {
               const Icon = step.icon;
               return (
-                <div key={i} className="rounded-2xl border border-surface-200 bg-white p-8 text-center shadow-sm hover:shadow-md transition-shadow">
+                <div key={i} className="rounded-2xl border border-surface-200 bg-white p-6 sm:p-8 text-center shadow-sm hover:shadow-md transition-shadow min-w-0">
                   <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50">
                     <Icon className="h-7 w-7 text-brand-600" />
                   </div>
@@ -188,9 +177,9 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="mt-10 sm:mt-12 grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-4">
             {cryptoCoins.map(({ name, ticker }) => (
-              <div key={ticker} className="rounded-2xl border border-surface-200 bg-surface-50 p-6 text-center hover:border-brand-300 hover:shadow-sm transition-all">
+              <div key={ticker} className="rounded-xl sm:rounded-2xl border border-surface-200 bg-surface-50 p-4 sm:p-6 text-center hover:border-brand-300 hover:shadow-sm transition-all min-w-0">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-50">
                   <Bitcoin className="h-6 w-6 text-brand-600" />
                 </div>
@@ -209,7 +198,7 @@ export default async function HomePage() {
             </p>
             <button
               type="button"
-              className="mt-6 rounded-xl bg-accent-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-accent-500 transition-colors"
+              className="mt-6 min-h-[48px] inline-flex items-center justify-center rounded-xl bg-accent-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-accent-500 transition-colors"
             >
               Learn About USD Ramp
             </button>

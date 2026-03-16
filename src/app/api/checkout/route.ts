@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import type { OrderItem } from '@/types/database';
 import { triggerEmail } from '@/lib/email';
+import { getCatalogProductBySlug } from '@/lib/catalog';
 
 function getClientIp(request: Request): string | null {
   const forwarded = request.headers.get('x-forwarded-for');
@@ -13,6 +14,33 @@ function getClientIp(request: Request): string | null {
 
 function getUserAgent(request: Request): string | null {
   return request.headers.get('user-agent');
+}
+
+/** Validate cart items against catalog (slug::variantId); return error message or null */
+async function validateItems(items: OrderItem[]): Promise<string | null> {
+  for (const item of items) {
+    const id = String(item.product_id ?? '');
+    const parts = id.split('::');
+    const slug = parts[0];
+    const variantId = parts[1];
+    if (!slug || !variantId) {
+      return `Invalid item: ${id}`;
+    }
+    const product = await getCatalogProductBySlug(slug);
+    if (!product) {
+      return `Product not found: ${slug}`;
+    }
+    const variant = product.variants.find((v) => v.id === variantId);
+    if (!variant) {
+      return `Variant not found: ${slug}::${variantId}`;
+    }
+    const expectedPrice = variant.price;
+    const actualPrice = Number(item.price);
+    if (Math.abs(actualPrice - expectedPrice) > 0.01) {
+      return `Price mismatch for ${product.name}: expected ${expectedPrice}, got ${actualPrice}`;
+    }
+  }
+  return null;
 }
 
 export async function POST(request: Request) {
@@ -33,6 +61,11 @@ export async function POST(request: Request) {
 
   if (!items || !Array.isArray(items) || items.length === 0) {
     return NextResponse.json({ error: 'Items required' }, { status: 400 });
+  }
+
+  const validationError = await validateItems(items);
+  if (validationError) {
+    return NextResponse.json({ error: validationError }, { status: 400 });
   }
 
   const total_amount = items.reduce(

@@ -3,15 +3,35 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #1e293b;
-  --background: #ffffff;
+  --foreground: #181c29;
+  --background: #f6f0e7;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
   font-feature-settings: "rlig" 1, "calt" 1;
+  font-family: var(--font-body), sans-serif;
+  background-image:
+    radial-gradient(circle at top left, rgba(21, 124, 117, 0.08), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(214, 150, 44, 0.08), transparent 30%);
+  overflow-x: hidden;
+  min-width: 0;
 }
+
+/* Prevent horizontal overflow from content */
+img, video, iframe, object, embed {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Safe area is applied per-component on fixed/sticky elements (header, footer) */
 
 @layer utilities {
   .text-balance {
@@ -20,8 +40,112 @@ body {
 }
 
 @layer base {
+  * {
+    @apply border-surface-200;
+  }
+
   ::selection {
-    background-color: rgba(20, 134, 245, 0.2);
-    color: #0f172a;
+    background-color: rgba(29, 156, 146, 0.22);
+    color: #07111f;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display), serif;
+    font-variation-settings: "SOFT" 80;
+    letter-spacing: -0.03em;
+  }
+
+  a {
+    @apply transition-colors;
+  }
+}
+
+@layer components {
+  .rich-content {
+    color: rgb(88 72 61);
+  }
+
+  .rich-content > * + * {
+    margin-top: 1rem;
+  }
+
+  .rich-content h2,
+  .rich-content h3,
+  .rich-content h4 {
+    color: rgb(24 28 41);
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .rich-content h2 {
+    font-size: clamp(1.85rem, 1.3rem + 1.6vw, 2.8rem);
+    line-height: 1.05;
+  }
+
+  .rich-content h3 {
+    font-size: 1.25rem;
+    line-height: 1.25;
+  }
+
+  .rich-content p,
+  .rich-content li {
+    font-size: 0.98rem;
+    line-height: 1.95;
+  }
+
+  .rich-content ul,
+  .rich-content ol {
+    margin-left: 1.25rem;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .rich-content strong {
+    color: rgb(24 28 41);
+    font-weight: 650;
+  }
+
+  .rich-content em {
+    color: rgb(115 93 77);
+  }
+
+  .rich-content a {
+    color: rgb(20 100 95);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  .rich-content a:hover {
+    color: rgb(21 124 117);
+  }
+
+  .rich-content img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .rich-content table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .rich-content pre,
+  .rich-content code {
+    overflow-x: auto;
+    max-width: 100%;
+    word-break: break-word;
+  }
+}
+
+/* Minimum touch target (WCAG 2.1 / Fitts's Law) */
+@media (pointer: coarse) {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
   }
 }

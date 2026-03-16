@@ -49,6 +49,24 @@ export default async function AdminLayout({
               Products
             </Link>
             <Link
+              href="/admin/users"
+              className="text-sm font-medium text-surface-400 hover:text-white"
+            >
+              Users
+            </Link>
+            <Link
+              href="/admin/blog"
+              className="text-sm font-medium text-surface-400 hover:text-white"
+            >
+              Blog
+            </Link>
+            <Link
+              href="/admin/accounting"
+              className="text-sm font-medium text-surface-400 hover:text-white"
+            >
+              Accounting
+            </Link>
+            <Link
               href="/"
               className="text-sm font-medium text-brand-600 hover:text-brand-700"
             >

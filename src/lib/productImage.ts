@@ -23,3 +23,16 @@ export function getProductImageUrl(
   }
   return `${PRODUCT_IMAGE_ORIGIN}/placeholder-product.jpg`;
 }
+
+/** Catalog product image: use first from product.images or null (no external origin). */
+export function getCatalogProductImageUrl(
+  product: { images?: string[] } | null | undefined,
+  index: number = 0
+): string | null {
+  const raw = product?.images?.[index];
+  if (raw && (raw.startsWith('http://') || raw.startsWith('https://'))) {
+    return raw;
+  }
+  if (raw) return raw;
+  return null;
+}

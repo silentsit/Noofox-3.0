@@ -40,3 +40,6 @@ next-env.d.ts
 
 # local reference only (do not push to GitHub)
 /legacy-wp-data/
+
+# local product image source (run scripts/copy-product-images.mjs to copy into public/product-images)
+/Noofox-Images/

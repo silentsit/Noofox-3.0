@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 interface ProductImageGalleryProps {
   images: string[];
   productName: string;
-  /** Optional: first image is already shown as hero elsewhere; we show all here */
   className?: string;
 }
 
@@ -19,7 +19,7 @@ export function ProductImageGallery({ images, productName, className = '' }: Pro
 
   return (
     <div className={`flex flex-col gap-3 ${className}`}>
-      <div className="relative aspect-square w-full min-h-[18rem] sm:min-h-[24rem] rounded-xl overflow-hidden border border-surface-200 bg-surface-50">
+      <div className="relative aspect-square w-full min-h-[18rem] sm:min-h-[24rem] rounded-3xl overflow-hidden border border-border bg-card">
         <Image
           src={current}
           alt={`${productName} — image ${selectedIndex + 1} of ${images.length}`}
@@ -36,11 +36,12 @@ export function ProductImageGallery({ images, productName, className = '' }: Pro
               key={`${url}-${i}`}
               type="button"
               onClick={() => setSelectedIndex(i)}
-              className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-2 shrink-0 transition-colors ${
+              className={cn(
+                'relative w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-2 shrink-0 transition-colors',
                 i === selectedIndex
-                  ? 'border-brand-500 ring-2 ring-brand-500/30'
-                  : 'border-surface-200 hover:border-surface-300'
-              }`}
+                  ? 'border-primary ring-2 ring-primary/30'
+                  : 'border-border hover:border-primary/50'
+              )}
               aria-label={`View image ${i + 1} of ${images.length}`}
             >
               <Image

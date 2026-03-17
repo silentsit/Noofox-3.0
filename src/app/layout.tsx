@@ -1,23 +1,13 @@
 import type { Metadata } from 'next';
-import { Fraunces, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CartProvider } from '@/context/CartContext';
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-body',
-  display: 'swap',
-});
-const fraunces = Fraunces({
-  subsets: ['latin'],
-  variable: '--font-display',
-  display: 'swap',
-});
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-mono',
+  variable: '--font-inter',
   display: 'swap',
 });
 
@@ -61,14 +51,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${plusJakartaSans.variable} ${fraunces.variable} ${jetbrainsMono.variable} overflow-x-hidden`}
+      className={`${inter.variable} dark`}
       suppressHydrationWarning
     >
-      <body className="min-h-screen min-w-0 flex flex-col bg-[#f6f0e7] text-surface-900 antialiased overflow-x-hidden">
+      <body className="min-h-screen min-w-0 flex flex-col font-sans antialiased overflow-x-hidden">
         <CartProvider>
           <a
             href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-brand-300 focus:px-4 focus:py-2 focus:text-surface-950 focus:outline-none"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:outline-none"
           >
             Skip to main content
           </a>

@@ -2,10 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { ShieldCheck, Star, Truck } from 'lucide-react';
-import { ProductCardRelated } from '@/components/product/ProductCardRelated';
+import { CheckCircle, Truck, Shield, Clock, ArrowLeft } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { ProductPurchasePanel } from '@/components/product/ProductPurchasePanel';
 import { ProductImageGallery } from '@/components/product/ProductImageGallery';
+import { ProductCard } from '@/components/products/ProductCard';
 import { getCatalogProductBySlug, getCatalogProducts, getRelatedCatalogProducts } from '@/lib/catalog';
 import { getCatalogProductImageUrl } from '@/lib/productImage';
 
@@ -101,28 +104,12 @@ export default async function ProductSlugPage({
   const relatedProducts = await getRelatedCatalogProducts(product, 4);
   const supplementalSchemas = buildSupplementalSchemas(product);
   const schemas = [...(product.structuredData ?? []), ...supplementalSchemas];
-  return (
-    <ProductSlugContent
-      product={product}
-      relatedProducts={relatedProducts}
-      schemas={schemas}
-    />
-  );
-}
 
-function ProductSlugContent({
-  product,
-  relatedProducts,
-  schemas,
-}: {
-  product: NonNullable<Awaited<ReturnType<typeof getCatalogProductBySlug>>>;
-  relatedProducts: Awaited<ReturnType<typeof getRelatedCatalogProducts>>;
-  schemas: unknown[];
-}) {
   const heroImageUrl = getCatalogProductImageUrl(product, 0);
   const allImages = product.images?.length ? product.images : [];
+
   return (
-    <div className="product-page-root bg-white min-h-screen">
+    <div className="py-12">
       {schemas.map((schema, index) => (
         <script
           key={`${product.slug}-schema-${index}`}
@@ -131,223 +118,170 @@ function ProductSlugContent({
         />
       ))}
 
-      <div className="relative overflow-hidden bg-white text-surface-900">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-surface-200 to-transparent" />
+      <div className="mx-auto max-w-7xl px-4 lg:px-8">
+        {/* Breadcrumb */}
+        <nav className="mb-8">
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/shop">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Shop
+            </Link>
+          </Button>
+        </nav>
 
-        <section className="relative mx-auto max-w-7xl min-w-0 px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-20">
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-surface-500">
-            <Link href="/" className="transition-colors hover:text-surface-900">
-              Home
-            </Link>
-            <span>/</span>
-            <Link href="/shop" className="transition-colors hover:text-surface-900">
-              Shop
-            </Link>
-            <span>/</span>
-            <span className="text-surface-900">{product.name}</span>
+        {/* Product Section */}
+        <div className="grid gap-12 lg:grid-cols-2">
+          {/* Product Image */}
+          <div className="relative">
+            <div className="sticky top-24">
+              {allImages.length > 1 ? (
+                <ProductImageGallery images={allImages} productName={product.name} />
+              ) : (
+                <div className="relative aspect-square overflow-hidden rounded-3xl border border-border bg-card">
+                  {heroImageUrl ? (
+                    <Image
+                      src={heroImageUrl}
+                      alt={product.name}
+                      fill
+                      className="object-cover"
+                      priority
+                      unoptimized={heroImageUrl.startsWith('http')}
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center">
+                      <div className="text-center">
+                        <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-2xl bg-primary">
+                          <span className="text-5xl font-bold text-primary-foreground">
+                            {product.name.split(' ').map(w => w[0]).join('').slice(0, 2)}
+                          </span>
+                        </div>
+                        <p className="mt-4 text-sm text-muted-foreground">{product.name}</p>
+                      </div>
+                    </div>
+                  )}
+                  {product.reviewSummary.reviewCount > 10 && (
+                    <Badge className="absolute left-4 top-4">Best Seller</Badge>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="mt-8 sm:mt-10 grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,24rem)] lg:items-start">
-            <div className="min-w-0">
-              <div className="grid gap-6 sm:gap-8 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] xl:items-start">
-                <div className="rounded-2xl sm:rounded-[2.25rem] border border-surface-200 bg-surface-50 p-4 sm:p-6 shadow-sm">
-                  <div className="flex h-full min-h-[18rem] sm:min-h-[24rem] flex-col justify-between rounded-xl sm:rounded-[1.8rem] border border-surface-200 bg-white p-5 sm:p-8 relative overflow-hidden">
-                    <div className="flex flex-wrap items-center justify-between gap-2 relative z-10">
-                      {heroImageUrl ? (
-                        <span className="rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[10px] sm:text-xs uppercase tracking-[0.22em] text-brand-800">
-                          {allImages.length > 1 ? `${allImages.length} images` : 'Product image'}
-                        </span>
-                      ) : (
-                        <span className="rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[10px] sm:text-xs uppercase tracking-[0.22em] text-brand-800">
-                          No image yet
-                        </span>
-                      )}
-                      <span className="rounded-full border border-surface-200 bg-surface-100 px-2.5 py-1 text-[10px] sm:text-xs uppercase tracking-[0.22em] text-surface-600">
-                        {product.category ?? 'Nootropic'}
-                      </span>
-                    </div>
-                    {allImages.length > 1 ? (
-                      <div className="relative z-10 mt-2">
-                        <ProductImageGallery images={allImages} productName={product.name} />
-                      </div>
-                    ) : heroImageUrl ? (
-                      <div className="absolute inset-0 flex items-center justify-center p-6">
-                        <Image
-                          src={heroImageUrl}
-                          alt={product.name}
-                          fill
-                          className="object-contain"
-                          unoptimized={heroImageUrl.startsWith('http')}
-                          sizes="(max-width: 1024px) 100vw, 480px"
-                        />
-                      </div>
-                    ) : (
-                      <div className="min-w-0 relative z-10">
-                        <p className="text-xs uppercase tracking-[0.3em] text-surface-500">Live catalog import</p>
-                        <p className="mt-4 sm:mt-5 font-display text-5xl sm:text-6xl lg:text-7xl leading-none text-surface-900 break-words">
-                          {product.name
-                            .split(' ')
-                            .slice(0, 2)
-                            .map((word) => word[0])
-                            .join('')}
-                        </p>
-                        <p className="mt-6 max-w-md text-sm leading-7 text-surface-600">
-                          Product data, long-form content, package pricing, meta tags, and structured data were
-                          migrated from the live site. Images are intentionally deferred until your final assets
-                          are ready.
-                        </p>
-                      </div>
-                    )}
-                    <div className="relative z-10">
-                      <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                        <div className="rounded-xl sm:rounded-[1.25rem] border border-surface-200 bg-surface-50 p-3 sm:p-4 min-w-0">
-                          <p className="text-[10px] sm:text-xs uppercase tracking-[0.18em] text-surface-500">Starting at</p>
-                          <p className="mt-1 sm:mt-2 text-base sm:text-xl font-semibold text-surface-900 truncate">${product.priceRange.min.toFixed(2)}</p>
-                        </div>
-                        <div className="rounded-xl sm:rounded-[1.25rem] border border-surface-200 bg-surface-50 p-3 sm:p-4 min-w-0">
-                          <p className="text-[10px] sm:text-xs uppercase tracking-[0.18em] text-surface-500">Packages</p>
-                          <p className="mt-1 sm:mt-2 text-base sm:text-xl font-semibold text-surface-900">{product.variants.length}</p>
-                        </div>
-                        <div className="rounded-xl sm:rounded-[1.25rem] border border-surface-200 bg-surface-50 p-3 sm:p-4 min-w-0">
-                          <p className="text-[10px] sm:text-xs uppercase tracking-[0.18em] text-surface-500">Reviews</p>
-                          <p className="mt-1 sm:mt-2 text-base sm:text-xl font-semibold text-surface-900">{product.reviewSummary.reviewCount}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+          {/* Product Info */}
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              {product.category && (
+                <Badge variant="outline" className="capitalize">{product.category}</Badge>
+              )}
+              {product.reviewSummary.averageRating && (
+                <Badge variant="outline">
+                  {product.reviewSummary.averageRating.toFixed(1)} ({product.reviewSummary.reviewCount} reviews)
+                </Badge>
+              )}
+            </div>
+
+            <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+              {product.name}
+            </h1>
+
+            <p className="mt-4 text-lg text-muted-foreground">
+              {product.seo.description || product.shortDescriptionText}
+            </p>
+
+            <Separator className="my-8" />
+
+            {/* Purchase Panel */}
+            <ProductPurchasePanel product={product} />
+
+            <Separator className="my-8" />
+
+            {/* Trust Badges */}
+            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
+              <div className="flex items-center gap-3 rounded-xl border border-border p-3 sm:p-4">
+                <Truck className="h-5 w-5 shrink-0 text-primary sm:h-6 sm:w-6" />
+                <div>
+                  <p className="text-sm font-medium">Free Shipping</p>
+                  <p className="text-xs text-muted-foreground">Worldwide delivery</p>
                 </div>
-
-                <div className="pt-2 min-w-0">
-                  <p className="text-xs uppercase tracking-[0.28em] text-brand-700">
-                    {product.category ?? 'Premium nootropic'}
-                  </p>
-                  <h1 className="mt-4 sm:mt-5 font-display text-3xl leading-tight text-surface-900 xs:text-4xl sm:text-5xl lg:text-6xl break-words">
-                    {product.name}
-                  </h1>
-                  <p className="mt-4 sm:mt-6 max-w-2xl text-base sm:text-lg leading-7 sm:leading-8 text-surface-600">
-                    {product.seo.description}
-                  </p>
-
-                  <div className="mt-6 sm:mt-8 flex flex-wrap gap-2 sm:gap-3">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800">
-                      <Star className="h-4 w-4 fill-current" />
-                      {product.reviewSummary.averageRating?.toFixed(1) ?? '5.0'} average from{' '}
-                      {product.reviewSummary.reviewCount} reviews
-                    </div>
-                    <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-800">
-                      <ShieldCheck className="h-4 w-4" />
-                      Transparent package pricing
-                    </div>
-                    <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm text-sky-800">
-                      <Truck className="h-4 w-4" />
-                      Discreet worldwide shipping
-                    </div>
-                  </div>
-
-                  <div
-                    className="rich-content mt-6 sm:mt-8 max-w-2xl text-surface-700 text-sm sm:text-base"
-                    dangerouslySetInnerHTML={{ __html: product.shortDescriptionHtml }}
-                  />
+              </div>
+              <div className="flex items-center gap-3 rounded-xl border border-border p-3 sm:p-4">
+                <Shield className="h-5 w-5 shrink-0 text-primary sm:h-6 sm:w-6" />
+                <div>
+                  <p className="text-sm font-medium">100% Authentic</p>
+                  <p className="text-xs text-muted-foreground">Lab-tested quality</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 rounded-xl border border-border p-3 sm:p-4">
+                <Clock className="h-5 w-5 shrink-0 text-primary sm:h-6 sm:w-6" />
+                <div>
+                  <p className="text-sm font-medium">Fast Processing</p>
+                  <p className="text-xs text-muted-foreground">Ships within 24h</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 rounded-xl border border-border p-3 sm:p-4">
+                <CheckCircle className="h-5 w-5 shrink-0 text-primary sm:h-6 sm:w-6" />
+                <div>
+                  <p className="text-sm font-medium">Discreet Packaging</p>
+                  <p className="text-xs text-muted-foreground">Privacy guaranteed</p>
                 </div>
               </div>
             </div>
-
-            <div className="lg:sticky lg:top-24 w-full">
-              <ProductPurchasePanel product={product} />
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <section className="border-t border-surface-200 bg-[#f6f0e7] px-4 py-12 sm:py-16 text-surface-900 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl min-w-0 gap-4 grid-cols-1 md:grid-cols-3">
-          <div className="rounded-[1.75rem] border border-surface-300/70 bg-white/80 p-6 shadow-[0_18px_45px_rgba(15,23,42,0.08)]">
-            <p className="text-xs uppercase tracking-[0.24em] text-surface-500">Trust cue</p>
-            <h2 className="mt-3 font-display text-2xl text-surface-950">Upfront disclosure</h2>
-            <p className="mt-3 text-sm leading-7 text-surface-600">
-              The page surfaces exact package pricing, counts, and the migrated live-site copy before checkout.
-            </p>
-          </div>
-          <div className="rounded-[1.75rem] border border-surface-300/70 bg-white/80 p-6 shadow-[0_18px_45px_rgba(15,23,42,0.08)]">
-            <p className="text-xs uppercase tracking-[0.24em] text-surface-500">Trust cue</p>
-            <h2 className="mt-3 font-display text-2xl text-surface-950">Evidence and reviews</h2>
-            <p className="mt-3 text-sm leading-7 text-surface-600">
-              Review volume and rating are made visible at the decision point instead of burying them below the fold.
-            </p>
-          </div>
-          <div className="rounded-[1.75rem] border border-surface-300/70 bg-white/80 p-6 shadow-[0_18px_45px_rgba(15,23,42,0.08)]">
-            <p className="text-xs uppercase tracking-[0.24em] text-surface-500">Trust cue</p>
-            <h2 className="mt-3 font-display text-2xl text-surface-950">Assurance</h2>
-            <p className="mt-3 text-sm leading-7 text-surface-600">
-              Discreet shipping, support availability, and pricing clarity are repeated in context to reduce purchase doubt.
-            </p>
           </div>
         </div>
-      </section>
 
-      <section className="bg-[#f6f0e7] px-4 pb-16 sm:pb-20 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl min-w-0 gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,22rem)]">
-          <article className="rounded-2xl sm:rounded-[2rem] border border-surface-300/70 bg-white p-5 shadow-[0_24px_70px_rgba(15,23,42,0.08)] sm:p-8 lg:p-10 min-w-0">
-            <p className="text-xs uppercase tracking-[0.24em] text-surface-500">Long-form content</p>
+        {/* Product Details */}
+        {product.descriptionHtml && (
+          <div className="mt-16 rounded-2xl border border-border bg-card p-8">
+            <h2 className="text-xl font-semibold">Product Information</h2>
             <div
               className="rich-content mt-6"
               dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
             />
-          </article>
+          </div>
+        )}
 
-          <aside className="space-y-6 min-w-0">
-            <div className="rounded-2xl sm:rounded-[2rem] border border-surface-300/70 bg-white p-4 sm:p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
-              <p className="text-xs uppercase tracking-[0.24em] text-surface-500">FAQ</p>
-              <div className="mt-5 space-y-3">
-                {product.faqs.map((faq) => (
-                  <details
-                    key={faq.question}
-                    className="group rounded-xl sm:rounded-[1.25rem] border border-surface-200 bg-surface-50 px-3 sm:px-4 py-3"
-                  >
-                    <summary className="cursor-pointer list-none pr-6 font-medium text-surface-900 text-sm sm:text-base min-h-[44px] flex items-center">
-                      {faq.question}
-                    </summary>
-                    <p className="mt-3 text-sm leading-7 text-surface-600">{faq.answer}</p>
-                  </details>
-                ))}
+        {/* FAQs */}
+        {product.faqs.length > 0 && (
+          <div className="mt-16 rounded-2xl border border-border bg-card p-8">
+            <h2 className="text-xl font-semibold">Frequently Asked Questions</h2>
+            <div className="mt-6 space-y-4">
+              {product.faqs.map((faq) => (
+                <details
+                  key={faq.question}
+                  className="group rounded-xl border border-border bg-background p-4"
+                >
+                  <summary className="cursor-pointer list-none font-medium text-sm">
+                    {faq.question}
+                  </summary>
+                  <p className="mt-3 text-sm text-muted-foreground">{faq.answer}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Related Products */}
+        {relatedProducts.length > 0 && (
+          <div className="mt-16">
+            <div className="flex items-end justify-between">
+              <div>
+                <h2 className="text-2xl font-bold">Related Products</h2>
+                <p className="mt-2 text-muted-foreground">
+                  You may also like
+                </p>
               </div>
+              <Button variant="outline" size="sm" asChild className="hidden sm:flex">
+                <Link href="/shop">View full catalog</Link>
+              </Button>
             </div>
-
-            <div className="rounded-[2rem] border border-surface-300/70 bg-[#081426] p-6 text-white shadow-[0_24px_70px_rgba(15,23,42,0.18)]">
-              <p className="text-xs uppercase tracking-[0.24em] text-brand-200">Why shoppers stay</p>
-              <h2 className="mt-3 font-display text-3xl">Confidence without clutter</h2>
-              <p className="mt-4 text-sm leading-7 text-surface-300">
-                The layout intentionally combines premium depth, transparent detail, and visible reassurance so
-                the page feels credible before it feels promotional.
-              </p>
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {relatedProducts.map((relatedProduct) => (
+                <ProductCard key={relatedProduct.slug} product={relatedProduct} />
+              ))}
             </div>
-          </aside>
-        </div>
-      </section>
-
-      <section className="border-t border-surface-200 bg-surface-100 px-4 py-12 sm:py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl min-w-0">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.24em] text-surface-500">You may also like</p>
-              <h2 className="mt-3 font-display text-3xl sm:text-4xl text-surface-950">Related products</h2>
-            </div>
-            <Link href="/shop" className="text-sm font-medium text-brand-700 hover:text-brand-800 min-h-[44px] flex items-center">
-              View full catalog
-            </Link>
           </div>
-
-          <div className="mt-8 sm:mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
-            {relatedProducts.map((relatedProduct, i) => (
-              <ProductCardRelated
-                key={relatedProduct.slug}
-                product={relatedProduct}
-                badge={i === 0 ? 'best-seller' : i === 1 ? 'popular' : null}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+        )}
+      </div>
     </div>
   );
 }

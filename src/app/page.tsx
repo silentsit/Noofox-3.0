@@ -1,246 +1,364 @@
-import Link from 'next/link';
-import { HomeFeaturedCard } from '@/components/product/HomeFeaturedCard';
-import { FAQAccordion } from '@/components/home/FAQAccordion';
-import { Package, CreditCard, Truck, Sparkles, Bitcoin, Shield, Headphones } from 'lucide-react';
-import { getFeaturedCatalogProducts } from '@/lib/catalog';
+import Link from 'next/link'
+import Image from 'next/image'
+import { ArrowRight, Zap, Shield, Truck, Clock, Star, CheckCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { getFeaturedCatalogProducts } from '@/lib/catalog'
+import { ProductCard } from '@/components/products/ProductCard'
 
-export const dynamic = 'force-dynamic';
-
-const howItWorksSteps = [
+const benefits = [
   {
-    icon: Package,
-    title: 'Choose Products',
-    description: 'Browse our selection of premium nootropics and add your favorites to the cart.',
+    icon: Zap,
+    title: 'Enhanced Focus',
+    description: 'Experience laser-sharp concentration for 12-15 hours of peak productivity.',
   },
   {
-    icon: CreditCard,
-    title: 'Pay with Crypto',
-    description: 'Pay securely with Bitcoin, Ethereum, or USDT. No crypto? Use our USD on-ramp.',
+    icon: Shield,
+    title: 'Lab-Tested Quality',
+    description: 'Every batch is tested for purity and potency. Only the best for our customers.',
   },
   {
     icon: Truck,
-    title: 'Discreet Shipping',
-    description: 'Your order is shipped discreetly with tracking. Free shipping worldwide.',
+    title: 'Worldwide Shipping',
+    description: 'Discreet packaging with tracking. Delivered to your door globally.',
   },
   {
-    icon: Sparkles,
-    title: 'Enjoy Results',
-    description: 'Experience enhanced focus, energy, and cognitive performance.',
+    icon: Clock,
+    title: 'Fast Processing',
+    description: 'Orders processed within 24 hours. Express shipping options available.',
   },
-];
+]
 
-const cryptoCoins = [
-  { name: 'Bitcoin', ticker: 'BTC' },
-  { name: 'Ethereum', ticker: 'ETH' },
-  { name: 'Tether', ticker: 'USDT' },
-  { name: 'USD Coin', ticker: 'USDC' },
-];
+const testimonials = [
+  {
+    name: 'Alex M.',
+    role: 'Software Engineer',
+    content: 'Noofox has been a game-changer for my productivity. The quality is consistently excellent, and shipping is always fast.',
+    rating: 5,
+  },
+  {
+    name: 'Sarah K.',
+    role: 'Medical Student',
+    content: "I've tried many vendors, but Noofox stands out for their reliability and customer service. Highly recommended!",
+    rating: 5,
+  },
+  {
+    name: 'James R.',
+    role: 'Entrepreneur',
+    content: 'The crypto payment option is perfect for privacy. Great products, great service, will definitely order again.',
+    rating: 5,
+  },
+]
 
-const trustBadges = [
-  { icon: Truck, title: 'Free Shipping', subtitle: 'On all orders' },
-  { icon: Shield, title: 'Secure Payments', subtitle: 'Crypto & USD Ramp' },
-  { icon: CreditCard, title: 'Best Prices', subtitle: 'Guaranteed' },
-  { icon: Headphones, title: '24/7 Support', subtitle: 'Always here' },
-];
+const stats = [
+  { value: '50K+', label: 'Happy Customers' },
+  { value: '99.8%', label: 'Delivery Success' },
+  { value: '150+', label: 'Countries Served' },
+  { value: '4.9/5', label: 'Customer Rating' },
+]
 
-export default async function HomePage() {
-  const featured = await getFeaturedCatalogProducts(8);
+export default async function Home() {
+  const featuredProducts = await getFeaturedCatalogProducts(8)
 
   return (
-    <>
-      {/* Hero — dark */}
-      <section
-        className="relative overflow-hidden bg-gradient-to-b from-surface-950 via-surface-900 to-surface-950 px-4 py-16 sm:py-24 lg:py-32 xl:py-40"
-        aria-label="Hero"
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-900/20 via-transparent to-transparent" />
-        <div className="relative mx-auto max-w-4xl min-w-0 text-center px-1">
-          <h1 className="text-3xl font-bold tracking-tight text-white xs:text-4xl sm:text-5xl lg:text-6xl text-balance">
-            Unlock Your Mind&apos;s Full Potential
-          </h1>
-          <p className="mx-auto mt-4 sm:mt-6 max-w-2xl text-base sm:text-lg text-surface-400 px-1">
-            Premium nootropics delivered worldwide. Pay with crypto or use our USD on-ramp.
-            Free shipping on every order.
-          </p>
-          <div className="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-            <Link
-              href="#featured"
-              className="min-h-[48px] inline-flex items-center justify-center rounded-xl bg-brand-600 px-6 sm:px-8 py-3.5 font-semibold text-white hover:bg-brand-700 transition-colors shadow-lg shadow-brand-600/25"
-            >
-              Shop Now
-            </Link>
-            <Link
-              href="#how-it-works"
-              className="min-h-[48px] inline-flex items-center justify-center rounded-xl border border-surface-600 px-6 sm:px-8 py-3.5 font-semibold text-surface-300 hover:border-surface-400 hover:text-white transition-colors"
-            >
-              Learn More
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Products — light grey bg, white cards (whalefriend-style) */}
-      <section
-        id="featured"
-        className="bg-surface-100 px-4 py-20 sm:px-6 lg:px-8"
-        aria-labelledby="featured-heading"
-      >
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center">
-            <h2 id="featured-heading" className="text-3xl font-bold text-surface-900 sm:text-4xl">
-              Our Products
-            </h2>
-            <p className="mt-3 text-surface-500 max-w-2xl mx-auto">
-              Pharmaceutical-grade cognitive enhancers, shipped discreetly worldwide with free shipping.
-            </p>
-          </div>
-          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {featured.length > 0 ? (
-              featured.map((product) => (
-                <HomeFeaturedCard key={product.slug} product={product} />
-              ))
-            ) : (
-              <>
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex flex-col overflow-hidden rounded-2xl border border-surface-200 bg-white p-5 animate-pulse"
-                  >
-                    <div className="aspect-[4/3] w-full rounded-xl bg-surface-100" />
-                    <div className="mt-4 h-5 w-3/4 rounded bg-surface-100" />
-                    <div className="mt-2 h-4 w-1/2 rounded bg-surface-100" />
-                    <div className="mt-4 flex-1" />
-                    <div className="mt-4 h-10 rounded-lg bg-surface-100" />
-                  </div>
-                ))}
-              </>
-            )}
-          </div>
-          <div className="mt-12 text-center">
-            <Link
-              href="/shop"
-              className="min-h-[48px] inline-flex items-center justify-center rounded-xl bg-brand-600 px-6 sm:px-8 py-3.5 font-semibold text-white hover:bg-brand-700 transition-colors shadow-lg shadow-brand-600/25"
-            >
-              Start Shopping
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* How it works — light gray bg */}
-      <section
-        id="how-it-works"
-        className="bg-surface-50 px-4 py-20 sm:px-6 lg:px-8"
-        aria-labelledby="how-heading"
-      >
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center">
-            <h2 id="how-heading" className="text-3xl font-bold text-surface-900 sm:text-4xl">
-              How It Works
-            </h2>
-            <p className="mt-3 text-surface-500 max-w-2xl mx-auto">
-              Get started in minutes with our streamlined ordering process.
-            </p>
-          </div>
-          <div className="mt-10 sm:mt-14 grid grid-cols-1 gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {howItWorksSteps.map((step, i) => {
-              const Icon = step.icon;
-              return (
-                <div key={i} className="rounded-2xl border border-surface-200 bg-white p-6 sm:p-8 text-center shadow-sm hover:shadow-md transition-shadow min-w-0">
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50">
-                    <Icon className="h-7 w-7 text-brand-600" />
-                  </div>
-                  <h3 className="mt-6 font-semibold text-surface-900">{step.title}</h3>
-                  <p className="mt-2 text-sm text-surface-500 leading-relaxed">{step.description}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Pay with Crypto — white bg */}
-      <section
-        id="payment"
-        className="bg-white px-4 py-20 sm:px-6 lg:px-8"
-        aria-labelledby="payment-heading"
-      >
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center">
-            <h2 id="payment-heading" className="text-3xl font-bold text-surface-900 sm:text-4xl">
-              Pay with Crypto
-            </h2>
-            <p className="mt-3 text-surface-500 max-w-2xl mx-auto">
-              We accept all major cryptocurrencies for secure, private transactions.
-              Don&apos;t have crypto? No problem—use our USD on-ramp to purchase cryptocurrency
-              instantly and complete your order.
-            </p>
-          </div>
-
-          <div className="mt-10 sm:mt-12 grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-4">
-            {cryptoCoins.map(({ name, ticker }) => (
-              <div key={ticker} className="rounded-xl sm:rounded-2xl border border-surface-200 bg-surface-50 p-4 sm:p-6 text-center hover:border-brand-300 hover:shadow-sm transition-all min-w-0">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-50">
-                  <Bitcoin className="h-6 w-6 text-brand-600" />
-                </div>
-                <p className="mt-3 font-semibold text-surface-900">{name}</p>
-                <p className="text-sm text-surface-500">{ticker}</p>
+    <div className="flex flex-col">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/20 via-background to-background" />
+        <div className="relative mx-auto max-w-7xl px-4 py-24 sm:py-32 lg:px-8">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <div className="flex flex-col gap-6">
+              <Badge variant="secondary" className="w-fit">
+                Trusted by 50,000+ customers worldwide
+              </Badge>
+              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+                Unlock Your{' '}
+                <span className="text-primary">Cognitive Potential</span>
+              </h1>
+              <p className="max-w-xl text-lg text-muted-foreground">
+                Premium Modafinil and Armodafinil delivered worldwide. Experience
+                enhanced focus, improved memory, and peak mental performance with
+                our lab-tested cognitive enhancers.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Button size="lg" asChild>
+                  <Link href="/shop">
+                    Shop Now
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild>
+                  <Link href="/about">Learn More</Link>
+                </Button>
               </div>
-            ))}
-          </div>
-
-          <div className="mt-12 rounded-2xl border border-surface-200 bg-surface-50 p-8 sm:p-10">
-            <h3 className="text-xl font-bold text-surface-900">USD On-Ramp</h3>
-            <p className="mt-1 text-sm font-medium text-brand-600">Buy crypto instantly</p>
-            <p className="mt-4 text-surface-600 leading-relaxed">
-              Don&apos;t own cryptocurrency? Use our integrated USD on-ramp to purchase crypto
-              with your credit card, debit card, or bank transfer. Complete your purchase in minutes.
-            </p>
-            <button
-              type="button"
-              className="mt-6 min-h-[48px] inline-flex items-center justify-center rounded-xl bg-accent-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-accent-500 transition-colors"
-            >
-              Learn About USD Ramp
-            </button>
+              <div className="flex items-center gap-6 pt-4">
+                <div className="flex -space-x-2">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div
+                      key={i}
+                      className="h-10 w-10 rounded-full border-2 border-background bg-muted"
+                    />
+                  ))}
+                </div>
+                <div>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star
+                        key={i}
+                        className="h-4 w-4 fill-primary text-primary"
+                      />
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    4.9/5 from 2,500+ reviews
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="relative mt-8 lg:mt-0">
+              <div className="absolute -inset-4 rounded-3xl bg-primary/10 blur-3xl" />
+              <div className="relative aspect-square max-w-md mx-auto lg:max-w-none overflow-hidden rounded-3xl border border-border bg-card">
+                <Image
+                  src="https://whalefriend-shop.lovable.app/lovable-uploads/47ed6a6e-27f4-4d1b-af9a-0dc61d7d2de9.png"
+                  alt="Premium cognitive enhancers"
+                  fill
+                  className="object-cover"
+                  priority
+                  unoptimized
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* FAQ — light gray bg */}
-      <section
-        id="faq"
-        className="bg-surface-50 px-4 py-20 sm:px-6 lg:px-8"
-        aria-labelledby="faq-heading"
-      >
-        <div className="mx-auto max-w-3xl">
-          <div className="text-center">
-            <h2 id="faq-heading" className="text-3xl font-bold text-surface-900 sm:text-4xl">
-              Frequently Asked Questions
-            </h2>
-            <p className="mt-3 text-surface-500">
-              Find answers to common questions about our products and services.
-            </p>
-          </div>
-          <div className="mt-12">
-            <FAQAccordion />
-          </div>
-        </div>
-      </section>
-
-      {/* Trust badges — white bg with top border */}
-      <section className="bg-white border-t border-surface-200 px-4 py-12 sm:px-6 lg:px-8" aria-label="Trust badges">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-            {trustBadges.map(({ icon: Icon, title, subtitle }) => (
-              <div key={title} className="text-center">
-                <Icon className="mx-auto h-6 w-6 text-brand-600" />
-                <p className="mt-2 font-semibold text-surface-900 text-sm">{title}</p>
-                <p className="text-xs text-surface-500">{subtitle}</p>
+      {/* Stats Section */}
+      <section className="border-y border-border bg-card/50">
+        <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
+          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <p className="text-3xl font-bold text-primary sm:text-4xl">
+                  {stat.value}
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
-    </>
-  );
+
+      {/* Benefits Section */}
+      <section className="py-24">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+          <div className="text-center">
+            <Badge variant="secondary">Why Choose Noofox</Badge>
+            <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+              The Smart Choice for Cognitive Enhancement
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
+              We&apos;re committed to providing the highest quality products with
+              exceptional service and complete customer satisfaction.
+            </p>
+          </div>
+          <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {benefits.map((benefit) => (
+              <div
+                key={benefit.title}
+                className="group rounded-2xl border border-border bg-card p-6 transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <benefit.icon className="h-6 w-6" />
+                </div>
+                <h3 className="mt-4 text-lg font-semibold">{benefit.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {benefit.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products Section */}
+      <section className="bg-card/50 py-24">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+          <div className="flex items-end justify-between">
+            <div>
+              <Badge variant="secondary">Featured Products</Badge>
+              <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+                Our Best Sellers
+              </h2>
+              <p className="mt-4 max-w-2xl text-muted-foreground">
+                Discover our most popular cognitive enhancers, trusted by
+                thousands of customers worldwide.
+              </p>
+            </div>
+            <Button variant="outline" asChild className="hidden sm:flex">
+              <Link href="/shop">
+                View All Products
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.slug} product={product} />
+            ))}
+          </div>
+          <div className="mt-8 text-center sm:hidden">
+            <Button variant="outline" asChild>
+              <Link href="/shop">
+                View All Products
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="py-24">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+          <div className="text-center">
+            <Badge variant="secondary">How It Works</Badge>
+            <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+              Simple, Secure, Fast
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
+              Getting your cognitive enhancers has never been easier. Follow these
+              simple steps.
+            </p>
+          </div>
+          <div className="mt-16 grid gap-8 md:grid-cols-3">
+            {[
+              {
+                step: '01',
+                title: 'Choose Your Product',
+                description: 'Browse our selection of premium Modafinil and Armodafinil products.',
+              },
+              {
+                step: '02',
+                title: 'Secure Payment',
+                description: 'Pay with crypto directly or use card via our secure on-ramp partner.',
+              },
+              {
+                step: '03',
+                title: 'Fast Delivery',
+                description: 'Receive your order in discreet packaging with full tracking.',
+              },
+            ].map((item, index) => (
+              <div key={item.step} className="relative">
+                {index < 2 && (
+                  <div className="absolute left-1/2 top-8 hidden h-0.5 w-full -translate-x-1/2 bg-border md:block" />
+                )}
+                <div className="relative flex flex-col items-center text-center">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-primary bg-background text-2xl font-bold text-primary">
+                    {item.step}
+                  </div>
+                  <h3 className="mt-6 text-lg font-semibold">{item.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="bg-card/50 py-24">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+          <div className="text-center">
+            <Badge variant="secondary">Testimonials</Badge>
+            <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+              What Our Customers Say
+            </h2>
+          </div>
+          <div className="mt-12 grid gap-8 md:grid-cols-3">
+            {testimonials.map((testimonial) => (
+              <div
+                key={testimonial.name}
+                className="rounded-2xl border border-border bg-card p-6"
+              >
+                <div className="flex gap-1">
+                  {Array.from({ length: testimonial.rating }).map((_, i) => (
+                    <Star key={i} className="h-5 w-5 fill-primary text-primary" />
+                  ))}
+                </div>
+                <p className="mt-4 text-muted-foreground">
+                  &ldquo;{testimonial.content}&rdquo;
+                </p>
+                <div className="mt-6 flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-muted" />
+                  <div>
+                    <p className="font-medium">{testimonial.name}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+          <div className="relative overflow-hidden rounded-3xl bg-primary px-6 py-16 sm:px-12 sm:py-24">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-transparent" />
+            <div className="relative mx-auto max-w-2xl text-center">
+              <h2 className="text-3xl font-bold tracking-tight text-primary-foreground sm:text-4xl">
+                Ready to Enhance Your Performance?
+              </h2>
+              <p className="mt-4 text-lg text-primary-foreground/80">
+                Join thousands of satisfied customers who have unlocked their
+                cognitive potential with Noofox.
+              </p>
+              <div className="mt-8 flex flex-wrap justify-center gap-4">
+                <Button size="lg" variant="secondary" asChild>
+                  <Link href="/shop">
+                    Shop Now
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-primary-foreground/20 bg-transparent text-primary-foreground hover:bg-primary-foreground/10"
+                  asChild
+                >
+                  <Link href="/contact">Contact Us</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Badges */}
+      <section className="border-t border-border py-12">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+          <div className="flex flex-wrap items-center justify-center gap-8">
+            {[
+              'SSL Secured',
+              '100% Authentic',
+              'Money Back Guarantee',
+              'Discreet Packaging',
+              '24/7 Support',
+            ].map((badge) => (
+              <div
+                key={badge}
+                className="flex items-center gap-2 text-sm text-muted-foreground"
+              >
+                <CheckCircle className="h-5 w-5 text-primary" />
+                <span>{badge}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  )
 }

@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { getBlogPostBySlug } from '@/lib/blog';
 import { sanitizeHtml } from '@/lib/sanitizeHtml';
 
@@ -35,21 +38,21 @@ export default async function BlogPostPage({
   const safeContent = sanitizeHtml(post.content);
 
   return (
-    <div className="min-h-screen bg-[#f6f0e7] text-surface-900">
-      <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
-        <nav className="mb-8 text-sm text-surface-500">
-          <Link href="/blog" className="hover:text-brand-600">
-            Blog
+    <div className="py-12">
+      <article className="mx-auto max-w-3xl px-4 lg:px-8">
+        <Button variant="ghost" size="sm" asChild>
+          <Link href="/blog">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Blog
           </Link>
-          <span className="mx-2">/</span>
-          <span className="text-surface-700">{post.title}</span>
-        </nav>
+        </Button>
 
-        <header className="mb-10">
-          <h1 className="font-display text-3xl font-bold text-surface-900 sm:text-4xl">
+        <header className="mt-8">
+          <Badge variant="secondary">Blog</Badge>
+          <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
             {post.title}
           </h1>
-          <p className="mt-3 text-sm text-surface-500">
+          <p className="mt-4 text-muted-foreground">
             {new Date(post.created_at).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
@@ -59,7 +62,7 @@ export default async function BlogPostPage({
         </header>
 
         <div
-          className="rich-content prose prose-surface max-w-none"
+          className="rich-content mt-12"
           dangerouslySetInnerHTML={{ __html: safeContent }}
         />
       </article>

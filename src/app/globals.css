@@ -2,9 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground: #181c29;
-  --background: #f6f0e7;
+@layer base {
+  :root {
+    --background: 222 20% 13%;
+    --foreground: 0 0% 96%;
+    --card: 222 15% 18%;
+    --card-foreground: 0 0% 96%;
+    --popover: 222 15% 18%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 175 60% 50%;
+    --primary-foreground: 222 20% 13%;
+    --secondary: 222 12% 25%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 222 12% 22%;
+    --muted-foreground: 222 12% 65%;
+    --accent: 175 40% 45%;
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 96%;
+    --border: 222 12% 28%;
+    --input: 222 12% 22%;
+    --ring: 175 60% 50%;
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
 html {
@@ -14,24 +42,15 @@ html {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
   font-feature-settings: "rlig" 1, "calt" 1;
-  font-family: var(--font-body), sans-serif;
-  background-image:
-    radial-gradient(circle at top left, rgba(21, 124, 117, 0.08), transparent 32%),
-    radial-gradient(circle at bottom right, rgba(214, 150, 44, 0.08), transparent 30%);
   overflow-x: hidden;
   min-width: 0;
 }
 
-/* Prevent horizontal overflow from content */
 img, video, iframe, object, embed {
   max-width: 100%;
   height: auto;
 }
-
-/* Safe area is applied per-component on fixed/sticky elements (header, footer) */
 
 @layer utilities {
   .text-balance {
@@ -40,22 +59,9 @@ img, video, iframe, object, embed {
 }
 
 @layer base {
-  * {
-    @apply border-surface-200;
-  }
-
   ::selection {
-    background-color: rgba(29, 156, 146, 0.22);
-    color: #07111f;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4 {
-    font-family: var(--font-display), serif;
-    font-variation-settings: "SOFT" 80;
-    letter-spacing: -0.03em;
+    background-color: rgba(29, 156, 146, 0.3);
+    color: #f0f0f0;
   }
 
   a {
@@ -65,7 +71,7 @@ img, video, iframe, object, embed {
 
 @layer components {
   .rich-content {
-    color: rgb(88 72 61);
+    color: hsl(var(--muted-foreground));
   }
 
   .rich-content > * + * {
@@ -75,7 +81,7 @@ img, video, iframe, object, embed {
   .rich-content h2,
   .rich-content h3,
   .rich-content h4 {
-    color: rgb(24 28 41);
+    color: hsl(var(--foreground));
     margin-top: 2.5rem;
     margin-bottom: 0.75rem;
   }
@@ -104,23 +110,19 @@ img, video, iframe, object, embed {
   }
 
   .rich-content strong {
-    color: rgb(24 28 41);
+    color: hsl(var(--foreground));
     font-weight: 650;
   }
 
-  .rich-content em {
-    color: rgb(115 93 77);
-  }
-
   .rich-content a {
-    color: rgb(20 100 95);
+    color: hsl(var(--primary));
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.18em;
   }
 
   .rich-content a:hover {
-    color: rgb(21 124 117);
+    opacity: 0.8;
   }
 
   .rich-content img {
@@ -142,7 +144,6 @@ img, video, iframe, object, embed {
   }
 }
 
-/* Minimum touch target (WCAG 2.1 / Fitts's Law) */
 @media (pointer: coarse) {
   .touch-target {
     min-height: 44px;

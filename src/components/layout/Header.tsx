@@ -1,158 +1,189 @@
-'use client';
+'use client'
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
-import { useEffect, useState } from 'react';
-import { ShoppingCart, Menu, X } from 'lucide-react';
-import { useCart } from '@/context/CartContext';
+import Link from 'next/link'
+import { useState, useEffect } from 'react'
+import { Menu, ChevronDown, ShoppingCart, User } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { useCart } from '@/context/CartContext'
+import { createClient } from '@/lib/supabase/client'
 
-const navLinks = [
-  { href: '/shop', label: 'Products' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/#how-it-works', label: 'How It Works' },
-  { href: '/#payment', label: 'Payment' },
-  { href: '/#faq', label: 'FAQ' },
-];
+const navigation = [
+  { name: 'Home', href: '/' },
+  {
+    name: 'Products',
+    href: '/shop',
+    children: [
+      { name: 'All Products', href: '/shop' },
+      { name: 'Modafinil', href: '/category/modafinil' },
+      { name: 'Armodafinil', href: '/category/armodafinil' },
+    ],
+  },
+  { name: 'Blog', href: '/blog' },
+  { name: 'About', href: '/about' },
+  { name: 'FAQ', href: '/faq' },
+  { name: 'Contact', href: '/contact' },
+]
 
 export function Header() {
-  const pathname = usePathname();
-  const supabase = createClient();
-  const [user, setUser] = useState<{ email?: string } | null>(null);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const { items } = useCart();
-  const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { items } = useCart()
+  const cartCount = items.reduce((sum, i) => sum + i.quantity, 0)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user: u } }) => setUser(u ?? null));
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-    return () => subscription.unsubscribe();
-  }, [supabase.auth]);
+    createClient()
+      .auth.getUser()
+      .then(({ data: { user } }) => {
+        setIsLoggedIn(!!user)
+      })
+  }, [])
 
   return (
-    <header
-      className="sticky top-0 z-50 border-b border-white/10 bg-[#07111f]/92 backdrop-blur supports-[backdrop-filter]:bg-[#07111f]/78 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
-      style={{ paddingTop: 'env(safe-area-inset-top)' }}
-    >
-      <nav
-        className="mx-auto flex max-w-7xl items-center justify-between gap-2 min-w-0 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4 lg:px-8"
-        aria-label="Main navigation"
-      >
-        <Link
-          href="/"
-          className="font-display text-xl tracking-tight text-white hover:text-brand-100 transition-colors shrink-0 sm:text-2xl min-h-[44px] flex items-center"
-        >
-          Noofox
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+            <span className="text-xl font-bold text-primary-foreground">N</span>
+          </div>
+          <span className="text-xl font-bold tracking-tight">Noofox</span>
         </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className={`text-sm font-medium transition-colors hover:text-brand-100 ${
-                pathname === href ? 'text-brand-100' : 'text-surface-300'
-              }`}
-            >
-              {label}
-            </Link>
-          ))}
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex lg:items-center lg:gap-8">
+          {navigation.map((item) =>
+            item.children ? (
+              <DropdownMenu key={item.name}>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                    {item.name}
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  {item.children.map((child) => (
+                    <DropdownMenuItem key={child.name} asChild>
+                      <Link href={child.href}>{child.name}</Link>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {item.name}
+              </Link>
+            )
+          )}
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
+        {/* Right side: Cart, Auth, CTA */}
+        <div className="flex items-center gap-3">
           <Link
             href="/checkout"
-            className="relative flex min-h-[44px] min-w-[44px] items-center justify-center text-surface-300 hover:text-brand-100 transition-colors rounded-full"
-            aria-label={`Cart (${cartCount} items)`}
+            className="relative flex items-center text-muted-foreground hover:text-foreground transition-colors"
           >
             <ShoppingCart className="h-5 w-5" />
             {cartCount > 0 && (
-              <span className="absolute right-0 top-0 flex h-5 w-5 items-center justify-center rounded-full bg-brand-300 text-[10px] font-bold text-surface-950">
+              <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                 {cartCount}
               </span>
             )}
           </Link>
-          <Link
-            href="/shop"
-            className="rounded-full bg-brand-300 px-5 py-2.5 text-sm font-semibold text-surface-950 hover:bg-brand-200 transition-colors min-h-[44px] inline-flex items-center justify-center"
-          >
-            Shop Now
-          </Link>
-          {user ? (
-            <Link
-              href="/dashboard"
-              className="text-sm font-medium text-surface-400 hover:text-brand-100 transition-colors"
-            >
-              Dashboard
-            </Link>
-          ) : (
-            <Link
-              href="/login"
-              className="text-sm font-medium text-surface-400 hover:text-brand-100 transition-colors"
-            >
-              Sign in
-            </Link>
-          )}
-        </div>
 
-        {/* Mobile toggle — 44px min touch target */}
-        <button
-          type="button"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-surface-300 hover:text-white hover:bg-white/5 -mr-2"
-          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={mobileOpen}
-        >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
-      </nav>
-
-      {/* Mobile menu — full-width tap targets */}
-      {mobileOpen && (
-        <div className="md:hidden border-t border-white/10 bg-[#07111f] px-4 pb-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-          <div className="flex flex-col gap-1 py-4">
-            {navLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setMobileOpen(false)}
-                className="min-h-[48px] flex items-center px-4 text-sm font-medium text-surface-300 hover:text-brand-100 rounded-lg hover:bg-white/5 -mx-2"
-              >
-                {label}
-              </Link>
-            ))}
-            <Link
-              href="/checkout"
-              onClick={() => setMobileOpen(false)}
-              className="min-h-[48px] flex items-center gap-2 px-4 text-sm font-medium text-surface-300 hover:text-brand-100 rounded-lg hover:bg-white/5 -mx-2"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              Cart {cartCount > 0 ? `(${cartCount})` : ''}
-            </Link>
-            <Link
-              href="/shop"
-              onClick={() => setMobileOpen(false)}
-              className="mt-2 min-h-[48px] flex items-center justify-center rounded-full bg-brand-300 text-sm font-semibold text-surface-950 hover:bg-brand-200"
-            >
-              Shop Now
-            </Link>
-            {user ? (
-              <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="min-h-[48px] flex items-center px-4 text-sm text-surface-400 hover:text-brand-100 rounded-lg hover:bg-white/5 -mx-2">
-                Dashboard
-              </Link>
+          <div className="hidden lg:flex lg:items-center lg:gap-2">
+            {isLoggedIn ? (
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/dashboard">
+                  <User className="h-4 w-4 mr-1" />
+                  Dashboard
+                </Link>
+              </Button>
             ) : (
-              <Link href="/login" onClick={() => setMobileOpen(false)} className="min-h-[48px] flex items-center px-4 text-sm text-surface-400 hover:text-brand-100 rounded-lg hover:bg-white/5 -mx-2">
-                Sign in
-              </Link>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/login">Sign in</Link>
+              </Button>
             )}
+            <Button asChild>
+              <Link href="/shop">Shop Now</Link>
+            </Button>
           </div>
+
+          {/* Mobile Menu */}
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild className="lg:hidden">
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-full max-w-xs">
+              <div className="flex flex-col gap-6 pt-6">
+                {navigation.map((item) =>
+                  item.children ? (
+                    <div key={item.name} className="flex flex-col gap-2">
+                      <span className="text-sm font-semibold text-foreground">
+                        {item.name}
+                      </span>
+                      <div className="flex flex-col gap-2 pl-4">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.name}
+                            href={child.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                          >
+                            {child.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      {item.name}
+                    </Link>
+                  )
+                )}
+                <div className="flex flex-col gap-2 pt-4 border-t border-border">
+                  {isLoggedIn ? (
+                    <Button variant="outline" asChild>
+                      <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                        Dashboard
+                      </Link>
+                    </Button>
+                  ) : (
+                    <Button variant="outline" asChild>
+                      <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                        Sign in
+                      </Link>
+                    </Button>
+                  )}
+                  <Button asChild>
+                    <Link href="/shop" onClick={() => setMobileMenuOpen(false)}>
+                      Shop Now
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
-      )}
+      </nav>
     </header>
-  );
+  )
 }

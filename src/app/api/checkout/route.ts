@@ -51,12 +51,14 @@ export async function POST(request: Request) {
     billing_address,
     shipping_address,
     payment_method,
+    payment_reference,
   } = body as {
     items?: OrderItem[];
     customer_email?: string;
     billing_address?: unknown;
     shipping_address?: unknown;
     payment_method?: string;
+    payment_reference?: string;
   };
 
   if (!items || !Array.isArray(items) || items.length === 0) {
@@ -90,6 +92,7 @@ export async function POST(request: Request) {
       status: 'Pending Payment',
       total_amount,
       payment_method: payment_method ?? null,
+      payment_reference: payment_reference?.trim() || null,
       billing_address: billing_address ?? null,
       shipping_address: shipping_address ?? null,
       ip_address: ip_address ?? null,

@@ -36,6 +36,9 @@ export default async function AdminOrdersPage() {
                   Tracking ID
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-surface-500 sm:px-6">
+                  Payment ref
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-surface-500 sm:px-6">
                   Total
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-surface-500 sm:px-6">
@@ -57,6 +60,18 @@ export default async function AdminOrdersPage() {
                   </td>
                   <td className="whitespace-nowrap px-4 py-4 sm:px-6">
                     <TrackingIdInput orderId={order.id} value={order.tracking_id} />
+                  </td>
+                  <td className="px-4 py-4 sm:px-6 max-w-[160px]">
+                    {(order as { payment_reference?: string }).payment_reference ? (
+                      <span
+                        title={(order as { payment_reference?: string }).payment_reference}
+                        className="block truncate font-mono text-xs text-surface-700 cursor-default"
+                      >
+                        {(order as { payment_reference?: string }).payment_reference}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-surface-400">—</span>
+                    )}
                   </td>
                   <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-surface-900 sm:px-6">
                     ${Number(order.total_amount).toFixed(2)}

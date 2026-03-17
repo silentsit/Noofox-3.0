@@ -52,7 +52,7 @@ export function Header() {
         {/* Logo — height fits nav bar, natural 4:1 aspect ratio */}
         <Link href="/" className="flex shrink-0 items-center">
           <Image
-            src="/best_noofox_logo_sq.png"
+            src="/best_noofox_logo_3.png"
             alt="Noofox - Brain Hacks & Better Health"
             width={480}
             height={120}

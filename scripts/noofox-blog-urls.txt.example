@@ -1,0 +1,5 @@
+# One blog post URL per line. Copy to noofox-blog-urls.txt and run:
+# BLOG_URLS_FILE=./scripts/noofox-blog-urls.txt node scripts/import-blog-posts.mjs
+# Or get URLs from https://noofox.com/sitemap_index.xml when available.
+# https://noofox.com/example-post/
+# https://noofox.com/blog/another-post/

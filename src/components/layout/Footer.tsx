@@ -57,7 +57,7 @@ export function Footer() {
           <div className="lg:col-span-1">
             <Link href="/" className="inline-flex shrink-0 items-center">
               <Image
-                src="/best_noofox_logo_sq.png"
+                src="/best_noofox_logo_3.png"
                 alt="Noofox - Brain Hacks & Better Health"
                 width={480}
                 height={120}

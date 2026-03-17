@@ -1,13 +1,13 @@
 import { MetadataRoute } from 'next';
 import { getCatalogProducts } from '@/lib/catalog';
-import { getPublishedBlogSlugs } from '@/lib/blog';
+import { getPublishedBlogSlugsWithDates } from '@/lib/blog';
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [products, blogSlugs] = await Promise.all([
+  const [products, blogPosts] = await Promise.all([
     getCatalogProducts(),
-    getPublishedBlogSlugs(),
+    getPublishedBlogSlugsWithDates(),
   ]);
 
   return [
@@ -24,9 +24,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     })),
-    ...blogSlugs.map(({ slug }) => ({
+    ...blogPosts.map(({ slug, updated_at }) => ({
       url: `${BASE}/blog/${slug}`,
-      lastModified: new Date(),
+      lastModified: new Date(updated_at),
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     })),

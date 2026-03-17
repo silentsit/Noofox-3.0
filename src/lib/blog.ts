@@ -21,6 +21,24 @@ export async function getPublishedBlogSlugs(): Promise<{ slug: string }[]> {
   }
 }
 
+/** For sitemap: slug + lastModified. */
+export async function getPublishedBlogSlugsWithDates(): Promise<
+  { slug: string; updated_at: string }[]
+> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('slug, updated_at')
+      .eq('published', true)
+      .order('created_at', { ascending: false });
+    if (error) return [];
+    return (data ?? []).map((row) => ({ slug: row.slug, updated_at: row.updated_at }));
+  } catch {
+    return [];
+  }
+}
+
 export async function getPublishedBlogPosts(limit?: number): Promise<BlogPost[]> {
   try {
     const supabase = await createClient();
@@ -79,4 +97,16 @@ export async function getAdminBlogPostById(id: string): Promise<BlogPost | null>
   } catch {
     return null;
   }
+}
+
+/** Strip HTML and return plain text excerpt (max length). */
+export function excerptFromHtml(html: string, maxLength: number = 160): string {
+  const text = html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength).replace(/\s+\S*$/, '') + '…';
 }

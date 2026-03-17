@@ -49,18 +49,16 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
-        {/* Logo — height matches nav bar, responsive */}
+        {/* Logo — height fits nav bar, natural 4:1 aspect ratio */}
         <Link href="/" className="flex shrink-0 items-center">
-          <span className="relative block h-8 w-8 sm:h-9 sm:w-9">
-            <Image
-              src="/best_noofox_logo_sq.png"
-              alt="Noofox Logo - Brain Hacks & Better Health"
-              fill
-              className="object-contain"
-              sizes="(max-width: 640px) 32px, 36px"
-              priority
-            />
-          </span>
+          <Image
+            src="/best_noofox_logo_sq.png"
+            alt="Noofox - Brain Hacks & Better Health"
+            width={480}
+            height={120}
+            className="h-8 w-auto sm:h-9"
+            priority
+          />
         </Link>
 
         {/* Desktop Navigation */}

@@ -56,15 +56,13 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href="/" className="inline-flex shrink-0 items-center">
-              <span className="relative block h-9 w-9 sm:h-10 sm:w-10">
-                <Image
-                  src="/best_noofox_logo_sq.png"
-                  alt="Noofox Logo - Brain Hacks & Better Health"
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 640px) 36px, 40px"
-                />
-              </span>
+              <Image
+                src="/best_noofox_logo_sq.png"
+                alt="Noofox - Brain Hacks & Better Health"
+                width={480}
+                height={120}
+                className="h-9 w-auto sm:h-10"
+              />
             </Link>
             <p className="mt-4 text-sm text-muted-foreground">
               Your trusted source for premium cognitive enhancers. We provide

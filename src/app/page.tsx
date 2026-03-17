@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { ArrowRight, Zap, Shield, Truck, Clock, Star, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -9,7 +8,6 @@ import type { CatalogProduct } from '@/types/catalog'
 
 /** Modawhale.to product image URLs (home page only). Source: https://modawhale.to/ */
 const MODAWHALE_IMAGE_BASE = 'https://modawhale.to/wp-content/uploads/2022/06'
-const MODAWHALE_HERO_IMAGE = `${MODAWHALE_IMAGE_BASE}/Copy-of-Products-2.png`
 const MODAWHALE_PRODUCT_IMAGES: Record<string, string> = {
   modalert: `${MODAWHALE_IMAGE_BASE}/Copy-of-Products-2-400x400.png`,
   modvigil: `${MODAWHALE_IMAGE_BASE}/2-1-400x400.png`,
@@ -84,68 +82,52 @@ export default async function Home() {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/20 via-background to-background" />
-        <div className="relative mx-auto max-w-7xl px-4 py-24 sm:py-32 lg:px-8">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            <div className="flex flex-col gap-6">
-              <Badge variant="secondary" className="w-fit">
-                Trusted by 50,000+ customers worldwide
-              </Badge>
-              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                Unlock Your{' '}
-                <span className="text-primary">Cognitive Potential</span>
-              </h1>
-              <p className="max-w-xl text-lg text-muted-foreground">
-                Premium Modafinil and Armodafinil delivered worldwide. Experience
-                enhanced focus, improved memory, and peak mental performance with
-                our lab-tested cognitive enhancers.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" asChild>
-                  <Link href="/shop">
-                    Shop Now
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild>
-                  <Link href="/about">Learn More</Link>
-                </Button>
+        <div className="relative mx-auto max-w-4xl px-4 py-24 sm:py-32 lg:px-8">
+          <div className="flex flex-col items-center gap-6 text-center">
+            <Badge variant="secondary" className="w-fit">
+              Trusted by 50,000+ customers worldwide
+            </Badge>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+              Unlock Your{' '}
+              <span className="text-primary">Cognitive Potential</span>
+            </h1>
+            <p className="max-w-2xl text-lg text-muted-foreground">
+              Premium Modafinil and Armodafinil delivered worldwide. Experience
+              enhanced focus, improved memory, and peak mental performance with
+              our lab-tested cognitive enhancers.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button size="lg" asChild>
+                <Link href="/shop">
+                  Shop Now
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/about">Learn More</Link>
+              </Button>
+            </div>
+            <div className="flex items-center gap-6 pt-4">
+              <div className="flex -space-x-2">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div
+                    key={i}
+                    className="h-10 w-10 rounded-full border-2 border-background bg-muted"
+                  />
+                ))}
               </div>
-              <div className="flex items-center gap-6 pt-4">
-                <div className="flex -space-x-2">
+              <div>
+                <div className="flex items-center gap-1">
                   {[1, 2, 3, 4, 5].map((i) => (
-                    <div
+                    <Star
                       key={i}
-                      className="h-10 w-10 rounded-full border-2 border-background bg-muted"
+                      className="h-4 w-4 fill-primary text-primary"
                     />
                   ))}
                 </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <Star
-                        key={i}
-                        className="h-4 w-4 fill-primary text-primary"
-                      />
-                    ))}
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    4.9/5 from 2,500+ reviews
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="relative mt-8 lg:mt-0">
-              <div className="absolute -inset-4 rounded-3xl bg-primary/10 blur-3xl" />
-              <div className="relative aspect-square w-full max-w-md mx-auto lg:max-w-none overflow-hidden rounded-3xl border border-border bg-card">
-                <Image
-                  src={MODAWHALE_HERO_IMAGE}
-                  alt="Premium cognitive enhancers"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  priority
-                  unoptimized
-                />
+                <p className="text-sm text-muted-foreground">
+                  4.9/5 from 2,500+ reviews
+                </p>
               </div>
             </div>
           </div>

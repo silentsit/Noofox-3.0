@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Bitcoin, Mail, Shield, Truck, Clock } from 'lucide-react'
 
 const footerLinks = {
@@ -54,11 +55,16 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                <span className="text-xl font-bold text-primary-foreground">N</span>
-              </div>
-              <span className="text-xl font-bold tracking-tight">Noofox</span>
+            <Link href="/" className="inline-flex shrink-0 items-center">
+              <span className="relative block h-9 w-9 sm:h-10 sm:w-10">
+                <Image
+                  src="/best_noofox_logo_sq.png"
+                  alt="Noofox Logo - Brain Hacks & Better Health"
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 640px) 36px, 40px"
+                />
+              </span>
             </Link>
             <p className="mt-4 text-sm text-muted-foreground">
               Your trusted source for premium cognitive enhancers. We provide

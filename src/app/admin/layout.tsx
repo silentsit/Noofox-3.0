@@ -61,6 +61,12 @@ export default async function AdminLayout({
               Blog
             </Link>
             <Link
+              href="/admin/media"
+              className="text-sm font-medium text-surface-400 hover:text-white"
+            >
+              Media
+            </Link>
+            <Link
               href="/admin/accounting"
               className="text-sm font-medium text-surface-400 hover:text-white"
             >

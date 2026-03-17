@@ -51,6 +51,7 @@ export interface Database {
           price: number;
           description: string | null;
           images: string[];
+          image_meta: Record<string, { alt?: string; title?: string }>;
           stock_count: number;
           created_at: string;
           updated_at: string;
@@ -61,6 +62,7 @@ export interface Database {
           price: number;
           description?: string | null;
           images?: string[];
+          image_meta?: Record<string, { alt?: string; title?: string }>;
           stock_count?: number;
           created_at?: string;
           updated_at?: string;
@@ -71,7 +73,49 @@ export interface Database {
           price?: number;
           description?: string | null;
           images?: string[];
+          image_meta?: Record<string, { alt?: string; title?: string }>;
           stock_count?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      media: {
+        Row: {
+          id: string;
+          file_path: string;
+          url: string;
+          alt: string | null;
+          title: string | null;
+          caption: string | null;
+          file_name: string;
+          mime_type: string | null;
+          size_bytes: number | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          file_path: string;
+          url: string;
+          alt?: string | null;
+          title?: string | null;
+          caption?: string | null;
+          file_name: string;
+          mime_type?: string | null;
+          size_bytes?: number | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          file_path?: string;
+          url?: string;
+          alt?: string | null;
+          title?: string | null;
+          caption?: string | null;
+          file_name?: string;
+          mime_type?: string | null;
+          size_bytes?: number | null;
           created_at?: string;
           updated_at?: string;
         };

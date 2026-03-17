@@ -5,6 +5,25 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { getFeaturedCatalogProducts } from '@/lib/catalog'
 import { ProductCard } from '@/components/products/ProductCard'
+import type { CatalogProduct } from '@/types/catalog'
+
+/** Modawhale.to product image URLs (home page only). Source: https://modawhale.to/ */
+const MODAWHALE_IMAGE_BASE = 'https://modawhale.to/wp-content/uploads/2022/06'
+const MODAWHALE_HERO_IMAGE = `${MODAWHALE_IMAGE_BASE}/Copy-of-Products-2.png`
+const MODAWHALE_PRODUCT_IMAGES: Record<string, string> = {
+  modalert: `${MODAWHALE_IMAGE_BASE}/Copy-of-Products-2-400x400.png`,
+  modvigil: `${MODAWHALE_IMAGE_BASE}/2-1-400x400.png`,
+  waklert: `${MODAWHALE_IMAGE_BASE}/3-1-400x400.png`,
+  artvigil: `${MODAWHALE_IMAGE_BASE}/4-1-400x400.png`,
+}
+
+function getModawhaleImageForProduct(product: CatalogProduct): string | null {
+  const slug = product.slug.toLowerCase()
+  for (const [key, url] of Object.entries(MODAWHALE_PRODUCT_IMAGES)) {
+    if (slug.includes(key)) return url
+  }
+  return MODAWHALE_PRODUCT_IMAGES.modalert
+}
 
 const benefits = [
   {
@@ -117,12 +136,13 @@ export default async function Home() {
             </div>
             <div className="relative mt-8 lg:mt-0">
               <div className="absolute -inset-4 rounded-3xl bg-primary/10 blur-3xl" />
-              <div className="relative aspect-square max-w-md mx-auto lg:max-w-none overflow-hidden rounded-3xl border border-border bg-card">
+              <div className="relative aspect-square w-full max-w-md mx-auto lg:max-w-none overflow-hidden rounded-3xl border border-border bg-card">
                 <Image
-                  src="https://whalefriend-shop.lovable.app/lovable-uploads/47ed6a6e-27f4-4d1b-af9a-0dc61d7d2de9.png"
+                  src={MODAWHALE_HERO_IMAGE}
                   alt="Premium cognitive enhancers"
                   fill
                   className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   priority
                   unoptimized
                 />
@@ -203,7 +223,11 @@ export default async function Home() {
           </div>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {featuredProducts.map((product) => (
-              <ProductCard key={product.slug} product={product} />
+              <ProductCard
+                key={product.slug}
+                product={product}
+                imageUrlOverride={getModawhaleImageForProduct(product)}
+              />
             ))}
           </div>
           <div className="mt-8 text-center sm:hidden">

@@ -10,29 +10,20 @@ async function ensureAdmin() {
   return null;
 }
 
-export async function POST(request: Request) {
+export async function GET(request: Request) {
   const authErr = await ensureAdmin();
   if (authErr) return authErr;
 
-  const body = await request.json();
-  const { name, price, description, images, image_meta, stock_count } = body;
-  if (!name || price == null) {
-    return NextResponse.json({ error: 'name and price required' }, { status: 400 });
-  }
+  const { searchParams } = new URL(request.url);
+  const limit = Math.min(Number(searchParams.get('limit')) || 50, 100);
+  const offset = Number(searchParams.get('offset')) || 0;
 
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('products')
-    .insert({
-      name: String(name),
-      price: parseFloat(price) || 0,
-      description: description ? String(description) : null,
-      images: Array.isArray(images) ? images : (images ? [images] : []),
-      image_meta: image_meta && typeof image_meta === 'object' ? image_meta : {},
-      stock_count: parseInt(String(stock_count), 10) || 0,
-    })
-    .select('id')
-    .single();
+    .from('media')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   return NextResponse.json(data);

@@ -9,6 +9,8 @@ export type UserRole = Database['public']['Tables']['users']['Row']['role'];
 export type UserProfile = Database['public']['Tables']['users']['Row'];
 
 export type Product = Database['public']['Tables']['products']['Row'];
+export type Media = Database['public']['Tables']['media']['Row'];
+export type ProductImageMeta = Record<string, { alt?: string; title?: string }>;
 
 export type OrderStatus = Database['public']['Tables']['orders']['Row']['status'];
 

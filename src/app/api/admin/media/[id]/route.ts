@@ -19,20 +19,27 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await request.json();
-  const { name, price, description, images, image_meta, stock_count } = body;
+  const { alt, title, caption } = body;
+
+  const updates: Record<string, unknown> = {};
+  if (alt !== undefined) updates.alt = alt === '' ? null : String(alt);
+  if (title !== undefined) updates.title = title === '' ? null : String(title);
+  if (caption !== undefined) updates.caption = caption === '' ? null : String(caption);
+
+  if (Object.keys(updates).length === 0) {
+    return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
+  }
 
   const supabase = await createClient();
-  const updates: Record<string, unknown> = {};
-  if (name !== undefined) updates.name = String(name);
-  if (price !== undefined) updates.price = parseFloat(price) || 0;
-  if (description !== undefined) updates.description = description ? String(description) : null;
-  if (images !== undefined) updates.images = Array.isArray(images) ? images : [images];
-  if (image_meta !== undefined) updates.image_meta = image_meta && typeof image_meta === 'object' ? image_meta : {};
-  if (stock_count !== undefined) updates.stock_count = parseInt(String(stock_count), 10) || 0;
+  const { data, error } = await supabase
+    .from('media')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
 
-  const { error } = await supabase.from('products').update(updates).eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json({ ok: true });
+  return NextResponse.json(data);
 }
 
 export async function DELETE(
@@ -44,7 +51,19 @@ export async function DELETE(
 
   const { id } = await params;
   const supabase = await createClient();
-  const { error } = await supabase.from('products').delete().eq('id', id);
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+
+  const { data: row, error: fetchError } = await supabase
+    .from('media')
+    .select('file_path')
+    .eq('id', id)
+    .single();
+
+  if (fetchError || !row) {
+    return NextResponse.json({ error: 'Media not found' }, { status: 404 });
+  }
+
+  await supabase.storage.from('media').remove([row.file_path]);
+  const { error: deleteError } = await supabase.from('media').delete().eq('id', id);
+  if (deleteError) return NextResponse.json({ error: deleteError.message }, { status: 400 });
   return NextResponse.json({ ok: true });
 }

@@ -8,22 +8,25 @@ import { getCatalogProductImageUrl } from '@/lib/productImage'
 
 interface ProductCardProps {
   product: CatalogProduct
+  /** When set (e.g. on home page), use this URL instead of catalog image. */
+  imageUrlOverride?: string | null
 }
 
-export function ProductCard({ product }: ProductCardProps) {
-  const imageUrl = getCatalogProductImageUrl(product)
+export function ProductCard({ product, imageUrlOverride }: ProductCardProps) {
+  const imageUrl = imageUrlOverride ?? getCatalogProductImageUrl(product)
   const lowestPrice = product.priceRange.min
 
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-border bg-card transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
       <Link href={`/${product.slug}`} className="block">
-        <div className="relative aspect-square overflow-hidden bg-muted">
+        <div className="relative aspect-square w-full overflow-hidden bg-muted">
           {imageUrl ? (
             <Image
               src={imageUrl}
               alt={product.name}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               unoptimized={imageUrl.startsWith('http')}
             />
           ) : (

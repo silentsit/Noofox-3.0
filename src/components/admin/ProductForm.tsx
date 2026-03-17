@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import type { Product } from '@/types/database';
+import type { Product, ProductImageMeta } from '@/types/database';
+import { ProductImageManager } from '@/components/admin/ProductImageManager';
 
 interface ProductFormProps {
   className?: string;
@@ -17,8 +18,9 @@ export function ProductForm({ className = '', product }: ProductFormProps) {
   const [name, setName] = useState(product?.name ?? '');
   const [price, setPrice] = useState(product?.price != null ? String(product.price) : '');
   const [description, setDescription] = useState(product?.description ?? '');
-  const [imagesStr, setImagesStr] = useState(
-    product?.images?.length ? product.images.join('\n') : ''
+  const [images, setImages] = useState<string[]>(product?.images ?? []);
+  const [imageMeta, setImageMeta] = useState<ProductImageMeta>(
+    (product as { image_meta?: ProductImageMeta })?.image_meta ?? {}
   );
   const [stockCount, setStockCount] = useState(
     product?.stock_count != null ? String(product.stock_count) : '0'
@@ -28,15 +30,12 @@ export function ProductForm({ className = '', product }: ProductFormProps) {
     e.preventDefault();
     setSaving(true);
     setMessage(null);
-    const images = imagesStr
-      .split('\n')
-      .map((s) => s.trim())
-      .filter(Boolean);
     const payload = {
       name,
       price: parseFloat(price) || 0,
       description: description || null,
       images,
+      image_meta: imageMeta,
       stock_count: parseInt(stockCount, 10) || 0,
     };
 
@@ -117,16 +116,13 @@ export function ProductForm({ className = '', product }: ProductFormProps) {
       </div>
 
       <div>
-        <label htmlFor="images" className="block text-sm font-medium text-surface-700">
-          Image URLs (one per line)
-        </label>
-        <textarea
-          id="images"
-          rows={3}
-          value={imagesStr}
-          onChange={(e) => setImagesStr(e.target.value)}
-          placeholder="https://example.com/image1.jpg"
-          className="mt-1 block w-full rounded-lg border border-surface-300 px-3 py-2 font-mono text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+        <ProductImageManager
+          images={images}
+          imageMeta={imageMeta}
+          onChange={(imgs, meta) => {
+            setImages(imgs);
+            setImageMeta(meta);
+          }}
         />
       </div>
 

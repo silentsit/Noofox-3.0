@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "gen:types": "supabase gen types typescript --linked > src/types/supabase.ts",
-    "sync:noofoxxx": "node scripts/sync-product-content-from-noofoxxx.mjs"
+    "sync:noofoxxx": "node scripts/sync-product-content-from-noofoxxx.mjs",
+    "import:blog": "node scripts/import-blog-posts.mjs",
+    "db:migrate:blog": "node scripts/run-blog-migration.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
@@ -40,6 +42,7 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.18",
+    "pg": "^8.20.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
     "typescript": "^5.6.3"

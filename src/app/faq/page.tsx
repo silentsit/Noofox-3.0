@@ -91,7 +91,7 @@ const faqCategories = [
       },
       {
         question: 'How can I contact customer support?',
-        answer: 'You can reach us via email at support@noofox.com. We typically respond within 24 hours, 7 days a week.',
+        answer: 'You can reach us via email at info@noofox.com. We typically respond within 24 hours, 7 days a week.',
       },
       {
         question: 'What is your return policy?',

@@ -68,10 +68,19 @@ const testimonials = [
 ]
 
 const stats = [
-  { value: '50K+', label: 'Happy Customers' },
-  { value: '99.8%', label: 'Delivery Success' },
+  { value: '30K+', label: 'Happy Customers' },
+  { value: '98%', label: 'Satisfaction' },
   { value: '150+', label: 'Countries Served' },
   { value: '4.9/5', label: 'Customer Rating' },
+]
+
+/** Professional headshots + drinks for hero avatars (Unsplash) */
+const HERO_AVATARS = [
+  'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&h=80&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=80&h=80&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=80&h=80&fit=crop',
+  'https://images.unsplash.com/photo-1544787219-7fcccc22f123?w=80&h=80&fit=crop&crop=face',
 ]
 
 export default async function Home() {
@@ -84,13 +93,13 @@ export default async function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-primary/20 via-background to-background" />
         <div className="relative mx-auto max-w-4xl px-4 py-24 sm:py-32 lg:px-8">
           <div className="flex flex-col items-center gap-6 text-center">
-            <Badge variant="secondary" className="w-fit">
-              Trusted by 50,000+ customers worldwide
-            </Badge>
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               Unlock Your{' '}
               <span className="text-primary">Cognitive Potential</span>
             </h1>
+            <p className="text-muted-foreground">
+              Trusted by 30,000+ customers worldwide
+            </p>
             <p className="max-w-2xl text-lg text-muted-foreground">
               Premium Modafinil and Armodafinil delivered worldwide. Experience
               enhanced focus, improved memory, and peak mental performance with
@@ -103,17 +112,22 @@ export default async function Home() {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="/about">Learn More</Link>
-              </Button>
             </div>
             <div className="flex items-center gap-6 pt-4">
               <div className="flex -space-x-2">
-                {[1, 2, 3, 4, 5].map((i) => (
+                {HERO_AVATARS.map((src, i) => (
                   <div
                     key={i}
-                    className="h-10 w-10 rounded-full border-2 border-background bg-muted"
-                  />
+                    className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-background bg-muted"
+                  >
+                    <img
+                      src={src}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      width={40}
+                      height={40}
+                    />
+                  </div>
                 ))}
               </div>
               <div>
@@ -126,7 +140,7 @@ export default async function Home() {
                   ))}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  4.9/5 from 2,500+ reviews
+                  4.9/5 from 2,300+ reviews
                 </p>
               </div>
             </div>

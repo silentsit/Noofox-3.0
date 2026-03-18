@@ -69,8 +69,8 @@ export default function ContactPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <a href="mailto:support@noofox.com" className="text-primary hover:underline">
-                  support@noofox.com
+                <a href="mailto:info@noofox.com" className="text-primary hover:underline">
+                  info@noofox.com
                 </a>
                 <p className="mt-2 text-sm text-muted-foreground">
                   For general inquiries and support

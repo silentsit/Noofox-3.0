@@ -101,7 +101,7 @@ export default function PrivacyPage() {
               <li>Opt out of marketing communications</li>
             </ul>
             <p className="mt-4">
-              To exercise these rights, contact us at support@noofox.com.
+              To exercise these rights, contact us at info@noofox.com.
             </p>
           </section>
 
@@ -109,9 +109,9 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-semibold text-foreground">7. Contact Us</h2>
             <p className="mt-4">
               If you have questions about this Privacy Policy, please contact us at:{' '}
-              <a href="mailto:support@noofox.com" className="text-primary hover:underline">
-                support@noofox.com
-              </a>
+<a href="mailto:info@noofox.com" className="text-primary hover:underline">
+              info@noofox.com
+            </a>
             </p>
           </section>
         </div>

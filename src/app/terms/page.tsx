@@ -111,8 +111,8 @@ export default function TermsPage() {
             <h2 className="text-xl font-semibold text-foreground">9. Contact</h2>
             <p className="mt-4">
               For questions about these Terms of Service, contact us at:{' '}
-              <a href="mailto:support@noofox.com" className="text-primary hover:underline">
-                support@noofox.com
+              <a href="mailto:info@noofox.com" className="text-primary hover:underline">
+                info@noofox.com
               </a>
             </p>
           </section>

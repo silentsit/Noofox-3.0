@@ -71,8 +71,8 @@ export function Footer() {
             </p>
             <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
               <Mail className="h-4 w-4" />
-              <a href="mailto:support@noofox.com" className="hover:text-primary">
-                support@noofox.com
+              <a href="mailto:info@noofox.com" className="hover:text-primary">
+                info@noofox.com
               </a>
             </div>
           </div>

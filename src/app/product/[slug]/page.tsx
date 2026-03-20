@@ -11,20 +11,21 @@ function normalizeName(input: string) {
     .trim();
 }
 
-export default async function ProductPage({
+/** Resolves legacy /product/:id (UUID) or /product/:slug to canonical catalog URLs under /[slug]. */
+export default async function ProductGatewayPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { id } = await params;
-  const directMatch = await getCatalogProductBySlug(id);
+  const { slug } = await params;
+  const directMatch = await getCatalogProductBySlug(slug);
 
   if (directMatch) {
     redirect(directMatch.urlPath);
   }
 
   const supabase = await createClient();
-  const { data: product } = await supabase.from('products').select('name').eq('id', id).single();
+  const { data: product } = await supabase.from('products').select('name').eq('id', slug).single();
   if (!product) notFound();
 
   const normalized = normalizeName(product.name);

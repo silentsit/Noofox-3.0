@@ -4,9 +4,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Shield, Truck, HeartHandshake, Award, Users, Globe, ArrowRight } from 'lucide-react'
 
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com'
+
 export const metadata: Metadata = {
   title: 'About Us',
   description: 'Learn about Noofox - your trusted source for premium cognitive enhancers.',
+  alternates: { canonical: `${BASE}/about` },
 }
 
 const values = [

@@ -1,9 +1,11 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ShieldCheck, ShoppingBag, Truck } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Zap } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/utils';
+import { getCatalogProductImageUrl } from '@/lib/productImage';
 import type { CatalogProduct } from '@/types/catalog';
 
 interface ProductPurchasePanelProps {
@@ -11,29 +13,29 @@ interface ProductPurchasePanelProps {
 }
 
 export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
+  const router = useRouter();
   const { addItem } = useCart();
   const [selectedVariantId, setSelectedVariantId] = useState(product.variants[0]?.id ?? '');
   const [quantity, setQuantity] = useState(1);
-  const [added, setAdded] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const selectedVariant = useMemo(
     () => product.variants.find((variant) => variant.id === selectedVariantId) ?? product.variants[0],
     [product.variants, selectedVariantId]
   );
 
-  function handleAddToCart() {
+  function handleBuyNow() {
     if (!selectedVariant) return;
-
+    setSubmitting(true);
+    const img = getCatalogProductImageUrl(product, 0);
     addItem({
       product_id: `${product.slug}::${selectedVariant.id}`,
       name: `${product.name} - ${selectedVariant.label}`,
       price: selectedVariant.price,
       quantity,
-      image_url: '',
+      image_url: img ?? '',
     });
-
-    setAdded(true);
-    window.setTimeout(() => setAdded(false), 1800);
+    router.push('/checkout');
   }
 
   if (!selectedVariant) {
@@ -133,20 +135,19 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
 
       <button
         type="button"
-        onClick={handleAddToCart}
+        onClick={handleBuyNow}
+        disabled={submitting}
         className={cn(
           'mt-6 flex w-full items-center justify-center gap-2 rounded-md px-6 py-3 font-medium transition-colors',
-          added
-            ? 'bg-primary/80 text-primary-foreground'
-            : 'bg-primary text-primary-foreground hover:bg-primary/90'
+          'bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-70'
         )}
       >
-        <ShoppingBag className="h-4 w-4" />
-        {added ? 'Added to cart' : 'Add to cart'}
+        <Zap className="h-4 w-4" aria-hidden />
+        {submitting ? 'Redirecting…' : 'Buy now'}
       </button>
 
       <p className="mt-4 text-center text-sm text-muted-foreground">
-        Secure checkout with crypto or card payment
+        You&apos;ll complete payment on the next step — crypto or card via Guardarian.
       </p>
     </div>
   );

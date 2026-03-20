@@ -1,6 +1,10 @@
-# v0-noofox-new-design-test
+# v0-noofox-new-design-test (noofox-remake)
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app). It lives inside the main **Noofox 3.0** repo as the v0 design scratch/ reference folder.
+
+- **Package name:** `noofox-remake` (so dependency install is triggered when needed).
+- **Integration:** To use this design in the main app, see `doc/V0_DESIGN_WORKFLOW.md` in the repo root. The main app has already ported layout, theme, and pages from an earlier version of this design.
+- **New zip updates:** If you download a new zip from v0, extract it into a subfolder here (e.g. `noofox-new-design-test/b_XXXX/`), then copy the contents of that subfolder into this folder (overwriting existing files). Run `pnpm install` in this folder so `next` and other deps are available.
 
 ## Built with v0
 

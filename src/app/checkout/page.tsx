@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { CheckoutTrustStrip } from '@/components/checkout/CheckoutTrustStrip';
+import { PaymentStepsCard, PaymentStepsCrypto } from '@/components/checkout/PaymentSteps';
 
 const ONRAMP_URL = process.env.NEXT_PUBLIC_ONRAMP_URL ?? 'https://guardarian.com/buy-crypto-with-card';
 
@@ -164,15 +166,18 @@ function CheckoutContent() {
   return (
     <div className="py-12">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <Badge variant="secondary">Checkout</Badge>
           <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
             Complete Your Order
           </h1>
-          <p className="mt-4 text-muted-foreground">
-            Review your order and choose a payment method.
+          <p className="mt-4 text-muted-foreground max-w-lg mx-auto">
+            Review your cart, choose <strong className="text-foreground">card</strong> (via Guardarian on-ramp) or{' '}
+            <strong className="text-foreground">crypto</strong>. All orders settle in cryptocurrency.
           </p>
         </div>
+
+        <CheckoutTrustStrip />
 
         <Suspense fallback={null}>
           <CheckoutErrorToast />
@@ -200,11 +205,19 @@ function CheckoutContent() {
 
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <h2 className="text-lg font-semibold">Payment method</h2>
-              <div className="mt-4 flex gap-2 rounded-lg border border-border p-1">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+              <h2 className="text-lg font-semibold" id="payment-method-heading">
+                Payment method
+              </h2>
+              <div
+                className="mt-4 flex gap-2 rounded-lg border border-border p-1"
+                role="tablist"
+                aria-labelledby="payment-method-heading"
+              >
                 <button
                   type="button"
+                  role="tab"
+                  aria-selected={paymentMode === 'card'}
                   onClick={() => setPaymentMode('card')}
                   className={`flex-1 rounded-md py-2.5 text-sm font-medium transition-colors ${
                     paymentMode === 'card'
@@ -216,6 +229,8 @@ function CheckoutContent() {
                 </button>
                 <button
                   type="button"
+                  role="tab"
+                  aria-selected={paymentMode === 'crypto'}
                   onClick={() => setPaymentMode('crypto')}
                   className={`flex-1 rounded-md py-2.5 text-sm font-medium transition-colors ${
                     paymentMode === 'crypto'
@@ -228,18 +243,12 @@ function CheckoutContent() {
               </div>
 
               {paymentMode === 'card' && (
-                <div className="mt-6 space-y-4">
+                <div className="mt-6 space-y-4" role="tabpanel">
                   <p className="text-sm text-muted-foreground">
-                    Don&apos;t have crypto? You can buy it with your credit or debit card
-                    via our partner <strong className="text-foreground">Guardarian</strong>. You will then return here
-                    to complete payment by sending your crypto to the Noofox wallet.
+                    Buy crypto with your card through <strong className="text-foreground">Guardarian</strong>, then
+                    return here to send funds to the Noofox wallet and submit your TxID.
                   </p>
-                  <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
-                    <li>Click below to open Guardarian and buy crypto with your card.</li>
-                    <li>Return to this page and switch to the <strong className="text-foreground">Crypto</strong> tab above.</li>
-                    <li>Send the order total to our wallet and enter your transaction hash.</li>
-                    <li>Click <strong className="text-foreground">Place order</strong> to complete.</li>
-                  </ol>
+                  <PaymentStepsCard />
                   <Button asChild className="w-full sm:w-auto">
                     <a
                       href={ONRAMP_URL}
@@ -253,15 +262,10 @@ function CheckoutContent() {
               )}
 
               {paymentMode === 'crypto' && (
-                <div className="mt-6 space-y-5">
+                <div className="mt-6 space-y-5" role="tabpanel">
                   <div className="rounded-xl border border-primary/30 bg-primary/10 p-4 text-sm text-foreground">
-                    <strong>How to pay with crypto:</strong>
-                    <ol className="mt-2 list-decimal list-inside space-y-1 text-muted-foreground">
-                      <li>Select your preferred cryptocurrency below.</li>
-                      <li>Send the exact order total (in that coin) to the wallet address shown.</li>
-                      <li>Paste your transaction hash / TxID into the field below.</li>
-                      <li>Click <strong className="text-foreground">Place order</strong> — we will verify and process your order.</li>
-                    </ol>
+                    <strong>How to pay with crypto</strong>
+                    <PaymentStepsCrypto />
                   </div>
 
                   <div>

@@ -1,8 +1,11 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Zap, Shield, Truck, Clock, Star, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { PaymentEducation } from '@/components/home/PaymentEducation'
 import { getFeaturedCatalogProducts } from '@/lib/catalog'
+import { getPublishedBlogPosts, excerptFromHtml } from '@/lib/blog'
 import { ProductCard } from '@/components/products/ProductCard'
 import type { CatalogProduct } from '@/types/catalog'
 
@@ -21,6 +24,12 @@ function getModawhaleImageForProduct(product: CatalogProduct): string | null {
     if (slug.includes(key)) return url
   }
   return MODAWHALE_PRODUCT_IMAGES.modalert
+}
+
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com'
+
+export const metadata: Metadata = {
+  alternates: { canonical: SITE },
 }
 
 const benefits = [
@@ -69,22 +78,23 @@ const testimonials = [
 
 const stats = [
   { value: '30K+', label: 'Happy Customers' },
-  { value: '98%', label: 'Satisfaction' },
-  { value: '150+', label: 'Countries Served' },
-  { value: '4.9/5', label: 'Customer Rating' },
+  { value: '100%', label: 'Guaranteed Delivery' },
+  { value: '24/7', label: 'Customer Support' },
+  { value: 'Secure Payments', label: 'Crypto & Credit Card' },
 ]
 
-/** Professional headshots + drinks for hero avatars (Unsplash) */
+/** Professional headshots for hero avatars (Unsplash, face crop) */
 const HERO_AVATARS = [
   'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&h=80&fit=crop&crop=face',
   'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop&crop=face',
   'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=80&h=80&fit=crop&crop=face',
-  'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=80&h=80&fit=crop',
-  'https://images.unsplash.com/photo-1544787219-7fcccc22f123?w=80&h=80&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=80&h=80&fit=crop&crop=face',
 ]
 
 export default async function Home() {
   const featuredProducts = await getFeaturedCatalogProducts(8)
+  const recentPosts = await getPublishedBlogPosts(3)
 
   return (
     <div className="flex flex-col">
@@ -93,17 +103,20 @@ export default async function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-primary/20 via-background to-background" />
         <div className="relative mx-auto max-w-4xl px-4 py-24 sm:py-32 lg:px-8">
           <div className="flex flex-col items-center gap-6 text-center">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              Unlock Your{' '}
-              <span className="text-primary">Cognitive Potential</span>
-            </h1>
-            <p className="text-muted-foreground">
-              Trusted by 30,000+ customers worldwide
+            <p className="text-sm font-medium uppercase tracking-widest text-primary">
+              Since 2023
             </p>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+              BuyModa alternative —{' '}
+              <span className="text-primary">better Modafinil</span>, online
+            </h1>
+            <Badge variant="secondary" className="w-fit text-[12px] font-normal">
+              Unbeatable prices · Lab-tested quality · Worldwide delivery
+            </Badge>
             <p className="max-w-2xl text-lg text-muted-foreground">
-              Premium Modafinil and Armodafinil delivered worldwide. Experience
-              enhanced focus, improved memory, and peak mental performance with
-              our lab-tested cognitive enhancers.
+              Modafinil made affordable. Enthusiastic about cognitive enhancement — premium
+              Modafinil and Armodafinil delivered worldwide with secure crypto or card
+              checkout (card settles via crypto).
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Button size="lg" asChild>
@@ -163,6 +176,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <PaymentEducation />
 
       {/* Benefits Section */}
       <section className="py-24">
@@ -237,56 +252,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-24">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="text-center">
-            <Badge variant="secondary">How It Works</Badge>
-            <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
-              Simple, Secure, Fast
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-              Getting your cognitive enhancers has never been easier. Follow these
-              simple steps.
-            </p>
-          </div>
-          <div className="mt-16 grid gap-8 md:grid-cols-3">
-            {[
-              {
-                step: '01',
-                title: 'Choose Your Product',
-                description: 'Browse our selection of premium Modafinil and Armodafinil products.',
-              },
-              {
-                step: '02',
-                title: 'Secure Payment',
-                description: 'Pay with crypto directly or use card via our secure on-ramp partner.',
-              },
-              {
-                step: '03',
-                title: 'Fast Delivery',
-                description: 'Receive your order in discreet packaging with full tracking.',
-              },
-            ].map((item, index) => (
-              <div key={item.step} className="relative">
-                {index < 2 && (
-                  <div className="absolute left-1/2 top-8 hidden h-0.5 w-full -translate-x-1/2 bg-border md:block" />
-                )}
-                <div className="relative flex flex-col items-center text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-primary bg-background text-2xl font-bold text-primary">
-                    {item.step}
-                  </div>
-                  <h3 className="mt-6 text-lg font-semibold">{item.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Testimonials Section */}
       <section className="bg-card/50 py-24">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
@@ -322,6 +287,56 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Blog preview */}
+      {recentPosts.length > 0 && (
+        <section className="border-y border-border bg-card/30 py-24">
+          <div className="mx-auto max-w-7xl px-4 lg:px-8">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+              <div>
+                <Badge variant="secondary">Blog</Badge>
+                <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+                  Guides & insights
+                </h2>
+                <p className="mt-2 max-w-xl text-muted-foreground">
+                  Long-form articles on nootropics, focus, and healthy productivity — with links to
+                  products where relevant.
+                </p>
+              </div>
+              <Button variant="outline" asChild>
+                <Link href="/blog">
+                  View all posts
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+            <ul className="mt-10 grid gap-6 md:grid-cols-3">
+              {recentPosts.map((post) => (
+                <li key={post.id}>
+                  <article className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 transition-shadow hover:shadow-md">
+                    <h3 className="text-lg font-semibold leading-snug">
+                      <Link href={`/blog/${post.slug}`} className="hover:text-primary">
+                        {post.title}
+                      </Link>
+                    </h3>
+                    {excerptFromHtml(post.content, 120) && (
+                      <p className="mt-3 flex-1 text-sm text-muted-foreground line-clamp-3">
+                        {excerptFromHtml(post.content, 120)}
+                      </p>
+                    )}
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="mt-4 text-sm font-medium text-primary"
+                    >
+                      Read more
+                    </Link>
+                  </article>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="py-24">

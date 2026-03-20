@@ -4,9 +4,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com'
+
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description: 'Learn how Noofox collects, uses, and protects your personal information.',
+  alternates: { canonical: `${BASE}/privacy` },
 }
 
 export default function PrivacyPage() {

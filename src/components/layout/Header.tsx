@@ -9,6 +9,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
@@ -22,8 +24,10 @@ const navigation = [
     href: '/shop',
     children: [
       { name: 'All Products', href: '/shop' },
-      { name: 'Modafinil', href: '/category/modafinil' },
-      { name: 'Armodafinil', href: '/category/armodafinil' },
+      { name: 'Modafinil', href: '/modafinil' },
+      { name: 'Armodafinil', href: '/armodafinil' },
+      { name: 'Anti-Cancer', href: '/anti-cancer' },
+      { name: 'Skincare', href: '/skincare' },
     ],
   },
   { name: 'Blog', href: '/blog' },
@@ -48,7 +52,10 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
+      <nav
+        className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8"
+        aria-label="Primary"
+      >
         {/* Logo — height fits nav bar, natural 4:1 aspect ratio */}
         <Link href="/" className="flex shrink-0 items-center">
           <Image
@@ -67,17 +74,54 @@ export function Header() {
             item.children ? (
               <DropdownMenu key={item.name}>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                  <button
+                    type="button"
+                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                    aria-haspopup="menu"
+                  >
                     {item.name}
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-4 w-4" aria-hidden />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-48">
-                  {item.children.map((child) => (
-                    <DropdownMenuItem key={child.name} asChild>
-                      <Link href={child.href}>{child.name}</Link>
+                <DropdownMenuContent
+                  align="start"
+                  className="w-[min(100vw-2rem,22rem)] p-0 sm:w-[28rem]"
+                >
+                  <div className="grid gap-0 sm:grid-cols-2">
+                    <div className="border-border p-3 sm:border-r">
+                      <DropdownMenuLabel className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Shop
+                      </DropdownMenuLabel>
+                      {item.children
+                        ?.filter((c) => c.href === '/shop' || c.href === '/modafinil' || c.href === '/armodafinil')
+                        .map((child) => (
+                          <DropdownMenuItem key={child.name} asChild className="cursor-pointer">
+                            <Link href={child.href}>{child.name}</Link>
+                          </DropdownMenuItem>
+                        ))}
+                    </div>
+                    <div className="p-3">
+                      <DropdownMenuLabel className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        More categories
+                      </DropdownMenuLabel>
+                      {item.children
+                        ?.filter((c) => c.href === '/anti-cancer' || c.href === '/skincare')
+                        .map((child) => (
+                          <DropdownMenuItem key={child.name} asChild className="cursor-pointer">
+                            <Link href={child.href}>{child.name}</Link>
+                          </DropdownMenuItem>
+                        ))}
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <div className="p-2">
+                    <p className="px-2 pb-2 text-xs text-muted-foreground">
+                      Pay with crypto or card — card on-ramps through Guardarian, then settle in crypto.
+                    </p>
+                    <DropdownMenuItem asChild className="cursor-pointer">
+                      <Link href="/checkout">Go to checkout</Link>
                     </DropdownMenuItem>
-                  ))}
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
@@ -119,9 +163,6 @@ export function Header() {
                 <Link href="/login">Sign in</Link>
               </Button>
             )}
-            <Button asChild>
-              <Link href="/shop">Shop Now</Link>
-            </Button>
           </div>
 
           {/* Mobile Menu */}
@@ -178,11 +219,6 @@ export function Header() {
                       </Link>
                     </Button>
                   )}
-                  <Button asChild>
-                    <Link href="/shop" onClick={() => setMobileMenuOpen(false)}>
-                      Shop Now
-                    </Link>
-                  </Button>
                 </div>
               </div>
             </SheetContent>

@@ -10,6 +10,7 @@ import {
   excerptFromHtml,
 } from '@/lib/blog';
 import { sanitizeHtml } from '@/lib/sanitizeHtml';
+import { blogPostingJsonLd } from '@/lib/schema';
 
 export const dynamic = 'force-dynamic';
 
@@ -64,22 +65,7 @@ export default async function BlogPostPage({
 
   const safeContent = sanitizeHtml(post.content);
   const datePublished = new Date(post.created_at);
-  const dateModified = new Date(post.updated_at);
-
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: post.title,
-    description: excerptFromHtml(post.content, 160) || post.title,
-    url: `${BASE}/blog/${post.slug}`,
-    datePublished: datePublished.toISOString(),
-    dateModified: dateModified.toISOString(),
-    publisher: {
-      '@type': 'Organization',
-      name: 'Noofox',
-      url: BASE,
-    },
-  };
+  const jsonLd = blogPostingJsonLd(post);
 
   return (
     <div className="min-h-screen py-12">

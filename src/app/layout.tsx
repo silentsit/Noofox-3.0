@@ -1,14 +1,24 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CartProvider } from '@/context/CartContext';
+import { organizationJsonLd } from '@/lib/schema';
+
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com';
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+  weight: ['500', '600', '700'],
 });
 
 export const viewport = {
@@ -19,7 +29,7 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://noofox.com'),
+  metadataBase: new URL(SITE),
   title: {
     default: 'Noofox | Premium Nootropics & Cognitive Enhancers',
     template: '%s | Noofox',
@@ -27,20 +37,36 @@ export const metadata: Metadata = {
   description:
     'Premium nootropics delivered worldwide. Pay with crypto or card. Free shipping on every order.',
   applicationName: 'Noofox',
-  keywords: ['Noofox', 'nootropics', 'modafinil', 'armodafinil', 'cognitive enhancers'],
+  keywords: [
+    'Noofox',
+    'nootropics',
+    'modafinil',
+    'armodafinil',
+    'cognitive enhancers',
+    'buy modafinil online',
+  ],
+  authors: [{ name: 'Noofox', url: SITE }],
+  creator: 'Noofox',
+  publisher: 'Noofox',
+  formatDetection: { email: false, address: false, telephone: false },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   openGraph: {
     title: 'Noofox | Premium Nootropics & Cognitive Enhancers',
     description: 'Premium nootropics delivered worldwide. Pay with crypto or card.',
     type: 'website',
-    url: 'https://noofox.com',
+    url: SITE,
     siteName: 'Noofox',
+    locale: 'en_US',
+    images: [{ url: '/best_noofox_logo_3.png', width: 1200, height: 300, alt: 'Noofox' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Noofox | Premium Nootropics & Cognitive Enhancers',
     description: 'Premium nootropics delivered worldwide. Pay with crypto or card.',
     creator: '@Noofox',
+    images: [`${SITE}/best_noofox_logo_3.png`],
   },
+  category: 'health',
 };
 
 export default function RootLayout({
@@ -51,10 +77,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} dark`}
+      className={`${inter.variable} ${plusJakarta.variable} dark`}
       suppressHydrationWarning
     >
       <body className="min-h-screen min-w-0 flex flex-col font-sans antialiased overflow-x-hidden">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd()),
+          }}
+        />
         <CartProvider>
           <a
             href="#main-content"

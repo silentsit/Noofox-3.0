@@ -4,9 +4,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com'
+
 export const metadata: Metadata = {
   title: 'Terms of Service',
   description: 'Read the terms and conditions for using Noofox services.',
+  alternates: { canonical: `${BASE}/terms` },
 }
 
 export default function TermsPage() {

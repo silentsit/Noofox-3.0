@@ -43,3 +43,10 @@ next-env.d.ts
 
 # product image source (copied into public/product-images by script)
 /Noofox-Images/
+
+# Supabase CLI cache
+supabase/.temp/
+
+# Design scratch: zip extractions (keep repo lean)
+noofox-new-design-test/*.zip
+noofox-new-design-test/b_S3nFqCQnYKZ-1773745206877/

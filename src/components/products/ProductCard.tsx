@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import type { CatalogProduct } from '@/types/catalog'
@@ -53,6 +53,25 @@ export function ProductCard({ product, imageUrlOverride }: ProductCardProps) {
             {product.name}
           </h3>
         </Link>
+        {product.reviewSummary.averageRating != null && product.reviewSummary.reviewCount > 0 && (
+          <div className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+            <span className="flex items-center gap-0.5 text-primary" aria-hidden>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  className={`h-3.5 w-3.5 ${
+                    i < Math.round(product.reviewSummary.averageRating ?? 0)
+                      ? 'fill-primary text-primary'
+                      : 'fill-muted text-muted'
+                  }`}
+                />
+              ))}
+            </span>
+            <span>
+              {product.reviewSummary.averageRating.toFixed(1)} ({product.reviewSummary.reviewCount})
+            </span>
+          </div>
+        )}
         <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
           {product.shortDescriptionText || product.descriptionText?.slice(0, 100)}
         </p>

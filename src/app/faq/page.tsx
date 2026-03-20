@@ -9,9 +9,12 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com'
+
 export const metadata: Metadata = {
   title: 'FAQ',
   description: 'Frequently asked questions about ordering Modafinil and Armodafinil from Noofox.',
+  alternates: { canonical: `${BASE}/faq` },
 }
 
 const faqCategories = [
@@ -120,9 +123,12 @@ export default function FAQPage() {
           </p>
         </div>
 
-        <div className="mt-12 space-y-12">
+        <div className="mt-12 space-y-10">
           {faqCategories.map((category) => (
-            <div key={category.category}>
+            <div
+              key={category.category}
+              className="rounded-2xl border border-border bg-card/50 p-6 shadow-sm backdrop-blur-sm sm:p-8"
+            >
               <h2 className="text-xl font-semibold">{category.category}</h2>
               <Accordion type="single" collapsible className="mt-4">
                 {category.questions.map((item, index) => (

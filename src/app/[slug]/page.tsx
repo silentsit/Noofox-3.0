@@ -11,6 +11,7 @@ import { ProductImageGallery } from '@/components/product/ProductImageGallery';
 import { ProductCard } from '@/components/products/ProductCard';
 import { getCatalogProductBySlug, getCatalogProducts, getRelatedCatalogProducts } from '@/lib/catalog';
 import { getCatalogProductImageUrl } from '@/lib/productImage';
+import { productJsonLd } from '@/lib/schema';
 
 export const dynamicParams = true;
 
@@ -103,7 +104,12 @@ export default async function ProductSlugPage({
 
   const relatedProducts = await getRelatedCatalogProducts(product, 4);
   const supplementalSchemas = buildSupplementalSchemas(product);
-  const schemas = [...(product.structuredData ?? []), ...supplementalSchemas];
+  const fromWoo = (product.structuredData ?? []).filter((entry) => {
+    if (typeof entry !== 'object' || entry === null) return true;
+    const t = (entry as Record<string, unknown>)['@type'];
+    return t !== 'Product';
+  });
+  const schemas = [productJsonLd(product), ...fromWoo, ...supplementalSchemas];
 
   const heroImageUrl = getCatalogProductImageUrl(product, 0);
   const allImages = product.images?.length ? product.images : [];
@@ -118,6 +124,7 @@ export default async function ProductSlugPage({
         />
       ))}
 
+      <article className="block">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         {/* Breadcrumb */}
         <nav className="mb-8">
@@ -282,6 +289,7 @@ export default async function ProductSlugPage({
           </div>
         )}
       </div>
+      </article>
     </div>
   );
 }

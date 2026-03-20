@@ -4,9 +4,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Truck, Shield, Clock } from 'lucide-react'
 
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com'
+
 export const metadata: Metadata = {
   title: 'Shipping Policy',
   description: 'Learn about Noofox shipping options, delivery times, and policies.',
+  alternates: { canonical: `${BASE}/shipping` },
 }
 
 export default function ShippingPage() {

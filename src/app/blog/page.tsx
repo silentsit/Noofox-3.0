@@ -2,9 +2,10 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { getPublishedBlogPosts, excerptFromHtml } from '@/lib/blog';
-import { ArrowRight, Calendar, FileText } from 'lucide-react';
+import { FileText } from 'lucide-react';
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com';
+const POSTS_PER_PAGE = 10;
 
 export const dynamic = 'force-dynamic';
 
@@ -29,15 +30,24 @@ export const metadata: Metadata = {
   alternates: { canonical: `${BASE}/blog` },
 };
 
-/** Approximate reading time in minutes from HTML content length. */
 function readingTimeMinutes(html: string): number {
   const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
   const words = text.split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.round(words / 200));
 }
 
-export default async function BlogListPage() {
+export default async function BlogListPage({
+  searchParams,
+}: {
+  searchParams: { page?: string; category?: string };
+}) {
   const posts = await getPublishedBlogPosts();
+  const { page: pageParam, category } = searchParams;
+  const currentPage = Math.max(1, parseInt(String(pageParam), 10) || 1);
+  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE) || 1;
+  const page = Math.min(currentPage, totalPages);
+  const start = (page - 1) * POSTS_PER_PAGE;
+  const paginatedPosts = posts.slice(start, start + POSTS_PER_PAGE);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -67,28 +77,48 @@ export default async function BlogListPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="mx-auto max-w-4xl px-4 py-12 sm:py-16 lg:px-8">
-        {/* Hero — SEO Sherpa style: clear title + tagline */}
-        <header className="border-b border-border pb-10 sm:pb-12">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-            The Noofox blog
-          </h1>
-          <p className="mt-4 text-lg text-muted-foreground sm:text-xl">
-            Grow your knowledge with guides and insights on nootropics, cognitive enhancement, and
-            peak mental performance.
-          </p>
-        </header>
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16 lg:px-8">
+        {/* Heading like noofox.com/blog */}
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          Blog
+        </h1>
 
-        {/* Posts list — editorial single column with cards */}
-        <div className="mt-10 sm:mt-12">
+        {/* Category tabs: All, General, Meditation, Nootropics */}
+        <nav className="mt-6 flex flex-wrap gap-2 border-b border-border pb-4" aria-label="Blog categories">
+          <Link
+            href="/blog"
+            className="rounded-md px-3 py-1.5 text-sm font-medium text-primary bg-primary/10"
+          >
+            All
+          </Link>
+          <Link
+            href="/blog?category=general"
+            className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            General
+          </Link>
+          <Link
+            href="/blog?category=meditation"
+            className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Meditation
+          </Link>
+          <Link
+            href="/blog?category=nootropics"
+            className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Nootropics
+          </Link>
+        </nav>
+
+        {/* Post grid — card layout like noofox.com/blog */}
+        <div className="mt-8">
           {posts.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/30 py-16 px-6 text-center sm:py-20">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted text-muted-foreground">
                 <FileText className="h-8 w-8" />
               </div>
-              <h2 className="mt-4 text-xl font-semibold text-foreground">
-                No posts yet
-              </h2>
+              <h2 className="mt-4 text-xl font-semibold text-foreground">No posts yet</h2>
               <p className="mt-2 max-w-sm text-muted-foreground">
                 We&apos;re preparing articles on nootropics, Modafinil, Armodafinil, and cognitive
                 enhancement. Check back soon or explore our products.
@@ -103,59 +133,81 @@ export default async function BlogListPage() {
               </div>
             </div>
           ) : (
-            <ul className="divide-y divide-border">
-              {posts.map((post) => {
-                const excerpt = excerptFromHtml(post.content, 180);
-                const date = new Date(post.created_at);
-                const readMin = readingTimeMinutes(post.content);
-                return (
-                  <li key={post.id}>
-                    <article className="group py-8 first:pt-0 sm:py-10">
+            <>
+              <ul className="grid gap-8 sm:grid-cols-2">
+                {paginatedPosts.map((post) => {
+                  const excerpt = excerptFromHtml(post.content, 160);
+                  const readMin = readingTimeMinutes(post.content);
+                  return (
+                    <li key={post.id}>
+                      <article className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-md">
+                        <Link href={`/blog/${post.slug}`} className="flex flex-1 flex-col">
+                          {/* Image placeholder — noofox uses featured images per post */}
+                          <div className="aspect-video w-full bg-muted flex items-center justify-center">
+                            <FileText className="h-12 w-12 text-muted-foreground/50" />
+                          </div>
+                          <div className="flex flex-1 flex-col p-5">
+                            <p className="text-xs text-muted-foreground">
+                              Nootropics / By Noofox / {readMin} minutes of reading
+                            </p>
+                            <h2 className="mt-2 text-lg font-semibold leading-tight text-foreground line-clamp-2">
+                              {post.title}
+                            </h2>
+                            {excerpt && (
+                              <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
+                                {excerpt}
+                              </p>
+                            )}
+                            <span className="mt-4 text-sm font-medium text-primary">
+                              Read More »
+                            </span>
+                          </div>
+                        </Link>
+                      </article>
+                    </li>
+                  );
+                })}
+              </ul>
+
+              {/* Pagination: 1 2 Next → */}
+              {totalPages > 1 && (
+                <nav className="mt-12 flex items-center justify-center gap-2 border-t border-border pt-8" aria-label="Blog pagination">
+                  {page > 1 && (
+                    <Link
+                      href={page === 2 ? '/blog' : `/blog?page=${page - 1}`}
+                      className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+                    >
+                      ← Previous
+                    </Link>
+                  )}
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                       <Link
-                        href={`/blog/${post.slug}`}
-                        className="block transition-colors hover:opacity-90"
+                        key={p}
+                        href={p === 1 ? '/blog' : `/blog?page=${p}`}
+                        className={`min-w-[2.25rem] rounded-md px-2 py-2 text-center text-sm font-medium ${
+                          p === page
+                            ? 'bg-primary text-primary-foreground'
+                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                        }`}
                       >
-                        <time
-                          dateTime={date.toISOString()}
-                          className="flex items-center gap-2 text-sm text-muted-foreground"
-                        >
-                          <Calendar className="h-4 w-4 shrink-0" />
-                          {date.toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                          })}
-                          <span className="text-border">·</span>
-                          <span>{readMin} min read</span>
-                        </time>
-                        <h2 className="mt-2 text-xl font-semibold leading-tight text-foreground transition-colors group-hover:text-primary sm:text-2xl">
-                          {post.title}
-                        </h2>
-                        {excerpt && (
-                          <p className="mt-3 line-clamp-3 text-muted-foreground sm:text-base">
-                            {excerpt}
-                          </p>
-                        )}
-                        <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary">
-                          Read post
-                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                        </span>
+                        {p}
                       </Link>
-                    </article>
-                  </li>
-                );
-              })}
-            </ul>
+                    ))}
+                  </div>
+                  {page < totalPages && (
+                    <Link
+                      href={`/blog?page=${page + 1}`}
+                      className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+                    >
+                      Next →
+                    </Link>
+                  )}
+                </nav>
+              )}
+            </>
           )}
         </div>
-
-        {posts.length > 0 && (
-          <div className="mt-12 flex justify-center border-t border-border pt-8">
-            <Button variant="outline" asChild>
-              <Link href="/">Back to home</Link>
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );

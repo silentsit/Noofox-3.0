@@ -1,7 +1,9 @@
-import type { CatalogProduct } from '@/types/catalog';
+﻿import type { CatalogProduct } from '@/types/catalog';
 import type { BlogPost } from '@/types/blog';
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com';
+import { SITE_LOGO_SRC } from '@/lib/branding';
+
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com';
 
 function absoluteUrl(path: string): string {
   if (path.startsWith('http')) return path;
@@ -13,9 +15,9 @@ export function organizationJsonLd() {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Noofox',
+    name: 'GrabModa',
     url: SITE,
-    logo: `${SITE}/best_noofox_logo_3.png`,
+    logo: `${SITE}${SITE_LOGO_SRC}`,
     sameAs: [] as string[],
   };
 }
@@ -71,7 +73,7 @@ export function productJsonLd(product: CatalogProduct) {
     image: product.images?.[0] ? absoluteUrl(product.images[0]) : undefined,
     brand: {
       '@type': 'Brand',
-      name: 'Noofox',
+      name: 'GrabModa',
     },
     offers: aggregateOffer,
     ...(aggregateRating ? { aggregateRating } : {}),
@@ -115,16 +117,16 @@ export function blogPostingJsonLd(post: BlogPost) {
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Noofox',
+      name: 'GrabModa',
       url: SITE,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE}/best_noofox_logo_3.png`,
+        url: `${SITE}${SITE_LOGO_SRC}`,
       },
     },
     author: {
       '@type': 'Organization',
-      name: 'Noofox',
+      name: 'GrabModa',
     },
   };
 }

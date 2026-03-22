@@ -22,6 +22,14 @@ const nextConfig = {
         destination: '/armodafinil',
         permanent: true,
       },
+      // Legacy WP paths referenced from footer / external links
+      { source: '/return-policy', destination: '/terms', permanent: true },
+      { source: '/noofox-reviews', destination: '/about', permanent: true },
+      {
+        source: '/buy-modafinil-online',
+        destination: '/modafinil',
+        permanent: true,
+      },
     ];
   },
   async headers() {

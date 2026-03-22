@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com';
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com';
 
 export async function GET() {
   const lastMod = new Date().toISOString().slice(0, 10);

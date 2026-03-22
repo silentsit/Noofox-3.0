@@ -21,7 +21,7 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-const CART_KEY = 'noofox-cart';
+const CART_KEY = 'grabmoda-cart';
 
 function loadStored(): OrderItem[] {
   if (typeof window === 'undefined') return [];

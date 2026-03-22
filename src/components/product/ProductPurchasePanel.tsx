@@ -61,12 +61,12 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
                   : 'border-border hover:border-primary/50'
               )}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+                <div className="min-w-0">
                   <p className="font-medium">{variant.quantityText}</p>
                   <p className="mt-1 text-sm text-muted-foreground">{variant.perUnitText ?? 'Flexible package'}</p>
                 </div>
-                <div className="text-right">
+                <div className="text-left sm:text-right">
                   {variant.regularPrice && (
                     <p className="text-sm text-muted-foreground line-through">
                       ${variant.regularPrice.toFixed(2)}

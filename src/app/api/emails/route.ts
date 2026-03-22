@@ -4,10 +4,10 @@ import { getAdminEmails } from '@/lib/email';
 import type { EmailPayload } from '@/lib/email';
 
 const resendApiKey = process.env.RESEND_API_KEY;
-const fromEmail = process.env.EMAIL_FROM ?? 'Noofox <onboarding@resend.dev>';
+const fromEmail = process.env.EMAIL_FROM ?? 'GrabModa <onboarding@resend.dev>';
 
 function htmlWrap(subject: string, body: string): string {
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(subject)}</title></head><body style="font-family:sans-serif;line-height:1.5;color:#181c29;max-width:560px;margin:0 auto;padding:24px"><p style="white-space:pre-wrap">${escapeHtml(body)}</p><p style="margin-top:24px;font-size:12px;color:#6b7280">Noofox – Premium nootropics</p></body></html>`;
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(subject)}</title></head><body style="font-family:sans-serif;line-height:1.5;color:#181c29;max-width:560px;margin:0 auto;padding:24px"><p style="white-space:pre-wrap">${escapeHtml(body)}</p><p style="margin-top:24px;font-size:12px;color:#6b7280">GrabModa – Premium nootropics</p></body></html>`;
 }
 
 function escapeHtml(s: string): string {
@@ -175,7 +175,7 @@ export async function POST(request: Request) {
       const to = (payload.customer_email as string)?.trim();
       const resetLink = (payload.reset_link as string) ?? '';
       if (to && resetLink) {
-        const subject = 'Reset your Noofox password';
+        const subject = 'Reset your GrabModa password';
         const body = `Use this link to reset your password: ${resetLink}\n\nIf you didn't request this, you can ignore this email.`;
         sent = await sendEmail(to, subject, body);
       }

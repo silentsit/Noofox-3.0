@@ -19,11 +19,11 @@ export function ShopCategoryTabs() {
 
   return (
     <div
-      className="sticky top-[4.5rem] z-30 -mx-4 border-b border-border bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:mx-0 lg:px-0"
+      className="sticky top-[calc(4.5rem+env(safe-area-inset-top))] z-30 -mx-4 border-b border-border bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:mx-0 lg:px-0"
       role="tablist"
       aria-label="Filter by category"
     >
-      <div className="mx-auto flex max-w-7xl flex-wrap gap-2">
+      <div className="mx-auto flex max-w-7xl gap-2 overflow-x-auto scrollbar-touch pb-0.5 sm:flex-wrap sm:overflow-visible">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -31,7 +31,7 @@ export function ShopCategoryTabs() {
             role="tab"
             onClick={() => scrollTo(tab.href)}
             className={cn(
-              'rounded-full border border-transparent px-4 py-2 text-sm font-medium transition-colors',
+              'shrink-0 rounded-full border border-transparent px-4 py-2.5 text-sm font-medium transition-colors sm:py-2',
               'hover:border-primary/40 hover:bg-primary/10 hover:text-foreground',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
             )}

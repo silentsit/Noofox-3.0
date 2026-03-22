@@ -4,7 +4,7 @@ export type CatalogSilo = 'modafinil' | 'armodafinil' | 'combo';
 
 /**
  * Classify catalog products into silos. Top-level `category` is often null in JSON;
- * slug patterns match Noofox product naming.
+ * slug patterns match imported catalog product naming (legacy URL slugs).
  */
 export function classifyCatalogProduct(product: CatalogProduct): CatalogSilo {
   const slug = product.slug.toLowerCase();

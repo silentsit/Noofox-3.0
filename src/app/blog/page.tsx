@@ -1,31 +1,30 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { getPublishedBlogPosts, excerptFromHtml } from '@/lib/blog';
+import Image from 'next/image';
+import { getPublishedBlogPostsByCategory, excerptFromHtml, getFirstImageUrlFromHtml } from '@/lib/blog';
 import { FileText } from 'lucide-react';
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com';
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com';
 const POSTS_PER_PAGE = 10;
 
-export const dynamic = 'force-dynamic';
-
 export const metadata: Metadata = {
-  title: 'Blog – Nootropics & Cognitive Enhancement',
+  title: 'Blog â€“ Nootropics & Cognitive Enhancement',
   description:
-    'Insights, guides, and news about cognitive enhancement, nootropics, Modafinil, Armodafinil, and peak mental performance. Noofox blog.',
+    'Insights, guides, and news about cognitive enhancement, nootropics, Modafinil, Armodafinil, and peak mental performance. GrabModa blog.',
   openGraph: {
-    title: 'Blog | Noofox – Nootropics & Cognitive Enhancement',
+    title: 'Blog | GrabModa â€“ Nootropics & Cognitive Enhancement',
     description:
       'Insights, guides, and news about cognitive enhancement, nootropics, and peak mental performance.',
     url: `${BASE}/blog`,
-    siteName: 'Noofox',
+    siteName: 'GrabModa',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Blog | Noofox – Nootropics & Cognitive Enhancement',
+    title: 'Blog | GrabModa â€“ Nootropics & Cognitive Enhancement',
     description: 'Insights, guides, and news about cognitive enhancement and nootropics.',
-    creator: '@Noofox',
+    creator: '@GrabModa',
   },
   alternates: { canonical: `${BASE}/blog` },
 };
@@ -41,8 +40,14 @@ export default async function BlogListPage({
 }: {
   searchParams: { page?: string; category?: string };
 }) {
-  const posts = await getPublishedBlogPosts();
-  const { page: pageParam, category } = searchParams;
+  const { page: pageParam, category: categoryParam } = searchParams;
+  const category =
+    categoryParam === 'nootropics' ||
+    categoryParam === 'meditation' ||
+    categoryParam === 'general'
+      ? categoryParam
+      : null;
+  const posts = await getPublishedBlogPostsByCategory(category);
   const currentPage = Math.max(1, parseInt(String(pageParam), 10) || 1);
   const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE) || 1;
   const page = Math.min(currentPage, totalPages);
@@ -52,13 +57,13 @@ export default async function BlogListPage({
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
-    name: 'Noofox Blog',
+    name: 'GrabModa Blog',
     description:
       'Insights, guides, and news about cognitive enhancement, nootropics, and peak mental performance.',
     url: `${BASE}/blog`,
     publisher: {
       '@type': 'Organization',
-      name: 'Noofox',
+      name: 'GrabModa',
       url: BASE,
     },
     blogPost: posts.slice(0, 20).map((post) => ({
@@ -71,15 +76,15 @@ export default async function BlogListPage({
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen-safe w-full min-w-0">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16 lg:px-8">
-        {/* Heading like noofox.com/blog */}
-        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:py-12 md:py-16 lg:px-8">
+        {/* Blog index (reference layout) */}
+        <h1 className="text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
           Blog
         </h1>
 
@@ -111,7 +116,7 @@ export default async function BlogListPage({
           </Link>
         </nav>
 
-        {/* Post grid — card layout like noofox.com/blog */}
+        {/* Post grid — card layout */}
         <div className="mt-8">
           {posts.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/30 py-16 px-6 text-center sm:py-20">
@@ -138,17 +143,32 @@ export default async function BlogListPage({
                 {paginatedPosts.map((post) => {
                   const excerpt = excerptFromHtml(post.content, 160);
                   const readMin = readingTimeMinutes(post.content);
+                  const coverUrl = getFirstImageUrlFromHtml(post.content);
                   return (
                     <li key={post.id}>
                       <article className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-md">
                         <Link href={`/blog/${post.slug}`} className="flex flex-1 flex-col">
-                          {/* Image placeholder — noofox uses featured images per post */}
-                          <div className="aspect-video w-full bg-muted flex items-center justify-center">
-                            <FileText className="h-12 w-12 text-muted-foreground/50" />
+                          <div className="relative aspect-video w-full overflow-hidden bg-muted">
+                            {coverUrl ? (
+                              <Image
+                                src={coverUrl}
+                                alt=""
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 640px) 100vw, 50vw"
+                                unoptimized={
+                                  coverUrl.startsWith('http') || coverUrl.includes('koala.sh')
+                                }
+                              />
+                            ) : (
+                              <div className="flex h-full min-h-[12rem] w-full items-center justify-center">
+                                <FileText className="h-12 w-12 text-muted-foreground/50" />
+                              </div>
+                            )}
                           </div>
                           <div className="flex flex-1 flex-col p-5">
                             <p className="text-xs text-muted-foreground">
-                              Nootropics / By Noofox / {readMin} minutes of reading
+                              Nootropics / By GrabModa / {readMin} minutes of reading
                             </p>
                             <h2 className="mt-2 text-lg font-semibold leading-tight text-foreground line-clamp-2">
                               {post.title}
@@ -159,7 +179,7 @@ export default async function BlogListPage({
                               </p>
                             )}
                             <span className="mt-4 text-sm font-medium text-primary">
-                              Read More »
+                              Read More Â»
                             </span>
                           </div>
                         </Link>
@@ -169,7 +189,7 @@ export default async function BlogListPage({
                 })}
               </ul>
 
-              {/* Pagination: 1 2 Next → */}
+              {/* Pagination: 1 2 Next â†’ */}
               {totalPages > 1 && (
                 <nav className="mt-12 flex items-center justify-center gap-2 border-t border-border pt-8" aria-label="Blog pagination">
                   {page > 1 && (
@@ -177,7 +197,7 @@ export default async function BlogListPage({
                       href={page === 2 ? '/blog' : `/blog?page=${page - 1}`}
                       className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
                     >
-                      ← Previous
+                      â† Previous
                     </Link>
                   )}
                   <div className="flex items-center gap-1">
@@ -200,7 +220,7 @@ export default async function BlogListPage({
                       href={`/blog?page=${page + 1}`}
                       className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
                     >
-                      Next →
+                      Next â†’
                     </Link>
                   )}
                 </nav>

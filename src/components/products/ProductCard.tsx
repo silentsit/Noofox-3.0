@@ -75,7 +75,7 @@ export function ProductCard({ product, imageUrlOverride }: ProductCardProps) {
         <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
           {product.shortDescriptionText || product.descriptionText?.slice(0, 100)}
         </p>
-        <div className="mt-3 flex items-center justify-between">
+        <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-lg font-bold text-primary">
               From ${lowestPrice}
@@ -86,7 +86,7 @@ export function ProductCard({ product, imageUrlOverride }: ProductCardProps) {
               </p>
             )}
           </div>
-          <Button size="sm" asChild>
+          <Button size="sm" asChild className="w-full sm:w-auto">
             <Link href={`/${product.slug}`}>
               Buy Now
               <ArrowRight className="ml-1 h-4 w-4" />

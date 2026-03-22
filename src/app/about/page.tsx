@@ -1,14 +1,14 @@
-import { Metadata } from 'next'
+﻿import { Metadata } from 'next'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Shield, Truck, HeartHandshake, Award, Users, Globe, ArrowRight } from 'lucide-react'
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com'
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com'
 
 export const metadata: Metadata = {
   title: 'About Us',
-  description: 'Learn about Noofox - your trusted source for premium cognitive enhancers.',
+  description: 'Learn about GrabModa - your trusted source for premium cognitive enhancers.',
   alternates: { canonical: `${BASE}/about` },
 }
 
@@ -44,28 +44,28 @@ const stats = [
 
 export default function AboutPage() {
   return (
-    <div className="py-12">
+    <div className="py-8 sm:py-12">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         {/* Hero */}
         <div className="text-center">
-          <Badge variant="secondary">About Noofox</Badge>
-          <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+          <Badge variant="secondary">About GrabModa</Badge>
+          <h1 className="mt-4 text-balance text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl">
             Your Trusted Partner in{' '}
             <span className="text-primary">Cognitive Enhancement</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Noofox was founded with a simple mission: to provide access to
+          <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg">
+            GrabModa was founded with a simple mission: to provide access to
             high-quality cognitive enhancers with exceptional service and
             complete privacy.
           </p>
         </div>
 
         {/* Stats */}
-        <div className="mt-16 grid grid-cols-2 gap-8 md:grid-cols-4">
+        <div className="mt-12 grid grid-cols-2 gap-6 sm:mt-16 sm:gap-8 md:grid-cols-4">
           {stats.map((stat) => (
-            <div key={stat.label} className="text-center">
-              <p className="text-3xl font-bold text-primary sm:text-4xl">{stat.value}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
+            <div key={stat.label} className="min-w-0 text-center">
+              <p className="text-2xl font-bold text-primary sm:text-3xl md:text-4xl">{stat.value}</p>
+              <p className="mt-1 text-xs text-muted-foreground sm:text-sm">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -80,7 +80,7 @@ export default function AboutPage() {
               </h2>
               <div className="mt-6 space-y-4 text-muted-foreground">
                 <p>
-                  Noofox started as a passion project by a group of professionals who
+                  GrabModa started as a passion project by a group of professionals who
                   experienced firsthand the benefits of cognitive enhancers. Frustrated
                   with unreliable vendors and inconsistent quality, we decided to create
                   the service we wished existed.
@@ -101,9 +101,9 @@ export default function AboutPage() {
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
                   <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-2xl bg-primary">
-                    <span className="text-5xl font-bold text-primary-foreground">N</span>
+                    <span className="text-5xl font-bold text-primary-foreground">G</span>
                   </div>
-                  <p className="mt-4 text-xl font-semibold">Noofox</p>
+                  <p className="mt-4 text-xl font-semibold">GrabModa</p>
                   <p className="text-sm text-muted-foreground">Est. 2020</p>
                 </div>
               </div>
@@ -178,7 +178,7 @@ export default function AboutPage() {
         <div className="mt-20 text-center">
           <h2 className="text-2xl font-bold sm:text-3xl">Ready to Get Started?</h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Browse our selection of premium cognitive enhancers and experience the Noofox difference.
+            Browse our selection of premium cognitive enhancers and experience the GrabModa difference.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Button size="lg" asChild>

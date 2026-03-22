@@ -1,13 +1,13 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com';
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com';
 
 export const metadata: Metadata = {
   title: 'Skincare',
-  description: 'Noofox category — coming soon.',
+  description: 'GrabModa category â€” coming soon.',
   alternates: { canonical: `${BASE}/skincare` },
   robots: { index: true, follow: true },
 };

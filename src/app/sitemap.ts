@@ -1,8 +1,8 @@
-import { MetadataRoute } from 'next';
+﻿import { MetadataRoute } from 'next';
 import { getCatalogProducts } from '@/lib/catalog';
 import { getPublishedBlogSlugsWithDates } from '@/lib/blog';
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com';
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [products, blogPosts] = await Promise.all([
@@ -20,6 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
     { url: `${BASE}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${BASE}/shipping`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${BASE}/html-sitemap`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 },
     { url: `${BASE}/checkout`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: `${BASE}/login`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
     ...products.map((product) => ({

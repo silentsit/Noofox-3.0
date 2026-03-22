@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,18 +9,18 @@ import { breadcrumbListJsonLd, itemListJsonLd } from '@/lib/schema';
 
 export const revalidate = 3600;
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com';
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com';
 
 export const metadata: Metadata = {
-  title: 'Modafinil — Shop',
+  title: 'Modafinil â€” Shop',
   description:
     'Browse premium Modafinil products: Modalert, Modvigil, Modaheal, and more. Lab-tested, worldwide shipping, crypto or card checkout.',
   alternates: { canonical: `${BASE}/modafinil` },
   openGraph: {
-    title: 'Modafinil Products | Noofox',
+    title: 'Modafinil Products | GrabModa',
     description: 'Premium Modafinil cognitive enhancers with secure checkout.',
     url: `${BASE}/modafinil`,
-    siteName: 'Noofox',
+    siteName: 'GrabModa',
     type: 'website',
   },
 };

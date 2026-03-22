@@ -16,25 +16,19 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { useCart } from '@/context/CartContext'
 import { createClient } from '@/lib/supabase/client'
+import {
+  FREEBIES_PATH,
+  modafinilArmodafinilProducts,
+  modaCombosItems,
+} from '@/lib/headerNav'
+import {
+  SITE_LOGO_ALT,
+  SITE_LOGO_HEIGHT,
+  SITE_LOGO_SRC,
+  SITE_LOGO_WIDTH,
+} from '@/lib/branding'
 
-const navigation = [
-  { name: 'Home', href: '/' },
-  {
-    name: 'Products',
-    href: '/shop',
-    children: [
-      { name: 'All Products', href: '/shop' },
-      { name: 'Modafinil', href: '/modafinil' },
-      { name: 'Armodafinil', href: '/armodafinil' },
-      { name: 'Anti-Cancer', href: '/anti-cancer' },
-      { name: 'Skincare', href: '/skincare' },
-    ],
-  },
-  { name: 'Blog', href: '/blog' },
-  { name: 'About', href: '/about' },
-  { name: 'FAQ', href: '/faq' },
-  { name: 'Contact', href: '/contact' },
-]
+/** Primary nav mirrors https://noofox.com (FREEBIES, Modafinil/Armodafinil, Moda Combos). */
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -51,96 +45,97 @@ export function Header() {
   }, [])
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 pt-[env(safe-area-inset-top)] backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav
-        className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8"
+        className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-3 sm:px-4 sm:py-4 lg:px-8"
         aria-label="Primary"
       >
-        {/* Logo — height fits nav bar, natural 4:1 aspect ratio */}
         <Link href="/" className="flex shrink-0 items-center">
           <Image
-            src="/best_noofox_logo_3.png"
-            alt="Noofox - Brain Hacks & Better Health"
-            width={480}
-            height={120}
+            src={SITE_LOGO_SRC}
+            alt={SITE_LOGO_ALT}
+            width={SITE_LOGO_WIDTH}
+            height={SITE_LOGO_HEIGHT}
             className="h-8 w-auto sm:h-9"
             priority
           />
         </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden lg:flex lg:items-center lg:gap-8">
-          {navigation.map((item) =>
-            item.children ? (
-              <DropdownMenu key={item.name}>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    type="button"
-                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                    aria-haspopup="menu"
-                  >
-                    {item.name}
-                    <ChevronDown className="h-4 w-4" aria-hidden />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="start"
-                  className="w-[min(100vw-2rem,22rem)] p-0 sm:w-[28rem]"
-                >
-                  <div className="grid gap-0 sm:grid-cols-2">
-                    <div className="border-border p-3 sm:border-r">
-                      <DropdownMenuLabel className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        Shop
-                      </DropdownMenuLabel>
-                      {item.children
-                        ?.filter((c) => c.href === '/shop' || c.href === '/modafinil' || c.href === '/armodafinil')
-                        .map((child) => (
-                          <DropdownMenuItem key={child.name} asChild className="cursor-pointer">
-                            <Link href={child.href}>{child.name}</Link>
-                          </DropdownMenuItem>
-                        ))}
-                    </div>
-                    <div className="p-3">
-                      <DropdownMenuLabel className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        More categories
-                      </DropdownMenuLabel>
-                      {item.children
-                        ?.filter((c) => c.href === '/anti-cancer' || c.href === '/skincare')
-                        .map((child) => (
-                          <DropdownMenuItem key={child.name} asChild className="cursor-pointer">
-                            <Link href={child.href}>{child.name}</Link>
-                          </DropdownMenuItem>
-                        ))}
-                    </div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <div className="p-2">
-                    <p className="px-2 pb-2 text-xs text-muted-foreground">
-                      Pay with crypto or card — card on-ramps through Guardarian, then settle in crypto.
-                    </p>
-                    <DropdownMenuItem asChild className="cursor-pointer">
-                      <Link href="/checkout">Go to checkout</Link>
-                    </DropdownMenuItem>
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        {/* Desktop — matches noofox.com primary menu */}
+        <div className="hidden lg:flex lg:items-center lg:gap-6 xl:gap-8">
+          <Link
+            href={FREEBIES_PATH}
+            className="text-sm font-semibold uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground"
+          >
+            FREEBIES
+          </Link>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                aria-haspopup="menu"
               >
-                {item.name}
-              </Link>
-            )
-          )}
+                Modafinil/Armodafinil
+                <ChevronDown className="h-4 w-4" aria-hidden />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="start"
+              className="w-[min(100vw-2rem,36rem)] max-h-[min(70vh,28rem)] overflow-y-auto p-0"
+            >
+              <div className="sticky top-0 z-10 border-b border-border bg-popover px-3 py-2">
+                <DropdownMenuItem asChild className="cursor-pointer font-medium">
+                  <Link href="/shop">Shop — all products</Link>
+                </DropdownMenuItem>
+              </div>
+              <div className="p-3">
+                <DropdownMenuLabel className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Products
+                </DropdownMenuLabel>
+                <ul className="grid grid-cols-1 gap-0.5 sm:grid-cols-2">
+                  {modafinilArmodafinilProducts.map((p) => (
+                    <li key={p.slug}>
+                      <DropdownMenuItem asChild className="cursor-pointer">
+                        <Link href={`/${p.slug}`}>{p.name}</Link>
+                      </DropdownMenuItem>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                aria-haspopup="menu"
+              >
+                Moda Combos
+                <ChevronDown className="h-4 w-4" aria-hidden />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuItem asChild className="cursor-pointer">
+                <Link href="/nootropic-combos">All combos</Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {modaCombosItems.map((c) => (
+                <DropdownMenuItem key={c.slug} asChild className="cursor-pointer">
+                  <Link href={`/${c.slug}`}>{c.name}</Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
-        {/* Right side: Cart, Auth, CTA */}
         <div className="flex items-center gap-3">
           <Link
             href="/checkout"
-            className="relative flex items-center text-muted-foreground hover:text-foreground transition-colors"
+            className="relative flex min-h-[44px] min-w-[44px] items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
           >
             <ShoppingCart className="h-5 w-5" />
             {cartCount > 0 && (
@@ -165,7 +160,6 @@ export function Header() {
             )}
           </div>
 
-          {/* Mobile Menu */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild className="lg:hidden">
               <Button variant="ghost" size="icon">
@@ -173,39 +167,65 @@ export function Header() {
                 <span className="sr-only">Open menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-full max-w-xs">
+            <SheetContent side="right" className="w-full max-w-sm overflow-y-auto">
               <div className="flex flex-col gap-6 pt-6">
-                {navigation.map((item) =>
-                  item.children ? (
-                    <div key={item.name} className="flex flex-col gap-2">
-                      <span className="text-sm font-semibold text-foreground">
-                        {item.name}
-                      </span>
-                      <div className="flex flex-col gap-2 pl-4">
-                        {item.children.map((child) => (
-                          <Link
-                            key={child.name}
-                            href={child.href}
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                          >
-                            {child.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {item.name}
-                    </Link>
-                  )
-                )}
-                <div className="flex flex-col gap-2 pt-4 border-t border-border">
+                <Link
+                  href={FREEBIES_PATH}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-semibold uppercase tracking-wide text-foreground"
+                >
+                  FREEBIES
+                </Link>
+
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm font-semibold text-foreground">
+                    Modafinil/Armodafinil
+                  </span>
+                  <Link
+                    href="/shop"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="pl-2 text-sm font-medium text-primary"
+                  >
+                    Shop — all products
+                  </Link>
+                  <div className="flex max-h-[40vh] flex-col gap-1 overflow-y-auto pl-2">
+                    {modafinilArmodafinilProducts.map((p) => (
+                      <Link
+                        key={p.slug}
+                        href={`/${p.slug}`}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        {p.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm font-semibold text-foreground">Moda Combos</span>
+                  <Link
+                    href="/nootropic-combos"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="pl-2 text-sm font-medium text-primary"
+                  >
+                    All combos
+                  </Link>
+                  <div className="flex flex-col gap-1 pl-2">
+                    {modaCombosItems.map((c) => (
+                      <Link
+                        key={c.slug}
+                        href={`/${c.slug}`}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        {c.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 border-t border-border pt-4">
                   {isLoggedIn ? (
                     <Button variant="outline" asChild>
                       <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>

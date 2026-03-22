@@ -29,18 +29,21 @@ const steps = [
 export function PaymentEducation() {
   return (
     <section
-      className="relative overflow-hidden border-y border-border bg-gradient-to-b from-card/80 to-background py-20"
+      className="relative overflow-hidden border-y border-border bg-gradient-to-b from-card/80 to-background py-12 sm:py-16 lg:py-20"
       aria-labelledby="payment-flow-heading"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--primary)/0.15),transparent)]" />
       <div className="relative mx-auto max-w-7xl px-4 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-medium uppercase tracking-wider text-primary">Payments</p>
-          <h2 id="payment-flow-heading" className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2
+            id="payment-flow-heading"
+            className="mt-2 text-balance text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl"
+          >
             Fiat or crypto — you always settle in crypto
           </h2>
           <p className="mt-4 text-muted-foreground">
-            Noofox is built for privacy-first checkout. Use your own wallet, or buy crypto with a
+            GrabModa is built for privacy-first checkout. Use your own wallet, or buy crypto with a
             card through our partner Guardarian and complete the transfer on this site.
           </p>
         </div>
@@ -71,15 +74,15 @@ export function PaymentEducation() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row"
+          className="mt-12 flex w-full max-w-md flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row sm:items-center sm:gap-4"
         >
-          <Button asChild size="lg">
+          <Button asChild size="lg" className="w-full sm:w-auto">
             <Link href="/shop">
               Shop products
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
-          <Button asChild size="lg" variant="outline">
+          <Button asChild size="lg" variant="outline" className="w-full whitespace-normal text-center sm:w-auto sm:whitespace-nowrap">
             <a href={ONRAMP_URL} target="_blank" rel="noopener noreferrer">
               Open Guardarian (card → crypto)
             </a>

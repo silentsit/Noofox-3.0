@@ -1,12 +1,13 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CartProvider } from '@/context/CartContext';
 import { organizationJsonLd } from '@/lib/schema';
+import { SITE_LOGO_ALT, SITE_LOGO_HEIGHT, SITE_LOGO_SRC, SITE_LOGO_WIDTH } from '@/lib/branding';
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com';
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -31,40 +32,42 @@ export const viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
-    default: 'Noofox | Premium Nootropics & Cognitive Enhancers',
-    template: '%s | Noofox',
+    default: 'GrabModa | Premium Nootropics & Cognitive Enhancers',
+    template: '%s | GrabModa',
   },
   description:
     'Premium nootropics delivered worldwide. Pay with crypto or card. Free shipping on every order.',
-  applicationName: 'Noofox',
+  applicationName: 'GrabModa',
   keywords: [
-    'Noofox',
+    'GrabModa',
     'nootropics',
     'modafinil',
     'armodafinil',
     'cognitive enhancers',
     'buy modafinil online',
   ],
-  authors: [{ name: 'Noofox', url: SITE }],
-  creator: 'Noofox',
-  publisher: 'Noofox',
+  authors: [{ name: 'GrabModa', url: SITE }],
+  creator: 'GrabModa',
+  publisher: 'GrabModa',
   formatDetection: { email: false, address: false, telephone: false },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   openGraph: {
-    title: 'Noofox | Premium Nootropics & Cognitive Enhancers',
+    title: 'GrabModa | Premium Nootropics & Cognitive Enhancers',
     description: 'Premium nootropics delivered worldwide. Pay with crypto or card.',
     type: 'website',
     url: SITE,
-    siteName: 'Noofox',
+    siteName: 'GrabModa',
     locale: 'en_US',
-    images: [{ url: '/best_noofox_logo_3.png', width: 1200, height: 300, alt: 'Noofox' }],
+    images: [
+      { url: SITE_LOGO_SRC, width: SITE_LOGO_WIDTH, height: SITE_LOGO_HEIGHT, alt: SITE_LOGO_ALT },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Noofox | Premium Nootropics & Cognitive Enhancers',
+    title: 'GrabModa | Premium Nootropics & Cognitive Enhancers',
     description: 'Premium nootropics delivered worldwide. Pay with crypto or card.',
-    creator: '@Noofox',
-    images: [`${SITE}/best_noofox_logo_3.png`],
+    creator: '@GrabModa',
+    images: [`${SITE}${SITE_LOGO_SRC}`],
   },
   category: 'health',
 };
@@ -80,7 +83,7 @@ export default function RootLayout({
       className={`${inter.variable} ${plusJakarta.variable} dark`}
       suppressHydrationWarning
     >
-      <body className="min-h-screen min-w-0 flex flex-col font-sans antialiased overflow-x-hidden">
+      <body className="min-h-screen-safe min-w-0 flex flex-col font-sans antialiased overflow-x-hidden pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

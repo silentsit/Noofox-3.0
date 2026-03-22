@@ -1,20 +1,22 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Calendar } from 'lucide-react';
+import { ArrowLeft, Calendar, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import {
   getBlogPostBySlug,
   getPublishedBlogSlugs,
   excerptFromHtml,
+  getFirstImageUrlFromHtml,
+  getRelatedBlogPostsExcludingSlug,
 } from '@/lib/blog';
 import { sanitizeHtml } from '@/lib/sanitizeHtml';
 import { blogPostingJsonLd } from '@/lib/schema';
 
-export const dynamic = 'force-dynamic';
-
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com';
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com';
 
 type PageParams = { slug: string };
 
@@ -39,7 +41,7 @@ export async function generateMetadata({
       title: post.title,
       description: description || post.title,
       url,
-      siteName: 'Noofox',
+      siteName: 'GrabModa',
       type: 'article',
       publishedTime: post.created_at,
       modifiedTime: post.updated_at,
@@ -48,7 +50,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title: post.title,
       description: description || post.title,
-      creator: '@Noofox',
+      creator: '@GrabModa',
     },
     alternates: { canonical: url },
   };
@@ -62,6 +64,8 @@ export default async function BlogPostPage({
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
   if (!post) notFound();
+
+  const relatedPosts = await getRelatedBlogPostsExcludingSlug(slug, 3);
 
   const safeContent = sanitizeHtml(post.content);
   const datePublished = new Date(post.created_at);
@@ -105,6 +109,59 @@ export default async function BlogPostPage({
           dangerouslySetInnerHTML={{ __html: safeContent }}
         />
       </article>
+
+      {relatedPosts.length > 0 && (
+        <div className="mx-auto mt-16 max-w-6xl px-4 lg:px-8">
+          <Separator className="w-full" />
+          <section className="mt-10" aria-labelledby="related-posts-heading">
+            <h4
+              id="related-posts-heading"
+              className="font-display text-xl font-semibold tracking-tight text-foreground"
+            >
+              You May Like to Read
+            </h4>
+            <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {relatedPosts.map((related) => {
+                const thumb = getFirstImageUrlFromHtml(related.content);
+                const blurb = excerptFromHtml(related.content, 110);
+                return (
+                  <li key={related.id}>
+                    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-md">
+                      <Link href={`/blog/${related.slug}`} className="flex flex-1 flex-col">
+                        <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+                          {thumb ? (
+                            <Image
+                              src={thumb}
+                              alt=""
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 640px) 100vw, 33vw"
+                              unoptimized={thumb.startsWith('http') || thumb.includes('koala.sh')}
+                            />
+                          ) : (
+                            <div className="flex h-full min-h-[10rem] items-center justify-center">
+                              <FileText className="h-10 w-10 text-muted-foreground/50" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-1 flex-col p-4">
+                          <h5 className="text-base font-semibold leading-snug text-foreground line-clamp-2 transition-colors hover:text-primary">
+                            {related.title}
+                          </h5>
+                          {blurb && (
+                            <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{blurb}</p>
+                          )}
+                          <span className="mt-3 text-sm font-medium text-primary">Read more</span>
+                        </div>
+                      </Link>
+                    </article>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        </div>
+      )}
     </div>
   );
 }

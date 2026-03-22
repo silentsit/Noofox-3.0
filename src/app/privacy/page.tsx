@@ -1,14 +1,14 @@
-import { Metadata } from 'next'
+﻿import { Metadata } from 'next'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com'
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'Learn how Noofox collects, uses, and protects your personal information.',
+  description: 'Learn how GrabModa collects, uses, and protects your personal information.',
   alternates: { canonical: `${BASE}/privacy` },
 }
 
@@ -37,7 +37,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-semibold text-foreground">1. Introduction</h2>
             <p className="mt-4">
-              Noofox (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your
+              GrabModa (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your
               privacy. This Privacy Policy explains how we collect, use,
               disclose, and safeguard your information when you visit our
               website and make purchases.
@@ -104,7 +104,7 @@ export default function PrivacyPage() {
               <li>Opt out of marketing communications</li>
             </ul>
             <p className="mt-4">
-              To exercise these rights, contact us at info@noofox.com.
+              To exercise these rights, contact us at info@grabmoda.com.
             </p>
           </section>
 
@@ -112,8 +112,8 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-semibold text-foreground">7. Contact Us</h2>
             <p className="mt-4">
               If you have questions about this Privacy Policy, please contact us at:{' '}
-<a href="mailto:info@noofox.com" className="text-primary hover:underline">
-              info@noofox.com
+<a href="mailto:info@grabmoda.com" className="text-primary hover:underline">
+              info@grabmoda.com
             </a>
             </p>
           </section>

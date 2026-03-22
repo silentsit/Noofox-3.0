@@ -1,4 +1,4 @@
-import { Metadata } from 'next'
+﻿import { Metadata } from 'next'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -9,11 +9,11 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com'
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com'
 
 export const metadata: Metadata = {
   title: 'FAQ',
-  description: 'Frequently asked questions about ordering Modafinil and Armodafinil from Noofox.',
+  description: 'Frequently asked questions about ordering Modafinil and Armodafinil from GrabModa.',
   alternates: { canonical: `${BASE}/faq` },
 }
 
@@ -94,7 +94,7 @@ const faqCategories = [
       },
       {
         question: 'How can I contact customer support?',
-        answer: 'You can reach us via email at info@noofox.com. We typically respond within 24 hours, 7 days a week.',
+        answer: 'You can reach us via email at info@grabmoda.com. We typically respond within 24 hours, 7 days a week.',
       },
       {
         question: 'What is your return policy?',

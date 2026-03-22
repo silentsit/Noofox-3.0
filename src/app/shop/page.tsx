@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { Metadata } from 'next'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -8,7 +8,7 @@ import { getProductsBySilo } from '@/lib/catalogCategories'
 import { ProductCard } from '@/components/products/ProductCard'
 import { itemListJsonLd } from '@/lib/schema'
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com'
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com'
 
 export const metadata: Metadata = {
   title: 'Shop All Products',
@@ -22,14 +22,14 @@ export default async function ShopPage() {
   const armodafinilProducts = getProductsBySilo(products, 'armodafinil')
   const comboProducts = getProductsBySilo(products, 'combo')
   const listLd = itemListJsonLd(
-    'Noofox Shop',
+    'GrabModa Shop',
     'Modafinil, Armodafinil, and combo products.',
     '/shop',
     products
   )
 
   return (
-    <div className="py-12">
+    <div className="py-8 sm:py-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(listLd) }}
@@ -38,7 +38,7 @@ export default async function ShopPage() {
         {/* Header */}
         <div className="text-center">
           <Badge variant="secondary">All Products</Badge>
-          <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+          <h1 className="mt-4 text-balance text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
             Shop Cognitive Enhancers
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
@@ -62,8 +62,8 @@ export default async function ShopPage() {
         {/* Modafinil Section */}
         {modafinilProducts.length > 0 && (
           <section id="modafinil" className="mt-12 scroll-mt-32" aria-labelledby="modafinil-heading">
-            <div className="flex items-center gap-4">
-              <h2 id="modafinil-heading" className="text-2xl font-bold">Modafinil</h2>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+              <h2 id="modafinil-heading" className="text-xl font-bold sm:text-2xl">Modafinil</h2>
               <Badge variant="outline">{modafinilProducts.length} products</Badge>
             </div>
             <p className="mt-2 text-muted-foreground">
@@ -81,8 +81,8 @@ export default async function ShopPage() {
         {/* Armodafinil Section */}
         {armodafinilProducts.length > 0 && (
           <section id="armodafinil" className="mt-20 scroll-mt-32" aria-labelledby="armodafinil-heading">
-            <div className="flex items-center gap-4">
-              <h2 id="armodafinil-heading" className="text-2xl font-bold">Armodafinil</h2>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+              <h2 id="armodafinil-heading" className="text-xl font-bold sm:text-2xl">Armodafinil</h2>
               <Badge variant="outline">{armodafinilProducts.length} products</Badge>
             </div>
             <p className="mt-2 text-muted-foreground">
@@ -100,8 +100,8 @@ export default async function ShopPage() {
         {/* Combos */}
         {comboProducts.length > 0 && (
           <section id="combos" className="mt-20 scroll-mt-32" aria-labelledby="combos-heading">
-            <div className="flex items-center gap-4">
-              <h2 id="combos-heading" className="text-2xl font-bold">Nootropic Combos</h2>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+              <h2 id="combos-heading" className="text-xl font-bold sm:text-2xl">Nootropic Combos</h2>
               <Badge variant="outline">{comboProducts.length} products</Badge>
             </div>
             <p className="mt-2 text-muted-foreground">
@@ -117,8 +117,8 @@ export default async function ShopPage() {
         </div>
 
         {/* Info Banner */}
-        <div className="mt-20 rounded-2xl border border-border bg-card p-8">
-          <div className="grid gap-8 md:grid-cols-3">
+        <div className="mt-12 rounded-2xl border border-border bg-card p-4 sm:mt-20 sm:p-8">
+          <div className="grid gap-6 sm:gap-8 md:grid-cols-3">
             <div>
               <h3 className="font-semibold">Free Worldwide Shipping</h3>
               <p className="mt-2 text-sm text-muted-foreground">

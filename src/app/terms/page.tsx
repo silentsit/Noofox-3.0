@@ -1,14 +1,14 @@
-import { Metadata } from 'next'
+﻿import { Metadata } from 'next'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com'
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com'
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
-  description: 'Read the terms and conditions for using Noofox services.',
+  description: 'Read the terms and conditions for using GrabModa services.',
   alternates: { canonical: `${BASE}/terms` },
 }
 
@@ -37,7 +37,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-foreground">1. Agreement to Terms</h2>
             <p className="mt-4">
-              By accessing or using Noofox&apos;s website and services, you agree to
+              By accessing or using GrabModa&apos;s website and services, you agree to
               be bound by these Terms of Service and all applicable laws and
               regulations.
             </p>
@@ -55,7 +55,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-foreground">3. Products and Services</h2>
             <p className="mt-4">
-              Noofox provides cognitive enhancement products for personal use.
+              GrabModa provides cognitive enhancement products for personal use.
               Our products are intended for use by adults seeking to improve
               focus, productivity, and cognitive function.
             </p>
@@ -104,7 +104,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-foreground">8. Limitation of Liability</h2>
             <p className="mt-4">
-              To the maximum extent permitted by law, Noofox shall not be liable
+              To the maximum extent permitted by law, GrabModa shall not be liable
               for any indirect, incidental, special, consequential, or punitive
               damages arising out of your use of our services.
             </p>
@@ -114,8 +114,8 @@ export default function TermsPage() {
             <h2 className="text-xl font-semibold text-foreground">9. Contact</h2>
             <p className="mt-4">
               For questions about these Terms of Service, contact us at:{' '}
-              <a href="mailto:info@noofox.com" className="text-primary hover:underline">
-                info@noofox.com
+              <a href="mailto:info@grabmoda.com" className="text-primary hover:underline">
+                info@grabmoda.com
               </a>
             </p>
           </section>

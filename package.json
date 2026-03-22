@@ -10,6 +10,7 @@
     "gen:types": "supabase gen types typescript --linked > src/types/supabase.ts",
     "sync:noofoxxx": "node scripts/sync-product-content-from-noofoxxx.mjs",
     "import:blog": "node scripts/import-blog-posts.mjs",
+    "blog:sync": "node scripts/fetch-noofox-blog.mjs",
     "db:migrate:blog": "node scripts/run-blog-migration.mjs"
   },
   "dependencies": {

@@ -53,6 +53,9 @@ body {
   font-feature-settings: "rlig" 1, "calt" 1;
   overflow-x: hidden;
   min-width: 0;
+  /* Long tokens/URLs don’t force horizontal scroll */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 img, video, iframe, object, embed {
@@ -63,6 +66,21 @@ img, video, iframe, object, embed {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Full viewport on mobile (dynamic toolbar / notches) */
+  .min-h-screen-safe {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Horizontal scroll for chip/tab rows on narrow screens */
+  .scrollbar-touch {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .scrollbar-touch::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -136,6 +154,14 @@ img, video, iframe, object, embed {
   .rich-content img {
     max-width: 100%;
     height: auto;
+  }
+
+  .rich-content figure {
+    margin: 1.5rem 0;
+  }
+
+  .rich-content figure.wp-block-image img {
+    border-radius: var(--radius);
   }
 
   .rich-content table {

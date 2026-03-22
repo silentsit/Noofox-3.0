@@ -32,8 +32,11 @@ const CRYPTO_WALLETS: Record<string, { name: string; network: string; address: s
 function SuccessContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId');
+  const method = searchParams.get('method') ?? '';
   const coin = searchParams.get('coin')?.toUpperCase() ?? '';
-  const wallet = CRYPTO_WALLETS[coin];
+  const showCryptoPay =
+    coin && CRYPTO_WALLETS[coin] && (method === 'crypto' || method === 'pay_crypto');
+  const wallet = showCryptoPay ? CRYPTO_WALLETS[coin] : undefined;
 
   return (
     <div className="py-16">
@@ -76,8 +79,8 @@ function SuccessContent() {
             <div className="flex items-start gap-3 rounded-xl border border-primary/30 bg-primary/10 p-4 text-sm text-muted-foreground">
               <Shield className="h-4 w-4 shrink-0 mt-0.5 text-primary" />
               <p>
-                We have recorded your transaction hash. Keep your wallet receipt as proof
-                of payment. If we cannot verify within 24 hours, we will reach out via email.
+                Send the correct amount from your wallet to the address above. Keep your receipt as proof of payment.
+                If we cannot verify within 24 hours, we will reach out via email.
               </p>
             </div>
           </div>

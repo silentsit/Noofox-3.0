@@ -70,10 +70,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: validationError }, { status: 400 });
   }
 
-  const total_amount = items.reduce(
+  let total_amount = items.reduce(
     (sum, i) => sum + Number(i.price) * (i.quantity || 1),
     0
   );
+  /** Match storefront “Pay with Crypto (15% Off)” — applied server-side only for this method. */
+  const payMethod = String(payment_method ?? '');
+  if (payMethod === 'pay_crypto') {
+    total_amount = Math.round(total_amount * 85) / 100;
+  }
   const ip_address = getClientIp(request);
   const user_agent = getUserAgent(request);
 

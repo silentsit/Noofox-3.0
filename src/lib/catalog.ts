@@ -152,8 +152,8 @@ export async function getCatalogDataset(): Promise<CatalogDataset> {
   const products = await getCatalogProducts();
   return {
     generatedAt: new Date().toISOString(),
-    source: 'https://noofox.com',
-    sitemapUrl: 'https://noofox.com/product-sitemap.xml',
+    source: 'https://grabmoda.com',
+    sitemapUrl: 'https://grabmoda.com/product-sitemap.xml',
     productCount: products.length,
     products,
   };

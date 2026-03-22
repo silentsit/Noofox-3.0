@@ -1,4 +1,4 @@
-# Noofox E-Commerce 3.0
+# GrabModa E-Commerce 3.0
 
 Modern e-commerce platform built with **Next.js (App Router)**, **TypeScript**, **Tailwind CSS**, and **Supabase** (PostgreSQL + Auth). Ready for deployment on Vercel or Netlify.
 

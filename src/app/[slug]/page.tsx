@@ -13,6 +13,8 @@ import { getCatalogProductBySlug, getCatalogProducts, getRelatedCatalogProducts 
 import { getCatalogProductImageUrl } from '@/lib/productImage';
 import { productJsonLd } from '@/lib/schema';
 
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com').replace(/\/$/, '');
+
 export const dynamicParams = true;
 
 type PageParams = {
@@ -26,16 +28,16 @@ function buildSupplementalSchemas(product: NonNullable<Awaited<ReturnType<typeof
           '@type': 'ListItem',
           position: index + 1,
           name: crumb.name,
-          item: crumb.href.startsWith('http') ? crumb.href : `https://noofox.com${crumb.href}`,
+          item: crumb.href.startsWith('http') ? crumb.href : `${SITE}${crumb.href}`,
         }))
       : [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://noofox.com/' },
-          { '@type': 'ListItem', position: 2, name: 'Shop', item: 'https://noofox.com/shop' },
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+          { '@type': 'ListItem', position: 2, name: 'Shop', item: `${SITE}/shop` },
           {
             '@type': 'ListItem',
             position: 3,
             name: product.name,
-            item: `https://noofox.com${product.urlPath}`,
+            item: `${SITE}${product.urlPath}`,
           },
         ];
 
@@ -78,13 +80,13 @@ export async function generateMetadata({
       title: product.seo.openGraph.title || product.seo.title,
       description: product.seo.openGraph.description || product.seo.description,
       url: product.urlPath,
-      siteName: product.seo.openGraph.siteName || 'Noofox',
+      siteName: product.seo.openGraph.siteName || 'GrabModa',
     },
     twitter: {
       card: 'summary_large_image',
       title: product.seo.twitter.title || product.seo.title,
       description: product.seo.twitter.description || product.seo.description,
-      creator: product.seo.twitter.creator || '@Noofox',
+      creator: product.seo.twitter.creator || '@GrabModa',
     },
     robots: product.seo.robots,
   };
@@ -115,7 +117,7 @@ export default async function ProductSlugPage({
   const allImages = product.images?.length ? product.images : [];
 
   return (
-    <div className="py-12">
+    <div className="py-8 sm:py-12">
       {schemas.map((schema, index) => (
         <script
           key={`${product.slug}-schema-${index}`}
@@ -140,7 +142,7 @@ export default async function ProductSlugPage({
         <div className="grid gap-12 lg:grid-cols-2">
           {/* Product Image */}
           <div className="relative">
-            <div className="sticky top-24">
+            <div className="lg:sticky lg:top-24">
               {allImages.length > 1 ? (
                 <ProductImageGallery images={allImages} productName={product.name} />
               ) : (
@@ -187,11 +189,11 @@ export default async function ProductSlugPage({
               )}
             </div>
 
-            <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+            <h1 className="mt-4 text-balance text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
               {product.name}
             </h1>
 
-            <p className="mt-4 text-lg text-muted-foreground">
+            <p className="mt-4 text-base text-muted-foreground sm:text-lg">
               {product.seo.description || product.shortDescriptionText}
             </p>
 
@@ -238,8 +240,8 @@ export default async function ProductSlugPage({
 
         {/* Product Details */}
         {product.descriptionHtml && (
-          <div className="mt-16 rounded-2xl border border-border bg-card p-8">
-            <h2 className="text-xl font-semibold">Product Information</h2>
+          <div className="mt-12 rounded-2xl border border-border bg-card p-4 sm:mt-16 sm:p-8">
+            <h2 className="text-lg font-semibold sm:text-xl">Product Information</h2>
             <div
               className="rich-content mt-6"
               dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
@@ -249,8 +251,8 @@ export default async function ProductSlugPage({
 
         {/* FAQs */}
         {product.faqs.length > 0 && (
-          <div className="mt-16 rounded-2xl border border-border bg-card p-8">
-            <h2 className="text-xl font-semibold">Frequently Asked Questions</h2>
+          <div className="mt-12 rounded-2xl border border-border bg-card p-4 sm:mt-16 sm:p-8">
+            <h2 className="text-lg font-semibold sm:text-xl">Frequently Asked Questions</h2>
             <div className="mt-6 space-y-4">
               {product.faqs.map((faq) => (
                 <details
@@ -270,9 +272,9 @@ export default async function ProductSlugPage({
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <div className="mt-16">
-            <div className="flex items-end justify-between">
-              <div>
-                <h2 className="text-2xl font-bold">Related Products</h2>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div className="min-w-0">
+                <h2 className="text-xl font-bold sm:text-2xl">Related Products</h2>
                 <p className="mt-2 text-muted-foreground">
                   You may also like
                 </p>

@@ -1,75 +1,77 @@
 /**
- * Blog data layer: fetch published posts for sitemap and blog pages.
- * Uses Supabase; returns [] if table not yet migrated or on error.
+ * Blog data layer: published posts ship from `src/data/noofox-blog-posts.json`
+ * (synced from noofox.com WordPress). Admin CRUD still uses Supabase when configured.
  */
 
-import { createClient } from '@/lib/supabase/server';
 import type { BlogPost } from '@/types/blog';
+import rawBlogPosts from '@/data/noofox-blog-posts.json';
+import { createClient } from '@/lib/supabase/server';
+
+function escapeRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Infer category from slug (matches /blog filters). */
+export function inferBlogCategory(slug: string): 'nootropics' | 'meditation' | 'general' {
+  const s = slug.toLowerCase();
+  if (
+    s.includes('dmt') ||
+    s.includes('meditation') ||
+    s.includes('ho-oponopono') ||
+    s.includes('oponopono')
+  ) {
+    return 'meditation';
+  }
+  if (s.includes('viagra')) return 'general';
+  return 'nootropics';
+}
+
+function rewriteImportedBlogHtml(html: string, blogSlugs: Set<string>): string {
+  let h = html.replace(/https:\/\/noofoxxx\.local\//g, 'https://grabmoda.com/');
+  for (const slug of blogSlugs) {
+    h = h.replace(
+      new RegExp(`https://noofox\\.com/${escapeRegex(slug)}/`, 'g'),
+      `/blog/${slug}/`
+    );
+  }
+  return h;
+}
+
+const RAW: BlogPost[] = rawBlogPosts as BlogPost[];
+const BLOG_SLUG_SET = new Set(RAW.map((p) => p.slug));
+
+const PUBLISHED_POSTS: BlogPost[] = RAW.map((p) => ({
+  ...p,
+  content: rewriteImportedBlogHtml(p.content, BLOG_SLUG_SET),
+})).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
 export async function getPublishedBlogSlugs(): Promise<{ slug: string }[]> {
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('slug')
-      .eq('published', true)
-      .order('created_at', { ascending: false });
-    if (error) return [];
-    return (data ?? []).map((row) => ({ slug: row.slug }));
-  } catch {
-    return [];
-  }
+  return PUBLISHED_POSTS.map((p) => ({ slug: p.slug }));
 }
 
 /** For sitemap: slug + lastModified. */
 export async function getPublishedBlogSlugsWithDates(): Promise<
   { slug: string; updated_at: string }[]
 > {
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('slug, updated_at')
-      .eq('published', true)
-      .order('created_at', { ascending: false });
-    if (error) return [];
-    return (data ?? []).map((row) => ({ slug: row.slug, updated_at: row.updated_at }));
-  } catch {
-    return [];
-  }
+  return PUBLISHED_POSTS.map((p) => ({ slug: p.slug, updated_at: p.updated_at }));
 }
 
 export async function getPublishedBlogPosts(limit?: number): Promise<BlogPost[]> {
-  try {
-    const supabase = await createClient();
-    let query = supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('published', true)
-      .order('created_at', { ascending: false });
-    if (limit != null) query = query.limit(limit);
-    const { data, error } = await query;
-    if (error) return [];
-    return (data ?? []) as BlogPost[];
-  } catch {
-    return [];
-  }
+  const list = [...PUBLISHED_POSTS];
+  if (limit != null) return list.slice(0, limit);
+  return list;
+}
+
+export async function getPublishedBlogPostsByCategory(
+  category: 'nootropics' | 'meditation' | 'general' | null
+): Promise<BlogPost[]> {
+  if (!category) return getPublishedBlogPosts();
+  return PUBLISHED_POSTS.filter((p) => inferBlogCategory(p.slug) === category);
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('slug', slug)
-      .eq('published', true)
-      .single();
-    if (error || !data) return null;
-    return data as BlogPost;
-  } catch {
-    return null;
-  }
+  const post = PUBLISHED_POSTS.find((p) => p.slug === slug);
+  return post ?? null;
 }
 
 /** All blog posts for admin (includes unpublished). Requires admin role for RLS. */
@@ -80,10 +82,10 @@ export async function getAdminBlogPosts(): Promise<BlogPost[]> {
       .from('blog_posts')
       .select('*')
       .order('created_at', { ascending: false });
-    if (error) return [];
-    return (data ?? []) as BlogPost[];
+    if (error || !data?.length) return [...PUBLISHED_POSTS];
+    return data as BlogPost[];
   } catch {
-    return [];
+    return [...PUBLISHED_POSTS];
   }
 }
 
@@ -92,11 +94,51 @@ export async function getAdminBlogPostById(id: string): Promise<BlogPost | null>
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('blog_posts').select('*').eq('id', id).single();
-    if (error || !data) return null;
+    if (error || !data) {
+      return PUBLISHED_POSTS.find((p) => p.id === id) ?? null;
+    }
     return data as BlogPost;
   } catch {
-    return null;
+    return PUBLISHED_POSTS.find((p) => p.id === id) ?? null;
   }
+}
+
+/**
+ * First image URL from post HTML (`<img src>`, `data-src`, or first URL in `srcset`).
+ * Used for blog cards and related posts thumbnails.
+ */
+export function getFirstImageUrlFromHtml(html: string): string | null {
+  if (!html || typeof html !== 'string') return null;
+  const imgTag = html.match(/<img\b[^>]*>/i)?.[0];
+  if (!imgTag) return null;
+  const src =
+    imgTag.match(/\ssrc=["']([^"']+)["']/i)?.[1] ??
+    imgTag.match(/\sdata-src=["']([^"']+)["']/i)?.[1];
+  if (src) return normalizeBlogImageUrl(src);
+  const srcset = imgTag.match(/\ssrcset=["']([^"']+)["']/i)?.[1];
+  if (srcset) {
+    const first = srcset
+      .split(',')
+      .map((s) => s.trim().split(/\s+/)[0])
+      .filter(Boolean)[0];
+    if (first) return normalizeBlogImageUrl(first);
+  }
+  return null;
+}
+
+function normalizeBlogImageUrl(url: string): string {
+  return url
+    .replace(/&amp;/g, '&')
+    .replace(/&#038;/g, '&')
+    .trim();
+}
+
+/** Other published posts (newest first), excluding the current slug. */
+export async function getRelatedBlogPostsExcludingSlug(
+  slug: string,
+  limit: number = 3
+): Promise<BlogPost[]> {
+  return PUBLISHED_POSTS.filter((p) => p.slug !== slug).slice(0, limit);
 }
 
 /** Strip HTML and return plain text excerpt (max length). */

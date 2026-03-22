@@ -1,14 +1,14 @@
-import { Metadata } from 'next'
+﻿import { Metadata } from 'next'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Truck, Shield, Clock } from 'lucide-react'
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com'
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com'
 
 export const metadata: Metadata = {
   title: 'Shipping Policy',
-  description: 'Learn about Noofox shipping options, delivery times, and policies.',
+  description: 'Learn about GrabModa shipping options, delivery times, and policies.',
   alternates: { canonical: `${BASE}/shipping` },
 }
 

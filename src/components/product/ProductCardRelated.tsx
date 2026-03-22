@@ -100,7 +100,7 @@ export function ProductCardRelated({ product, badge = null }: ProductCardRelated
             </span>
           )}
           <span className="rounded-lg border border-surface-200 bg-surface-100 px-2.5 py-1 text-xs text-surface-700">
-            Noofox
+            GrabModa
           </span>
         </div>
 

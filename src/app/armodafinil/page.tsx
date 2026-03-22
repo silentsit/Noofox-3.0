@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,18 +9,18 @@ import { breadcrumbListJsonLd, itemListJsonLd } from '@/lib/schema';
 
 export const revalidate = 3600;
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://noofox.com';
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com';
 
 export const metadata: Metadata = {
-  title: 'Armodafinil — Shop',
+  title: 'Armodafinil â€” Shop',
   description:
     'Browse premium Armodafinil: Waklert, Artvigil, ArmodaXL, and more. Secure crypto or card checkout.',
   alternates: { canonical: `${BASE}/armodafinil` },
   openGraph: {
-    title: 'Armodafinil Products | Noofox',
+    title: 'Armodafinil Products | GrabModa',
     description: 'Premium Armodafinil for clean, long-lasting focus.',
     url: `${BASE}/armodafinil`,
-    siteName: 'Noofox',
+    siteName: 'GrabModa',
     type: 'website',
   },
 };
@@ -74,7 +74,7 @@ export default async function ArmodafinilCategoryPage() {
           <Badge variant="secondary">Category</Badge>
           <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">Armodafinil</h1>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            The R-enantiomer of Modafinil — often preferred for smooth, long-lasting alertness.
+            The R-enantiomer of Modafinil â€” often preferred for smooth, long-lasting alertness.
             Select a product and continue with <strong className="text-foreground">Buy now</strong>.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">

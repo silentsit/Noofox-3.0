@@ -97,8 +97,8 @@ async function run() {
   if (catalog.generatedAt) {
     await supabase.from('catalog_import_meta').insert({
       generated_at: catalog.generatedAt,
-      source: catalog.source ?? 'https://noofox.com',
-      sitemap_url: catalog.sitemapUrl ?? 'https://noofox.com/product-sitemap.xml',
+      source: catalog.source ?? 'https://grabmoda.com',
+      sitemap_url: catalog.sitemapUrl ?? 'https://grabmoda.com/product-sitemap.xml',
       product_count: products.length,
     });
   }

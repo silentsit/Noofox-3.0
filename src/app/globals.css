@@ -3,26 +3,33 @@
 @tailwind utilities;
 
 @layer base {
+  /*
+   * Brand colors (GrabModa wordmark) — sampled from Logo Design/colored-logo.svg:
+   *   leaf green fills ≈ rgb(82–86, 185, 100–102) → #55BA65 / #56B966
+   *   wordmark dark ≈ rgb(3,3,3) → #030303
+   * HSL values below are unwrapped for hsl(var(--token) / opacity).
+   */
   :root {
-    --background: 222 20% 13%;
+    --background: 150 14% 11%;
     --foreground: 0 0% 96%;
-    --card: 222 15% 18%;
+    --card: 148 12% 15%;
     --card-foreground: 0 0% 96%;
-    --popover: 222 15% 18%;
+    --popover: 148 12% 15%;
     --popover-foreground: 0 0% 96%;
-    --primary: 175 60% 50%;
-    --primary-foreground: 222 20% 13%;
-    --secondary: 222 12% 25%;
+    /* Logo-adjacent green; pair with dark foreground for WCAG on filled buttons */
+    --primary: 128 42% 52%;
+    --primary-foreground: 152 28% 7%;
+    --secondary: 148 10% 24%;
     --secondary-foreground: 0 0% 96%;
-    --muted: 222 12% 22%;
-    --muted-foreground: 222 12% 65%;
-    --accent: 175 40% 45%;
+    --muted: 150 10% 20%;
+    --muted-foreground: 145 10% 62%;
+    --accent: 128 28% 22%;
     --accent-foreground: 0 0% 96%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 96%;
-    --border: 222 12% 28%;
-    --input: 222 12% 22%;
-    --ring: 175 60% 50%;
+    --border: 150 9% 26%;
+    --input: 150 9% 20%;
+    --ring: 128 50% 56%;
     --radius: 0.75rem;
   }
 
@@ -86,7 +93,7 @@ img, video, iframe, object, embed {
 
 @layer base {
   ::selection {
-    background-color: rgba(29, 156, 146, 0.3);
+    background-color: rgba(86, 185, 102, 0.35);
     color: #f0f0f0;
   }
 

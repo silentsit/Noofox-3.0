@@ -126,7 +126,7 @@ export default async function DashboardPage() {
         </p>
         <Link
           href="/dashboard/profile"
-          className="mt-4 inline-block rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-surface-900 hover:bg-brand-700"
+          className="mt-4 inline-block rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
         >
           Edit profile
         </Link>

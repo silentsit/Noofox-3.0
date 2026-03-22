@@ -24,7 +24,7 @@ export default async function AdminProductsPage() {
         </div>
         <Link
           href="/admin/products/new"
-          className="rounded-lg bg-brand-600 px-4 py-2.5 font-medium text-surface-900 hover:bg-brand-700"
+          className="rounded-lg bg-brand-600 px-4 py-2.5 font-medium text-white hover:bg-brand-700"
         >
           Add product
         </Link>

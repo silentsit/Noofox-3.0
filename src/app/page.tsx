@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Zap, Shield, Truck, Clock, Star, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -83,15 +83,6 @@ const stats = [
   { value: 'Secure Payments', label: 'Crypto & Credit Card' },
 ]
 
-/** Professional headshots for hero avatars (Unsplash, face crop) */
-const HERO_AVATARS = [
-  'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&h=80&fit=crop&crop=face',
-  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop&crop=face',
-  'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=80&h=80&fit=crop&crop=face',
-  'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face',
-  'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=80&h=80&fit=crop&crop=face',
-]
-
 export default async function Home() {
   const featuredProducts = await getFeaturedCatalogProducts(8)
   const recentPosts = await getPublishedBlogPosts(3)
@@ -113,7 +104,7 @@ export default async function Home() {
               </h2>
             </div>
             <Badge variant="secondary" className="w-fit text-[12px] font-normal">
-              Unbeatable Prices Â· 24/7 Support Â· Guaranteed Delivery
+              Unbeatable Prices · 24/7 Support · 100% Guaranteed Delivery
             </Badge>
             <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
               Enthusiastic about cognitive enhancement, repurposed medications, and meditation.
@@ -127,36 +118,18 @@ export default async function Home() {
                 </Link>
               </Button>
             </div>
-            <div className="flex flex-col items-center gap-4 pt-4 sm:flex-row sm:gap-6">
-              <div className="flex -space-x-2">
-                {HERO_AVATARS.map((src, i) => (
-                  <div
+            <div className="flex flex-col items-center gap-2 pt-4">
+              <div className="flex justify-center gap-1">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star
                     key={i}
-                    className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-background bg-muted"
-                  >
-                    <img
-                      src={src}
-                      alt=""
-                      className="h-full w-full object-cover"
-                      width={40}
-                      height={40}
-                    />
-                  </div>
+                    className="h-4 w-4 fill-primary text-primary"
+                  />
                 ))}
               </div>
-              <div>
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star
-                      key={i}
-                      className="h-4 w-4 fill-primary text-primary"
-                    />
-                  ))}
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  4.9/5 from 2,300+ reviews
-                </p>
-              </div>
+              <p className="text-center text-sm text-muted-foreground">
+                4.9/5 from 2,300+ reviews
+              </p>
             </div>
           </div>
         </div>
@@ -185,12 +158,9 @@ export default async function Home() {
                 <p className="mt-4 text-muted-foreground">
                   &ldquo;{testimonial.content}&rdquo;
                 </p>
-                <div className="mt-6 flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-muted" />
-                  <div>
-                    <p className="font-medium">{testimonial.name}</p>
-                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                  </div>
+                <div className="mt-6">
+                  <p className="font-medium">{testimonial.name}</p>
+                  <p className="text-sm text-muted-foreground">{testimonial.role}</p>
                 </div>
               </div>
             ))}

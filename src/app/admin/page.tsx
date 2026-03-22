@@ -88,7 +88,7 @@ export default async function AdminDashboardPage() {
       <div className="flex gap-4">
         <Link
           href="/admin/orders"
-          className="rounded-lg bg-brand-600 px-4 py-2.5 font-medium text-surface-900 hover:bg-brand-700"
+          className="rounded-lg bg-brand-600 px-4 py-2.5 font-medium text-white hover:bg-brand-700"
         >
           Manage orders
         </Link>

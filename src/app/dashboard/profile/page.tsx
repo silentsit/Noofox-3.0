@@ -229,7 +229,7 @@ export default function DashboardProfilePage() {
         <button
           type="submit"
           disabled={saving}
-          className="rounded-lg bg-brand-600 px-4 py-2.5 font-medium text-surface-900 hover:bg-brand-700 disabled:opacity-50"
+          className="rounded-lg bg-brand-600 px-4 py-2.5 font-medium text-white hover:bg-brand-700 disabled:opacity-50"
         >
           {saving ? 'Saving…' : 'Save changes'}
         </button>

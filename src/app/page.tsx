@@ -107,8 +107,12 @@ export default async function Home() {
               Unbeatable Prices · 24/7 Support · 100% Guaranteed Delivery
             </Badge>
             <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
-              Enthusiastic about cognitive enhancement, repurposed medications, and meditation.
-              We believe that everyone should have access to affordable medicines.
+              <strong>Where to buy Modafinil online?</strong>
+              <br />
+              Get your Modafinil and cognitive enhancers at GrabModa today!
+              <br />
+              <br />
+              We deliver total peace of mind with our 100% Delivery Guarantee, 24/7 Dedicated Support, and the absolute best prices online.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Button size="lg" asChild>

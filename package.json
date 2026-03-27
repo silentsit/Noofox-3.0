@@ -13,7 +13,8 @@
     "sync:noofoxxx": "node scripts/sync-product-content-from-noofoxxx.mjs",
     "import:blog": "node scripts/import-blog-posts.mjs",
     "blog:sync": "node scripts/fetch-noofox-blog.mjs",
-    "db:migrate:blog": "node scripts/run-blog-migration.mjs"
+    "db:migrate:blog": "node scripts/run-blog-migration.mjs",
+    "admin:create": "node scripts/create-admin-user.mjs"
   },
   "dependencies": {
     "@marsidev/react-turnstile": "^1.4.2",

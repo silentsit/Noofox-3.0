@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { BlogPostForm } from '@/components/admin/BlogPostForm';
+import { requireAdminPage } from '@/lib/rbac';
 
 export const dynamic = 'force-dynamic';
 
-export default function AdminBlogNewPage() {
+export default async function AdminBlogNewPage() {
+  await requireAdminPage({ action: 'write', resource: 'blog' });
   return (
     <div>
       <nav className="mb-6 text-sm text-surface-500">

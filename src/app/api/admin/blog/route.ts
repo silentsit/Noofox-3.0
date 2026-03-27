@@ -1,12 +1,13 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { writeAuditLog } from '@/lib/audit';
+import { requireAdminRoute } from '@/lib/rbac';
 
 export async function POST(request: Request) {
+  const auth = await requireAdminRoute({ action: 'write', resource: 'blog' });
+  if (auth.response) return auth.response;
+
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   const body = await request.json().catch(() => ({}));
   const title = (body.title as string)?.trim();
@@ -24,7 +25,7 @@ export async function POST(request: Request) {
       title,
       slug,
       content: content || '',
-      author_id: user.id,
+      author_id: auth.admin.user.id,
       published,
     })
     .select('id')
@@ -34,5 +35,13 @@ export async function POST(request: Request) {
     if (error.code === '23505') return NextResponse.json({ error: 'Slug already in use' }, { status: 400 });
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
+
+  await writeAuditLog({
+    action: 'create',
+    resourceType: 'blog_post',
+    resourceId: data.id,
+    newData: { title, slug, published },
+  });
+
   return NextResponse.json({ id: data.id });
 }

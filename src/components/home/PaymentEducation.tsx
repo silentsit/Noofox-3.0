@@ -15,13 +15,13 @@ const steps = [
     icon: Wallet,
   },
   {
-    title: 'Pay with crypto or card',
+    title: 'Pay with crypto or credit card',
     copy: 'Crypto goes directly to our wallet. For card, open Guardarian to buy crypto, then return here to send funds and confirm your TxID.',
     icon: CreditCard,
   },
   {
     title: 'We verify & ship',
-    copy: 'After we match your payment, your order is processed with discreet, tracked delivery worldwide.',
+    copy: 'After we match your payment, your order is processed and sent out. Tracking number will be sent to you within 72 hours.',
     icon: ShieldCheck,
   },
 ];
@@ -40,11 +40,11 @@ export function PaymentEducation() {
             id="payment-flow-heading"
             className="mt-2 text-balance text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl"
           >
-            Fiat or crypto — you always settle in crypto
+            Simple Payment Process
           </h2>
           <p className="mt-4 text-muted-foreground">
-            GrabModa is built for privacy-first checkout. Use your own wallet, or buy crypto with a
-            card through our partner Guardarian and complete the transfer on this site.
+            Seamless payment process. We accept payments in crypto, or you can use your
+            credit/debit card to buy the crypto in 3 min - no KYC.
           </p>
         </div>
 

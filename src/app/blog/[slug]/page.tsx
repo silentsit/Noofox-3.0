@@ -65,7 +65,7 @@ export default async function BlogPostPage({
   const post = await getBlogPostBySlug(slug);
   if (!post) notFound();
 
-  const relatedPosts = await getRelatedBlogPostsExcludingSlug(slug, 3);
+  const relatedPosts = await getRelatedBlogPostsExcludingSlug(slug, 2);
 
   const safeContent = sanitizeHtml(post.content);
   const datePublished = new Date(post.created_at);
@@ -111,7 +111,7 @@ export default async function BlogPostPage({
       </article>
 
       {relatedPosts.length > 0 && (
-        <div className="mx-auto mt-16 max-w-6xl px-4 lg:px-8">
+        <div className="mx-auto mt-16 max-w-3xl px-4 lg:px-8">
           <Separator className="w-full" />
           <section className="mt-10" aria-labelledby="related-posts-heading">
             <h4
@@ -120,7 +120,7 @@ export default async function BlogPostPage({
             >
               You May Like to Read
             </h4>
-            <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="mt-6 grid gap-6 sm:grid-cols-2">
               {relatedPosts.map((related) => {
                 const thumb = getFirstImageUrlFromHtml(related.content);
                 const blurb = excerptFromHtml(related.content, 110);
@@ -135,7 +135,7 @@ export default async function BlogPostPage({
                               alt=""
                               fill
                               className="object-cover"
-                              sizes="(max-width: 640px) 100vw, 33vw"
+                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 360px"
                               unoptimized={thumb.startsWith('http') || thumb.includes('koala.sh')}
                             />
                           ) : (

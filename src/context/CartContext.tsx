@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -45,7 +46,13 @@ function saveStored(items: OrderItem[]) {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<OrderItem[]>(loadStored);
+  const [items, setItems] = useState<OrderItem[]>([]);
+
+  // Avoid hydration mismatch: server cannot read localStorage.
+  // Load persisted cart only after the component mounts in browser.
+  useEffect(() => {
+    setItems(loadStored());
+  }, []);
 
   const persist = useCallback((next: OrderItem[]) => {
     setItems(next);

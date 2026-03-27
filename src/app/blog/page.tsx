@@ -2,7 +2,15 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { getPublishedBlogPostsByCategory, excerptFromHtml, getFirstImageUrlFromHtml } from '@/lib/blog';
+import {
+  BLOG_CATEGORY_SLUGS,
+  getPublishedBlogPostsByCategory,
+  excerptFromHtml,
+  getFirstImageUrlFromHtml,
+  inferBlogCategory,
+  blogCategoryLabel,
+  type BlogCategorySlug,
+} from '@/lib/blog';
 import { FileText } from 'lucide-react';
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com';
@@ -29,6 +37,14 @@ export const metadata: Metadata = {
   alternates: { canonical: `${BASE}/blog` },
 };
 
+function blogListHref(pageNum: number, categoryFilter: BlogCategorySlug | null): string {
+  const p = new URLSearchParams();
+  if (pageNum > 1) p.set('page', String(pageNum));
+  if (categoryFilter) p.set('category', categoryFilter);
+  const q = p.toString();
+  return q ? `/blog?${q}` : '/blog';
+}
+
 function readingTimeMinutes(html: string): number {
   const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
   const words = text.split(/\s+/).filter(Boolean).length;
@@ -41,11 +57,13 @@ export default async function BlogListPage({
   searchParams: { page?: string; category?: string };
 }) {
   const { page: pageParam, category: categoryParam } = searchParams;
-  const category =
-    categoryParam === 'nootropics' ||
-    categoryParam === 'meditation' ||
-    categoryParam === 'general'
-      ? categoryParam
+  const legacy = categoryParam === 'nootropics' || categoryParam === 'general';
+  const normalized = legacy ? 'cognitive-enhancement' : categoryParam;
+  const category: BlogCategorySlug | null =
+    normalized === 'cognitive-enhancement' ||
+    normalized === 'meditation' ||
+    normalized === 'repurposed-medication'
+      ? normalized
       : null;
   const posts = await getPublishedBlogPostsByCategory(category);
   const currentPage = Math.max(1, parseInt(String(pageParam), 10) || 1);
@@ -88,32 +106,31 @@ export default async function BlogListPage({
           Blog
         </h1>
 
-        {/* Category tabs: All, General, Meditation, Nootropics */}
+        {/* Category tabs: Cognitive Enhancement, Meditation, Repurposed Medication */}
         <nav className="mt-6 flex flex-wrap gap-2 border-b border-border pb-4" aria-label="Blog categories">
           <Link
             href="/blog"
-            className="rounded-md px-3 py-1.5 text-sm font-medium text-primary bg-primary/10"
+            className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+              !category
+                ? 'bg-primary/10 text-primary'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
           >
             All
           </Link>
-          <Link
-            href="/blog?category=general"
-            className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            General
-          </Link>
-          <Link
-            href="/blog?category=meditation"
-            className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Meditation
-          </Link>
-          <Link
-            href="/blog?category=nootropics"
-            className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Nootropics
-          </Link>
+          {BLOG_CATEGORY_SLUGS.map((slug) => (
+            <Link
+              key={slug}
+              href={`/blog?category=${slug}`}
+              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                category === slug
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {blogCategoryLabel(slug)}
+            </Link>
+          ))}
         </nav>
 
         {/* Post grid — card layout */}
@@ -168,7 +185,8 @@ export default async function BlogListPage({
                           </div>
                           <div className="flex flex-1 flex-col p-5">
                             <p className="text-xs text-muted-foreground">
-                              Nootropics / By GrabModa / {readMin} minutes of reading
+                              {blogCategoryLabel(inferBlogCategory(post.slug))} / By GrabModa /{' '}
+                              {readMin} minutes of reading
                             </p>
                             <h2 className="mt-2 text-lg font-semibold leading-tight text-foreground line-clamp-2">
                               {post.title}
@@ -194,7 +212,7 @@ export default async function BlogListPage({
                 <nav className="mt-12 flex items-center justify-center gap-2 border-t border-border pt-8" aria-label="Blog pagination">
                   {page > 1 && (
                     <Link
-                      href={page === 2 ? '/blog' : `/blog?page=${page - 1}`}
+                      href={blogListHref(page - 1, category)}
                       className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
                     >
                       â† Previous
@@ -204,7 +222,7 @@ export default async function BlogListPage({
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                       <Link
                         key={p}
-                        href={p === 1 ? '/blog' : `/blog?page=${p}`}
+                        href={blogListHref(p, category)}
                         className={`min-w-[2.25rem] rounded-md px-2 py-2 text-center text-sm font-medium ${
                           p === page
                             ? 'bg-primary text-primary-foreground'
@@ -217,7 +235,7 @@ export default async function BlogListPage({
                   </div>
                   {page < totalPages && (
                     <Link
-                      href={`/blog?page=${page + 1}`}
+                      href={blogListHref(page + 1, category)}
                       className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
                     >
                       Next â†’

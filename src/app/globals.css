@@ -39,6 +39,13 @@
 
   body {
     @apply bg-background text-foreground;
+    font-size: 16px;
+  }
+
+  /* Default body copy: 16px site-wide */
+  p {
+    font-size: 16px;
+    line-height: 1.6;
   }
 
   h1,
@@ -89,6 +96,25 @@ img, video, iframe, object, embed {
   .scrollbar-touch::-webkit-scrollbar {
     display: none;
   }
+
+  /*
+   * Tailwind text-xs/text-sm/text-lg on <p> would otherwise override base 16px.
+   * Display sizes (text-xl+) stay on utilities for emphasis/stats.
+   */
+  p.text-xs,
+  p.text-sm,
+  p.text-lg {
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+  }
+}
+
+/* Responsive paragraph sizes (e.g. sm:text-lg) still map to 16px */
+@media (min-width: 640px) {
+  p.sm\:text-lg {
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+  }
 }
 
 @layer base {
@@ -131,7 +157,7 @@ img, video, iframe, object, embed {
 
   .rich-content p,
   .rich-content li {
-    font-size: 0.98rem;
+    font-size: 16px;
     line-height: 1.95;
   }
 

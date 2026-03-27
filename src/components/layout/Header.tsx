@@ -16,11 +16,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { useCart } from '@/context/CartContext'
 import { createClient } from '@/lib/supabase/client'
-import {
-  FREEBIES_PATH,
-  modafinilArmodafinilProducts,
-  modaCombosItems,
-} from '@/lib/headerNav'
+import { modafinilArmodafinilProducts, modaCombosItems } from '@/lib/headerNav'
 import {
   SITE_LOGO_ALT,
   SITE_LOGO_HEIGHT,
@@ -28,7 +24,7 @@ import {
   SITE_LOGO_WIDTH,
 } from '@/lib/branding'
 
-/** Primary nav mirrors https://noofox.com (FREEBIES, Modafinil/Armodafinil, Moda Combos). */
+/** Primary nav mirrors https://noofox.com (Modafinil, Moda Combos). */
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -63,13 +59,6 @@ export function Header() {
 
         {/* Desktop — matches noofox.com primary menu */}
         <div className="hidden lg:flex lg:items-center lg:gap-6 xl:gap-8">
-          <Link
-            href={FREEBIES_PATH}
-            className="text-sm font-semibold uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground"
-          >
-            FREEBIES
-          </Link>
-
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
@@ -77,7 +66,7 @@ export function Header() {
                 className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                 aria-haspopup="menu"
               >
-                Modafinil/Armodafinil
+                Modafinil
                 <ChevronDown className="h-4 w-4" aria-hidden />
               </button>
             </DropdownMenuTrigger>
@@ -169,17 +158,9 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-full max-w-sm overflow-y-auto">
               <div className="flex flex-col gap-6 pt-6">
-                <Link
-                  href={FREEBIES_PATH}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-semibold uppercase tracking-wide text-foreground"
-                >
-                  FREEBIES
-                </Link>
-
                 <div className="flex flex-col gap-2">
                   <span className="text-sm font-semibold text-foreground">
-                    Modafinil/Armodafinil
+                    Modafinil
                   </span>
                   <Link
                     href="/shop"

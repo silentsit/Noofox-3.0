@@ -3,9 +3,7 @@
  * Product paths use catalog slugs at site root (`/[slug]`).
  */
 
-export const FREEBIES_PATH = '/free-modafinil' as const;
-
-/** Submenu under “Modafinil/Armodafinil” — order matches live site. */
+/** Submenu under “Modafinil” — order matches live site. */
 export const modafinilArmodafinilProducts: { name: string; slug: string }[] = [
   { name: 'Modasmart 400 mg', slug: 'buy-modasmart-400-mg' },
   { name: 'ModaXL 300 mg', slug: 'buy-modaxl-300-mg' },

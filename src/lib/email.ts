@@ -27,11 +27,30 @@ export async function getAdminEmails(): Promise<string[]> {
   }
   const service = createServiceClient();
   const supabase = service ?? await createClient();
-  const { data: rows } = await supabase
+  const { data: legacyRows } = await supabase
     .from('users')
     .select('email')
     .eq('role', 'admin');
-  return (rows ?? []).map((r) => r.email).filter(Boolean);
+  const emails = new Set<string>();
+  for (const row of legacyRows ?? []) {
+    if (row.email) emails.add(row.email);
+  }
+
+  const { data: assignedRows } = await supabase
+    .from('user_admin_roles')
+    .select('user_id');
+  const assignedIds = (assignedRows ?? []).map((r) => r.user_id).filter(Boolean);
+  if (assignedIds.length > 0) {
+    const { data: assignedUsers } = await supabase
+      .from('users')
+      .select('email')
+      .in('id', assignedIds);
+    for (const row of assignedUsers ?? []) {
+      if (row.email) emails.add(row.email);
+    }
+  }
+
+  return Array.from(emails);
 }
 
 /**

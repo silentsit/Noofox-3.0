@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getAdminBlogPostById } from '@/lib/blog';
 import { BlogPostForm } from '@/components/admin/BlogPostForm';
+import { requireAdminPage } from '@/lib/rbac';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +13,7 @@ export default async function AdminBlogEditPage({
 }: {
   params: Promise<PageParams>;
 }) {
+  await requireAdminPage({ action: 'write', resource: 'blog' });
   const { id } = await params;
   const post = await getAdminBlogPostById(id);
   if (!post) notFound();

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import { ProductForm } from '@/components/admin/ProductForm';
+import { requireAdminPage } from '@/lib/rbac';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,6 +11,7 @@ export default async function EditProductPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireAdminPage({ action: 'write', resource: 'products' });
   const { id } = await params;
   const supabase = await createClient();
   const { data: product } = await supabase.from('products').select('*').eq('id', id).single();

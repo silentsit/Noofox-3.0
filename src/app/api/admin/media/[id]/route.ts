@@ -1,21 +1,14 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
-
-async function ensureAdmin() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  return null;
-}
+import { writeAuditLog } from '@/lib/audit';
+import { requireAdminRoute } from '@/lib/rbac';
 
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const authErr = await ensureAdmin();
-  if (authErr) return authErr;
+  const auth = await requireAdminRoute({ action: 'write', resource: 'media' });
+  if (auth.response) return auth.response;
 
   const { id } = await params;
   const body = await request.json();
@@ -31,6 +24,7 @@ export async function PATCH(
   }
 
   const supabase = await createClient();
+  const { data: previous } = await supabase.from('media').select('*').eq('id', id).single();
   const { data, error } = await supabase
     .from('media')
     .update(updates)
@@ -39,6 +33,15 @@ export async function PATCH(
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+
+  await writeAuditLog({
+    action: 'update',
+    resourceType: 'media',
+    resourceId: id,
+    oldData: previous,
+    newData: updates,
+  });
+
   return NextResponse.json(data);
 }
 
@@ -46,8 +49,8 @@ export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const authErr = await ensureAdmin();
-  if (authErr) return authErr;
+  const auth = await requireAdminRoute({ action: 'write', resource: 'media' });
+  if (auth.response) return auth.response;
 
   const { id } = await params;
   const supabase = await createClient();
@@ -65,5 +68,13 @@ export async function DELETE(
   await supabase.storage.from('media').remove([row.file_path]);
   const { error: deleteError } = await supabase.from('media').delete().eq('id', id);
   if (deleteError) return NextResponse.json({ error: deleteError.message }, { status: 400 });
+
+  await writeAuditLog({
+    action: 'delete',
+    resourceType: 'media',
+    resourceId: id,
+    oldData: row,
+  });
+
   return NextResponse.json({ ok: true });
 }

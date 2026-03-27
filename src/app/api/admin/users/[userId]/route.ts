@@ -1,21 +1,18 @@
 import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { writeAuditLog } from '@/lib/audit';
+import { requireAdminRoute } from '@/lib/rbac';
 
 export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ userId: string }> }
 ) {
   const { userId } = await params;
+  const auth = await requireAdminRoute({ action: 'write', resource: 'users' });
+  if (auth.response) return auth.response;
+
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-  if (userId === user.id) {
+  if (userId === auth.admin.user.id) {
     return NextResponse.json({ error: 'Cannot delete your own account' }, { status: 400 });
   }
 
@@ -33,5 +30,13 @@ export async function DELETE(
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
+
+  await writeAuditLog({
+    action: 'delete',
+    resourceType: 'user',
+    resourceId: userId,
+    oldData: targetProfile.data,
+  });
+
   return NextResponse.json({ ok: true });
 }

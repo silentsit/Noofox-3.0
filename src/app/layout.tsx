@@ -1,9 +1,10 @@
-﻿import type { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CartProvider } from '@/context/CartContext';
+import { SocialProofToaster } from '@/components/social-proof/SocialProofToaster';
 import { organizationJsonLd } from '@/lib/schema';
 import { SITE_LOGO_ALT, SITE_LOGO_HEIGHT, SITE_LOGO_SRC, SITE_LOGO_WIDTH } from '@/lib/branding';
 
@@ -102,6 +103,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <SocialProofToaster />
         </CartProvider>
       </body>
     </html>

@@ -3,11 +3,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { TurnstileField } from '@/components/security/TurnstileField';
+
+const turnstileRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim());
 
 export default function SignUpPage() {
   const supabase = createClient();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
 
@@ -15,18 +19,37 @@ export default function SignUpPage() {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
-      },
-    });
-    setLoading(false);
-    if (error) {
-      setMessage({ type: 'error', text: error.message });
+    if (turnstileRequired && !turnstileToken) {
+      setLoading(false);
+      setMessage({ type: 'error', text: 'Please complete the verification challenge.' });
       return;
     }
+    const res = await fetch('/api/auth/sign-up', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        password,
+        turnstile_token: turnstileToken ?? '',
+        redirect_to: '/dashboard',
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setLoading(false);
+    if (!res.ok) {
+      setMessage({ type: 'error', text: (data as { error?: string }).error ?? 'Sign up failed' });
+      return;
+    }
+    void fetch('/api/emails', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'welcome_email',
+        payload: {
+          customer_email: email.trim(),
+        },
+      }),
+    });
     setMessage({
       type: 'success',
       text: 'Check your email for the confirmation link.',
@@ -96,9 +119,10 @@ export default function SignUpPage() {
               minLength={6}
             />
           </div>
+          <TurnstileField className="flex justify-center" onToken={setTurnstileToken} />
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || (turnstileRequired && !turnstileToken)}
             className="w-full rounded-lg bg-brand-600 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50 transition-colors"
           >
             {loading ? 'Creating account…' : 'Sign up with Email'}

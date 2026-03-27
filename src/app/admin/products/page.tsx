@@ -3,10 +3,12 @@ import { createClient } from '@/lib/supabase/server';
 import Image from 'next/image';
 import { DeleteProductButton } from '@/components/admin/DeleteProductButton';
 import { getProductImageUrl } from '@/lib/productImage';
+import { requireAdminPage } from '@/lib/rbac';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminProductsPage() {
+  await requireAdminPage({ action: 'read', resource: 'products' });
   const supabase = await createClient();
   const { data: products } = await supabase
     .from('products')

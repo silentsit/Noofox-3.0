@@ -1,18 +1,11 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
-
-async function ensureAdmin() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  return null;
-}
+import { writeAuditLog } from '@/lib/audit';
+import { requireAdminRoute } from '@/lib/rbac';
 
 export async function POST(request: Request) {
-  const authErr = await ensureAdmin();
-  if (authErr) return authErr;
+  const auth = await requireAdminRoute({ action: 'write', resource: 'products' });
+  if (auth.response) return auth.response;
 
   const body = await request.json();
   const { name, price, description, images, image_meta, stock_count } = body;
@@ -35,5 +28,20 @@ export async function POST(request: Request) {
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+
+  await writeAuditLog({
+    action: 'create',
+    resourceType: 'product',
+    resourceId: data.id,
+    newData: {
+      name: String(name),
+      price: parseFloat(price) || 0,
+      description: description ? String(description) : null,
+      images: Array.isArray(images) ? images : (images ? [images] : []),
+      image_meta: image_meta && typeof image_meta === 'object' ? image_meta : {},
+      stock_count: parseInt(String(stock_count), 10) || 0,
+    },
+  });
+
   return NextResponse.json(data);
 }

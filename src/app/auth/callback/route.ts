@@ -1,5 +1,6 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { triggerEmail } from '@/lib/email';
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -17,6 +18,20 @@ export async function GET(request: Request) {
           p_user_id: id,
           p_email: normalizedEmail,
         });
+
+        const service = createServiceClient();
+        const queueClient = service ?? supabase;
+        const { count } = await queueClient
+          .from('email_queue')
+          .select('id', { count: 'exact', head: true })
+          .eq('event_key', 'welcome_email')
+          .eq('recipient_email', normalizedEmail);
+        if (!count) {
+          await triggerEmail(origin, 'welcome_email', {
+            customer_email: normalizedEmail,
+            user_id: id,
+          });
+        }
       }
       return NextResponse.redirect(`${origin}${next.startsWith('/') ? next : `/${next}`}`);
     }

@@ -1,22 +1,15 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { writeAuditLog } from '@/lib/audit';
+import { requireAdminRoute } from '@/lib/rbac';
 
 const BUCKET = 'media';
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
-async function ensureAdmin() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  return null;
-}
-
 export async function POST(request: Request) {
-  const authErr = await ensureAdmin();
-  if (authErr) return authErr;
+  const auth = await requireAdminRoute({ action: 'write', resource: 'media' });
+  if (auth.response) return auth.response;
 
   const formData = await request.formData();
   const file = formData.get('file') as File | null;
@@ -64,5 +57,18 @@ export async function POST(request: Request) {
     await supabase.storage.from(BUCKET).remove([path]);
     return NextResponse.json({ error: insertError.message }, { status: 400 });
   }
+
+  await writeAuditLog({
+    action: 'upload',
+    resourceType: 'media',
+    resourceId: row.id,
+    newData: {
+      file_path: path,
+      file_name: file.name,
+      mime_type: file.type,
+      size_bytes: file.size,
+    },
+  });
+
   return NextResponse.json(row);
 }

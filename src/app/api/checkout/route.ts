@@ -3,6 +3,10 @@ import { NextResponse } from 'next/server';
 import type { OrderItem } from '@/types/database';
 import { triggerEmail } from '@/lib/email';
 import { getCatalogProductBySlug } from '@/lib/catalog';
+import { validateCoupon, recordCouponUsage } from '@/lib/coupons';
+import { markAbandonedCartRecovered, upsertEmailSubscriber } from '@/lib/emailAutomation';
+import { verifyTurnstileToken } from '@/lib/turnstile';
+import { consumeRateLimit } from '@/lib/rateLimit';
 
 function getClientIp(request: Request): string | null {
   const forwarded = request.headers.get('x-forwarded-for');
@@ -52,6 +56,9 @@ export async function POST(request: Request) {
     shipping_address,
     payment_method,
     payment_reference,
+    coupon_code,
+    marketing_opt_in,
+    turnstile_token,
   } = body as {
     items?: OrderItem[];
     customer_email?: string;
@@ -59,10 +66,33 @@ export async function POST(request: Request) {
     shipping_address?: unknown;
     payment_method?: string;
     payment_reference?: string;
+    coupon_code?: string;
+    marketing_opt_in?: boolean;
+    turnstile_token?: string;
   };
 
   if (!items || !Array.isArray(items) || items.length === 0) {
     return NextResponse.json({ error: 'Items required' }, { status: 400 });
+  }
+
+  const ip = getClientIp(request) ?? 'unknown';
+  const rate = await consumeRateLimit('checkout', ip, 20, 300);
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { error: 'Too many checkout attempts. Please wait a moment and retry.' },
+      { status: 429, headers: { 'Retry-After': String(rate.retryAfterSeconds) } }
+    );
+  }
+
+  const humanOk = await verifyTurnstileToken(
+    typeof turnstile_token === 'string' ? turnstile_token : '',
+    ip
+  );
+  if (!humanOk) {
+    return NextResponse.json(
+      { error: 'Human verification failed. Refresh the page and try again.' },
+      { status: 403 }
+    );
   }
 
   const validationError = await validateItems(items);
@@ -70,15 +100,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: validationError }, { status: 400 });
   }
 
-  let total_amount = items.reduce(
+  const subtotal_amount = items.reduce(
     (sum, i) => sum + Number(i.price) * (i.quantity || 1),
     0
   );
-  /** Match storefront “Pay with Crypto (15% Off)” — applied server-side only for this method. */
-  const payMethod = String(payment_method ?? '');
-  if (payMethod === 'pay_crypto') {
-    total_amount = Math.round(total_amount * 85) / 100;
-  }
+
   const ip_address = getClientIp(request);
   const user_agent = getUserAgent(request);
 
@@ -88,6 +114,36 @@ export async function POST(request: Request) {
     (bodyEmail as string)?.trim() ||
     (user?.email ?? null);
 
+  let discount_amount = 0;
+  let applied_coupon_code: string | null = null;
+  let coupon_id: string | null = null;
+
+  if (coupon_code && typeof coupon_code === 'string' && coupon_code.trim()) {
+    const result = await validateCoupon(
+      coupon_code,
+      subtotal_amount,
+      user?.id ?? null,
+      customer_email,
+      items
+    );
+    if (!result.valid) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+    discount_amount = result.discount;
+    applied_coupon_code = result.coupon.code;
+    coupon_id = result.coupon.id;
+  }
+
+  let total_amount = subtotal_amount - discount_amount;
+
+  /** Match storefront "Pay with Crypto (15% Off)" — applied server-side only for this method. */
+  const payMethod = String(payment_method ?? '');
+  if (payMethod === 'pay_crypto') {
+    total_amount = Math.round(total_amount * 85) / 100;
+  }
+
+  total_amount = Math.round(total_amount * 100) / 100;
+
   const { data: order, error } = await supabase
     .from('orders')
     .insert({
@@ -95,6 +151,9 @@ export async function POST(request: Request) {
       customer_email: customer_email || null,
       items,
       status: 'Pending Payment',
+      subtotal_amount,
+      discount_amount,
+      coupon_code: applied_coupon_code,
       total_amount,
       payment_method: payment_method ?? null,
       payment_reference: payment_reference?.trim() || null,
@@ -111,6 +170,27 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
+  if (coupon_id) {
+    void recordCouponUsage(coupon_id, order.id, user?.id ?? null, customer_email);
+  }
+
+  if (customer_email) {
+    void markAbandonedCartRecovered(customer_email);
+    if (marketing_opt_in) {
+      const shipping = shipping_address as Record<string, unknown> | null;
+      void upsertEmailSubscriber({
+        email: customer_email,
+        userId: user?.id ?? null,
+        firstName: typeof shipping?.first_name === 'string' ? shipping.first_name : null,
+        lastName: typeof shipping?.last_name === 'string' ? shipping.last_name : null,
+        source: 'checkout',
+        metadata: {
+          order_id: order.id,
+        },
+      });
+    }
+  }
+
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? (request.url ? new URL(request.url).origin : '');
   const payload = {
     order_id: order.id,
@@ -118,6 +198,8 @@ export async function POST(request: Request) {
     total_amount,
     items,
     shipping_address: shipping_address ?? undefined,
+    coupon_code: applied_coupon_code ?? undefined,
+    discount_amount: discount_amount > 0 ? discount_amount : undefined,
   };
 
   if (baseUrl) {

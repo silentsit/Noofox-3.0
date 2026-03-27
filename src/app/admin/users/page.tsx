@@ -1,9 +1,11 @@
 import { createClient } from '@/lib/supabase/server';
 import { AdminUsersList } from '@/components/admin/AdminUsersList';
+import { requireAdminPage } from '@/lib/rbac';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminUsersPage() {
+  await requireAdminPage({ action: 'read', resource: 'users' });
   const supabase = await createClient();
   const { data: users } = await supabase
     .from('users')

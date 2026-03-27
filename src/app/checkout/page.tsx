@@ -12,8 +12,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
+import { TurnstileField } from '@/components/security/TurnstileField';
 
 const ONRAMP_URL = process.env.NEXT_PUBLIC_ONRAMP_URL ?? 'https://guardarian.com/buy-crypto-with-card';
+const turnstileRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim());
 const REVOLUT_PAY_URL =
   process.env.NEXT_PUBLIC_REVOLUT_PAY_URL ?? 'https://www.revolut.com/pay-online/';
 
@@ -110,6 +112,7 @@ function CheckoutContent() {
 
   const [placing, setPlacing] = useState(false);
   const [placeError, setPlaceError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   useEffect(() => {
     createClient().auth.getUser().then(({ data: { user } }) => {
@@ -118,6 +121,31 @@ function CheckoutContent() {
       if (e) setEmail(e);
     });
   }, []);
+
+  useEffect(() => {
+    const resolvedEmail = (userEmail || email).trim();
+    if (!resolvedEmail || items.length === 0) return;
+
+    const timer = window.setTimeout(() => {
+      void fetch('/api/automation/abandoned-cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: resolvedEmail,
+          items,
+          subtotal_amount: total,
+          coupon_code: showCoupon ? couponCode.trim() || undefined : undefined,
+          payment_choice: paymentChoice,
+          marketing_opt_in: marketingOptIn,
+          metadata: {
+            create_account_requested: createAccount,
+          },
+        }),
+      });
+    }, 900);
+
+    return () => window.clearTimeout(timer);
+  }, [items, email, userEmail, total, showCoupon, couponCode, paymentChoice, marketingOptIn, createAccount]);
 
   const subtotal = total;
   const shipping = 0;
@@ -131,6 +159,7 @@ function CheckoutContent() {
     if (!firstName.trim() || !lastName.trim()) return 'Please enter your first and last name.';
     if (!address1.trim()) return 'Please enter your street address.';
     if (!city.trim() || !state.trim() || !postcode.trim()) return 'Please enter city, state, and postcode.';
+    if (turnstileRequired && !turnstileToken) return 'Please complete the verification challenge below.';
     return null;
   }
 
@@ -180,6 +209,9 @@ function CheckoutContent() {
           billing_address,
           payment_method: paymentChoice,
           payment_reference: null,
+          coupon_code: showCoupon ? couponCode.trim() || undefined : undefined,
+          marketing_opt_in: marketingOptIn,
+          turnstile_token: turnstileToken ?? '',
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -504,6 +536,7 @@ function CheckoutContent() {
                 Please wait 10 to 15 seconds after clicking &quot;Place Order&quot; as we redirect you to our payment
                 partners.
               </p>
+              <TurnstileField className="flex justify-center pt-2" onToken={setTurnstileToken} />
             </div>
 
             <div className="flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
@@ -518,7 +551,7 @@ function CheckoutContent() {
                 type="button"
                 size="lg"
                 className="w-full sm:w-auto sm:min-w-[200px]"
-                disabled={placing || items.length === 0}
+                disabled={placing || items.length === 0 || (turnstileRequired && !turnstileToken)}
                 onClick={handlePlaceOrder}
               >
                 {placing ? 'Placing order…' : 'Place Order'}

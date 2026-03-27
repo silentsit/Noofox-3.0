@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { getAdminBlogPosts } from '@/lib/blog';
+import { requireAdminPage } from '@/lib/rbac';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminBlogPage() {
+  await requireAdminPage({ action: 'read', resource: 'blog' });
   const posts = await getAdminBlogPosts();
 
   return (

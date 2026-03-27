@@ -1,6 +1,8 @@
 import { ProductForm } from '@/components/admin/ProductForm';
+import { requireAdminPage } from '@/lib/rbac';
 
-export default function NewProductPage() {
+export default async function NewProductPage() {
+  await requireAdminPage({ action: 'write', resource: 'products' });
   return (
     <div>
       <h1 className="text-2xl font-semibold text-surface-900">New product</h1>

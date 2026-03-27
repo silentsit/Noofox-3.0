@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Zap, Shield, Truck, Clock, Star, CheckCircle } from 'lucide-react'
+import Image from 'next/image'
+import { ArrowRight, MessageCircle, Zap, Shield, Truck, Clock, Star, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PaymentEducation } from '@/components/home/PaymentEducation'
 import { getFeaturedCatalogProducts } from '@/lib/catalog'
-import { getPublishedBlogPosts, excerptFromHtml } from '@/lib/blog'
+import { getPublishedBlogPosts, excerptFromHtml, getFirstImageUrlFromHtml } from '@/lib/blog'
 import { ProductCard } from '@/components/products/ProductCard'
 import type { CatalogProduct } from '@/types/catalog'
 
@@ -27,6 +28,9 @@ function getModawhaleImageForProduct(product: CatalogProduct): string | null {
 }
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com'
+
+/** Set in `.env.local` when the community Telegram group exists, e.g. https://t.me/+inviteHash or https://t.me/yourgroup */
+const TELEGRAM_GROUP_URL = process.env.NEXT_PUBLIC_TELEGRAM_GROUP_URL
 
 export const metadata: Metadata = {
   alternates: { canonical: SITE },
@@ -77,14 +81,14 @@ const testimonials = [
 ]
 
 const stats = [
-  { value: '30K+', label: 'Happy Customers' },
   { value: '100%', label: 'Guaranteed Delivery' },
   { value: '24/7', label: 'Customer Support' },
-  { value: 'Secure Payments', label: 'Crypto & Credit Card' },
+  { value: 'Worldwide', label: 'Tracked & discreet shipping' },
+  { value: 'Unbeatable', label: 'Pricing' },
 ]
 
 export default async function Home() {
-  const featuredProducts = await getFeaturedCatalogProducts(8)
+  const featuredProducts = await getFeaturedCatalogProducts(4)
   const recentPosts = await getPublishedBlogPosts(3)
 
   return (
@@ -93,20 +97,20 @@ export default async function Home() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/20 via-background to-background" />
         <div className="relative mx-auto max-w-4xl px-4 py-16 sm:py-24 lg:px-8 lg:py-32">
-          <div className="flex flex-col items-center gap-6 text-center">
-            <div className="flex flex-col items-center gap-2 sm:gap-3">
+          <div className="flex flex-col items-center text-center">
+            <div className="mb-10 flex flex-col items-center gap-2 sm:mb-12 sm:gap-3">
               <h1 className="text-balance text-3xl font-bold tracking-tight xs:text-4xl sm:text-5xl lg:text-6xl">
                 <span className="text-[#7ed957]">Grab</span>
                 <span className="text-foreground">Moda</span>
               </h1>
-              <h2 className="text-balance text-xl font-semibold tracking-tight text-primary sm:text-2xl md:text-3xl lg:text-4xl">
+              <h2 className="text-balance text-[1.9rem] font-semibold leading-snug tracking-tight text-[#166534]">
                 Ninja Moda Alternative
               </h2>
             </div>
-            <Badge variant="secondary" className="w-fit text-[12px] font-normal">
+            <Badge variant="secondary" className="mb-10 w-fit text-[12px] font-normal sm:mb-12">
               Unbeatable Prices · 24/7 Support · 100% Guaranteed Delivery
             </Badge>
-            <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
+            <p className="mb-12 max-w-2xl text-muted-foreground sm:mb-14">
               <strong>Where to buy Modafinil online?</strong>
               <br />
               Get your Modafinil and cognitive enhancers at GrabModa today!
@@ -115,14 +119,18 @@ export default async function Home() {
               We deliver total peace of mind with our 100% Delivery Guarantee, 24/7 Dedicated Support, and the absolute best prices online.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Button size="lg" asChild>
+              <Button
+                size="lg"
+                className="!text-white hover:!text-white [&_svg]:!text-white"
+                asChild
+              >
                 <Link href="/shop">
                   Shop Now
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
             </div>
-            <div className="flex flex-col items-center gap-2 pt-4">
+            <div className="flex flex-col items-center gap-2 pt-8 sm:pt-10">
               <div className="flex justify-center gap-1">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <Star
@@ -131,7 +139,7 @@ export default async function Home() {
                   />
                 ))}
               </div>
-              <p className="text-center text-sm text-muted-foreground">
+              <p className="text-center text-[14px] text-muted-foreground">
                 4.9/5 from 2,300+ reviews
               </p>
             </div>
@@ -193,7 +201,7 @@ export default async function Home() {
               </Link>
             </Button>
           </div>
-          <div className="mt-8 grid gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+          <div className="mt-8 grid grid-cols-1 gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-6 md:grid-cols-4 md:gap-6">
             {featuredProducts.map((product) => (
               <ProductCard
                 key={product.slug}
@@ -274,8 +282,8 @@ export default async function Home() {
                   Guides & insights
                 </h2>
                 <p className="mt-2 max-w-xl text-muted-foreground">
-                  Long-form articles on nootropics, focus, and healthy productivity â€” with links to
-                  products where relevant.
+                  Cognitive Enhancement. Meditation. Repurposed Medication. Three topics that will be the
+                  core and focus of the GrabModa community.
                 </p>
               </div>
               <Button variant="outline" asChild>
@@ -286,28 +294,47 @@ export default async function Home() {
               </Button>
             </div>
             <ul className="mt-10 grid gap-6 md:grid-cols-3">
-              {recentPosts.map((post) => (
-                <li key={post.id}>
-                  <article className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 transition-shadow hover:shadow-md">
-                    <h3 className="text-lg font-semibold leading-snug">
-                      <Link href={`/blog/${post.slug}`} className="hover:text-primary">
-                        {post.title}
+              {recentPosts.map((post) => {
+                const coverUrl = getFirstImageUrlFromHtml(post.content)
+                const excerpt = excerptFromHtml(post.content, 120)
+                return (
+                  <li key={post.id}>
+                    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-shadow hover:shadow-md">
+                      <Link href={`/blog/${post.slug}`} className="flex flex-1 flex-col">
+                        <div className="relative aspect-video w-full overflow-hidden bg-muted">
+                          {coverUrl ? (
+                            <Image
+                              src={coverUrl}
+                              alt=""
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 100vw, 33vw"
+                              unoptimized={
+                                coverUrl.startsWith('http') || coverUrl.includes('koala.sh')
+                              }
+                            />
+                          ) : (
+                            <div className="h-full w-full bg-muted" />
+                          )}
+                        </div>
+                        <div className="flex flex-1 flex-col p-6">
+                          <h3 className="text-lg font-semibold leading-snug">
+                            <span className="hover:text-primary">{post.title}</span>
+                          </h3>
+                          {excerpt && (
+                            <p className="mt-3 flex-1 text-sm text-muted-foreground line-clamp-3">
+                              {excerpt}
+                            </p>
+                          )}
+                          <span className="mt-4 text-sm font-medium text-primary">
+                            Read more
+                          </span>
+                        </div>
                       </Link>
-                    </h3>
-                    {excerptFromHtml(post.content, 120) && (
-                      <p className="mt-3 flex-1 text-sm text-muted-foreground line-clamp-3">
-                        {excerptFromHtml(post.content, 120)}
-                      </p>
-                    )}
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      className="mt-4 text-sm font-medium text-primary"
-                    >
-                      Read more
-                    </Link>
-                  </article>
-                </li>
-              ))}
+                    </article>
+                  </li>
+                )
+              })}
             </ul>
           </div>
         </section>
@@ -323,24 +350,30 @@ export default async function Home() {
                 Ready to Enhance Your Performance?
               </h2>
               <p className="mt-4 text-base text-primary-foreground/80 sm:text-lg">
-                Join thousands of satisfied customers who have unlocked their
-                cognitive potential with GrabModa.
+                Join our growing community of like-minded individuals who share a common passion for
+                Cognitive Enhancement.
               </p>
-              <div className="mt-8 flex flex-wrap justify-center gap-4">
-                <Button size="lg" variant="secondary" asChild>
-                  <Link href="/shop">
-                    Shop Now
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-primary-foreground/20 bg-transparent text-primary-foreground hover:bg-primary-foreground/10"
-                  asChild
-                >
-                  <Link href="/contact">Contact Us</Link>
-                </Button>
+              <div className="mt-8 flex justify-center">
+                {TELEGRAM_GROUP_URL ? (
+                  <Button size="lg" variant="secondary" className="max-w-md" asChild>
+                    <a href={TELEGRAM_GROUP_URL} target="_blank" rel="noopener noreferrer">
+                      <MessageCircle className="mr-2 h-5 w-5 shrink-0" aria-hidden />
+                      Join our Telegram community
+                    </a>
+                  </Button>
+                ) : (
+                  <Button
+                    size="lg"
+                    variant="secondary"
+                    type="button"
+                    className="max-w-md cursor-not-allowed opacity-90"
+                    disabled
+                    title="Telegram group link will be added soon"
+                  >
+                    <MessageCircle className="mr-2 h-5 w-5 shrink-0 opacity-80" aria-hidden />
+                    Join our Telegram community (link coming soon)
+                  </Button>
+                )}
               </div>
             </div>
           </div>

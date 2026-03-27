@@ -1,10 +1,12 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { AdminCharts } from '@/components/admin/AdminCharts';
+import { requireAdminPage } from '@/lib/rbac';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboardPage() {
+  await requireAdminPage({ action: 'read', resource: 'dashboard' });
   const supabase = await createClient();
 
   const { count: totalOrders } = await supabase
@@ -26,6 +28,12 @@ export default async function AdminDashboardPage() {
   const activeOrders = (orders ?? []).filter(
     (o) => o.status !== 'Completed' && o.status !== 'Cancelled'
   ).length;
+  const completedOrders = (orders ?? []).filter((o) => o.status === 'Completed').length;
+  const pendingPaymentOrders = (orders ?? []).filter((o) => o.status === 'Pending Payment').length;
+  const completionRate = (totalOrders ?? 0) > 0 ? (completedOrders / (totalOrders ?? 0)) * 100 : 0;
+  const paymentCompletionRate =
+    (totalOrders ?? 0) > 0 ? ((totalOrders ?? 0) - pendingPaymentOrders) / (totalOrders ?? 0) * 100 : 0;
+  const avgOrderValue = (totalOrders ?? 0) > 0 ? totalSales / (totalOrders ?? 0) : 0;
 
   const byDay: Record<string, { date: string; sales: number; orders: number }> = {};
   for (const o of orders ?? []) {
@@ -79,6 +87,27 @@ export default async function AdminDashboardPage() {
           <p className="text-sm font-medium text-surface-500">User growth</p>
           <p className="mt-2 text-2xl font-semibold text-surface-900">
             {totalUsers ?? 0} users
+          </p>
+        </div>
+      </div>
+
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="rounded-2xl border border-surface-200 bg-white p-6 shadow-sm">
+          <p className="text-sm font-medium text-surface-500">AOV (USD)</p>
+          <p className="mt-2 text-2xl font-semibold text-surface-900">
+            ${avgOrderValue.toFixed(2)}
+          </p>
+        </div>
+        <div className="rounded-2xl border border-surface-200 bg-white p-6 shadow-sm">
+          <p className="text-sm font-medium text-surface-500">Order completion rate</p>
+          <p className="mt-2 text-2xl font-semibold text-surface-900">
+            {completionRate.toFixed(1)}%
+          </p>
+        </div>
+        <div className="rounded-2xl border border-surface-200 bg-white p-6 shadow-sm">
+          <p className="text-sm font-medium text-surface-500">Payment completion proxy</p>
+          <p className="mt-2 text-2xl font-semibold text-surface-900">
+            {paymentCompletionRate.toFixed(1)}%
           </p>
         </div>
       </div>

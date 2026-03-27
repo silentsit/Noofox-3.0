@@ -4,6 +4,9 @@ import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { TurnstileField } from '@/components/security/TurnstileField';
+
+const turnstileRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim());
 
 function LoginForm() {
   const router = useRouter();
@@ -12,6 +15,7 @@ function LoginForm() {
   const supabase = createClient();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
 
@@ -19,10 +23,24 @@ function LoginForm() {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (turnstileRequired && !turnstileToken) {
+      setLoading(false);
+      setMessage({ type: 'error', text: 'Please complete the verification challenge.' });
+      return;
+    }
+    const res = await fetch('/api/auth/sign-in', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        password,
+        turnstile_token: turnstileToken ?? '',
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
     setLoading(false);
-    if (error) {
-      setMessage({ type: 'error', text: error.message });
+    if (!res.ok) {
+      setMessage({ type: 'error', text: (data as { error?: string }).error ?? 'Sign in failed' });
       return;
     }
     router.push(redirectTo);
@@ -94,9 +112,10 @@ function LoginForm() {
               required
             />
           </div>
+          <TurnstileField className="flex justify-center" onToken={setTurnstileToken} />
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || (turnstileRequired && !turnstileToken)}
             className="w-full rounded-lg bg-brand-600 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50 transition-colors"
           >
             {loading ? 'Signing in…' : 'Sign in with Email'}

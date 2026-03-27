@@ -11,8 +11,32 @@ function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-/** Infer category from slug (matches /blog filters). */
-export function inferBlogCategory(slug: string): 'nootropics' | 'meditation' | 'general' {
+/** Blog taxonomy: three core topics (matches /blog?category= filters). */
+export type BlogCategorySlug =
+  | 'cognitive-enhancement'
+  | 'meditation'
+  | 'repurposed-medication';
+
+export const BLOG_CATEGORY_SLUGS: BlogCategorySlug[] = [
+  'cognitive-enhancement',
+  'meditation',
+  'repurposed-medication',
+];
+
+/** Human-readable label for a category slug (UI + cards). */
+export function blogCategoryLabel(slug: BlogCategorySlug): string {
+  switch (slug) {
+    case 'meditation':
+      return 'Meditation';
+    case 'repurposed-medication':
+      return 'Repurposed Medication';
+    default:
+      return 'Cognitive Enhancement';
+  }
+}
+
+/** Infer category from slug (heuristic for imported / legacy posts without a DB column). */
+export function inferBlogCategory(slug: string): BlogCategorySlug {
   const s = slug.toLowerCase();
   if (
     s.includes('dmt') ||
@@ -22,8 +46,8 @@ export function inferBlogCategory(slug: string): 'nootropics' | 'meditation' | '
   ) {
     return 'meditation';
   }
-  if (s.includes('viagra')) return 'general';
-  return 'nootropics';
+  if (s.includes('viagra')) return 'repurposed-medication';
+  return 'cognitive-enhancement';
 }
 
 function rewriteImportedBlogHtml(html: string, blogSlugs: Set<string>): string {
@@ -63,7 +87,7 @@ export async function getPublishedBlogPosts(limit?: number): Promise<BlogPost[]>
 }
 
 export async function getPublishedBlogPostsByCategory(
-  category: 'nootropics' | 'meditation' | 'general' | null
+  category: BlogCategorySlug | null
 ): Promise<BlogPost[]> {
   if (!category) return getPublishedBlogPosts();
   return PUBLISHED_POSTS.filter((p) => inferBlogCategory(p.slug) === category);

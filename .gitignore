@@ -50,3 +50,11 @@ supabase/.temp/
 # Design scratch: zip extractions (keep repo lean)
 noofox-new-design-test/*.zip
 noofox-new-design-test/b_S3nFqCQnYKZ-1773745206877/
+
+# Local scratch exports / one-off files
+tmp-*.html
+tmp-*.xml
+tmp-*.json
+
+# Local reference documents
+Finish What You Start The Art of Following Through, Taking Action, Executing,  Self-Discipline (Peter K Hollins) (z-library.sk, 1lib.sk, z-lib.sk).pdf

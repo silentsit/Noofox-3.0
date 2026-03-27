@@ -13,11 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { TurnstileField } from '@/components/security/TurnstileField';
-
-const ONRAMP_URL = process.env.NEXT_PUBLIC_ONRAMP_URL ?? 'https://guardarian.com/buy-crypto-with-card';
 const turnstileRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim());
-const REVOLUT_PAY_URL =
-  process.env.NEXT_PUBLIC_REVOLUT_PAY_URL ?? 'https://www.revolut.com/pay-online/';
 
 const FULL_GUARANTEE_SHIPPING =
   'Full Guarantee Shipping (We ship thrice, before offering full refund if unsuccessful)';
@@ -82,7 +78,7 @@ function CheckoutErrorToast() {
   );
 }
 
-type PaymentChoice = 'pay_card' | 'pay_revolut' | 'pay_crypto';
+type PaymentChoice = 'pay_card' | 'pay_crypto';
 
 function CheckoutContent() {
   const { items, removeItem, setQuantity, total, clearCart } = useCart();
@@ -149,8 +145,7 @@ function CheckoutContent() {
 
   const subtotal = total;
   const shipping = 0;
-  const cryptoDiscount = paymentChoice === 'pay_crypto' ? Math.round(subtotal * 0.15 * 100) / 100 : 0;
-  const orderTotal = Math.max(0, subtotal - cryptoDiscount + shipping);
+  const orderTotal = Math.max(0, subtotal + shipping);
 
   function validate(): string | null {
     if (items.length === 0) return 'Your basket is empty.';
@@ -221,14 +216,20 @@ function CheckoutContent() {
         return;
       }
       const orderId = (data as { orderId?: string }).orderId ?? '';
-
-      clearCart();
+      const guardarianUrl = (data as { guardarianUrl?: string | null }).guardarianUrl ?? null;
 
       if (paymentChoice === 'pay_card') {
-        window.open(ONRAMP_URL, '_blank', 'noopener,noreferrer');
-      } else if (paymentChoice === 'pay_revolut') {
-        window.open(REVOLUT_PAY_URL, '_blank', 'noopener,noreferrer');
+        if (!guardarianUrl) {
+          setPlaceError('Unable to start Guardarian checkout. Please try again.');
+          setPlacing(false);
+          return;
+        }
+        clearCart();
+        window.location.href = guardarianUrl;
+        return;
       }
+
+      clearCart();
 
       const q =
         paymentChoice === 'pay_crypto'
@@ -470,28 +471,12 @@ function CheckoutContent() {
                       onChange={() => setPaymentChoice('pay_card')}
                       className="h-4 w-4 border-border text-primary"
                     />
-                    <span className="font-medium">Pay with Credit Cards</span>
+                    <span className="font-medium">Buy crypto with Credit/Debit Card</span>
                   </span>
                   <p className="pl-7 text-xs text-muted-foreground">
-                    *Disable VPN for better success rates. **Payment options vary by location. Try alternative providers
-                    if needed.
+                    No KYC in most cases. Complete card on-ramp in about 3 minutes, then send crypto payment to
+                    complete your order.
                   </p>
-                </label>
-                <label
-                  className={`flex cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors ${
-                    paymentChoice === 'pay_revolut'
-                      ? 'border-primary bg-primary/5 ring-1 ring-primary'
-                      : 'border-transparent hover:bg-muted/50'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="payment"
-                    checked={paymentChoice === 'pay_revolut'}
-                    onChange={() => setPaymentChoice('pay_revolut')}
-                    className="h-4 w-4 border-border text-primary"
-                  />
-                  <span className="font-medium">Pay with Revolut</span>
                 </label>
                 <label
                   className={`flex cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors ${
@@ -507,7 +492,7 @@ function CheckoutContent() {
                     onChange={() => setPaymentChoice('pay_crypto')}
                     className="h-4 w-4 border-border text-primary"
                   />
-                  <span className="font-medium">Pay with Crypto (15% Off)</span>
+                  <span className="font-medium">Pay from existing crypto wallet</span>
                 </label>
               </div>
             </section>
@@ -643,12 +628,6 @@ function CheckoutContent() {
                       <span className="text-muted-foreground">Subtotal</span>
                       <span>${subtotal.toFixed(2)}</span>
                     </div>
-                    {cryptoDiscount > 0 && (
-                      <div className="flex justify-between text-primary">
-                        <span>Crypto discount (15%)</span>
-                        <span>-${cryptoDiscount.toFixed(2)}</span>
-                      </div>
-                    )}
                     <div className="flex justify-between text-muted-foreground">
                       <span>Shipping</span>
                       <span>${shipping.toFixed(2)}</span>

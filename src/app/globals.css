@@ -72,9 +72,14 @@ body {
   word-break: break-word;
 }
 
-img, video, iframe, object, embed {
+img, video, object, embed {
   max-width: 100%;
   height: auto;
+}
+
+/* Keep responsive embeds without breaking fixed-size security iframes (Turnstile, etc.) */
+iframe {
+  max-width: 100%;
 }
 
 @layer utilities {

@@ -7,6 +7,7 @@ import { validateCoupon, recordCouponUsage } from '@/lib/coupons';
 import { markAbandonedCartRecovered, upsertEmailSubscriber } from '@/lib/emailAutomation';
 import { verifyTurnstileToken } from '@/lib/turnstile';
 import { consumeRateLimit } from '@/lib/rateLimit';
+import { appendGuardarianTimeline, buildGuardarianCheckoutUrl } from '@/lib/guardarian';
 
 function getClientIp(request: Request): string | null {
   const forwarded = request.headers.get('x-forwarded-for');
@@ -135,12 +136,7 @@ export async function POST(request: Request) {
   }
 
   let total_amount = subtotal_amount - discount_amount;
-
-  /** Match storefront "Pay with Crypto (15% Off)" — applied server-side only for this method. */
   const payMethod = String(payment_method ?? '');
-  if (payMethod === 'pay_crypto') {
-    total_amount = Math.round(total_amount * 85) / 100;
-  }
 
   total_amount = Math.round(total_amount * 100) / 100;
 
@@ -156,6 +152,7 @@ export async function POST(request: Request) {
       coupon_code: applied_coupon_code,
       total_amount,
       payment_method: payment_method ?? null,
+      payment_gateway: payMethod === 'pay_card' ? 'guardarian' : null,
       payment_reference: payment_reference?.trim() || null,
       billing_address: billing_address ?? null,
       shipping_address: shipping_address ?? null,
@@ -172,6 +169,20 @@ export async function POST(request: Request) {
 
   if (coupon_id) {
     void recordCouponUsage(coupon_id, order.id, user?.id ?? null, customer_email);
+  }
+
+  let guardarianUrl: string | null = null;
+  if (payMethod === 'pay_card') {
+    guardarianUrl = buildGuardarianCheckoutUrl({
+      orderId: order.id,
+      customerEmail: customer_email,
+      amountUsd: total_amount,
+    });
+    void appendGuardarianTimeline(order.id, 'Guardarian checkout initialized for card-to-crypto payment.', {
+      provider: 'guardarian',
+      checkout_url: guardarianUrl,
+      amount_usd: total_amount,
+    });
   }
 
   if (customer_email) {
@@ -211,5 +222,5 @@ export async function POST(request: Request) {
     }
   }
 
-  return NextResponse.json({ orderId: order.id });
+  return NextResponse.json({ orderId: order.id, guardarianUrl });
 }

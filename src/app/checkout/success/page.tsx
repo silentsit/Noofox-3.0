@@ -34,6 +34,7 @@ function SuccessContent() {
   const orderId = searchParams.get('orderId');
   const method = searchParams.get('method') ?? '';
   const coin = searchParams.get('coin')?.toUpperCase() ?? '';
+  const isCardFlow = method === 'pay_card' || method === 'card';
   const showCryptoPay =
     coin && CRYPTO_WALLETS[coin] && (method === 'crypto' || method === 'pay_crypto');
   const wallet = showCryptoPay ? CRYPTO_WALLETS[coin] : undefined;
@@ -83,6 +84,13 @@ function SuccessContent() {
                 If we cannot verify within 24 hours, we will reach out via email.
               </p>
             </div>
+          </div>
+        ) : isCardFlow ? (
+          <div className="mt-6 rounded-2xl border border-border bg-card p-6 text-center">
+            <p className="text-muted-foreground">
+              Your card checkout is linked to this order. You can safely leave this page while payment is pending.
+              Once Guardarian confirms the transaction, your order updates automatically.
+            </p>
           </div>
         ) : (
           <div className="mt-6 rounded-2xl border border-border bg-card p-6 text-center">

@@ -17,6 +17,8 @@ const turnstileRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.tr
 
 const FULL_GUARANTEE_SHIPPING =
   'Full Guarantee Shipping (We ship thrice, before offering full refund if unsuccessful)';
+const FREE_SHIPPING_THRESHOLD = 300;
+const DEFAULT_SHIPPING_FEE = 20;
 
 const COUNTRIES = [
   { value: 'US', label: 'United States (US)' },
@@ -144,7 +146,7 @@ function CheckoutContent() {
   }, [items, email, userEmail, total, showCoupon, couponCode, paymentChoice, marketingOptIn, createAccount]);
 
   const subtotal = total;
-  const shipping = 0;
+  const shipping = subtotal > FREE_SHIPPING_THRESHOLD ? 0 : DEFAULT_SHIPPING_FEE;
   const orderTotal = Math.max(0, subtotal + shipping);
 
   function validate(): string | null {
@@ -444,6 +446,10 @@ function CheckoutContent() {
               <p className="mt-3 rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
                 {FULL_GUARANTEE_SHIPPING}
               </p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Shipping is ${DEFAULT_SHIPPING_FEE.toFixed(2)} by default. Orders above $
+                {FREE_SHIPPING_THRESHOLD.toFixed(2)} get free shipping.
+              </p>
             </section>
 
             <Separator />
@@ -630,7 +636,7 @@ function CheckoutContent() {
                     </div>
                     <div className="flex justify-between text-muted-foreground">
                       <span>Shipping</span>
-                      <span>${shipping.toFixed(2)}</span>
+                      <span>{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
                     </div>
                     <p className="text-xs text-muted-foreground">{FULL_GUARANTEE_SHIPPING}</p>
                     <p className="text-xs text-muted-foreground">

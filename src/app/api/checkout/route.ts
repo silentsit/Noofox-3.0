@@ -9,6 +9,9 @@ import { verifyTurnstileToken } from '@/lib/turnstile';
 import { consumeRateLimit } from '@/lib/rateLimit';
 import { appendGuardarianTimeline, buildGuardarianCheckoutUrl } from '@/lib/guardarian';
 
+const FREE_SHIPPING_THRESHOLD = 300;
+const DEFAULT_SHIPPING_FEE = 20;
+
 function getClientIp(request: Request): string | null {
   const forwarded = request.headers.get('x-forwarded-for');
   if (forwarded) return forwarded.split(',')[0]?.trim() ?? null;
@@ -135,7 +138,9 @@ export async function POST(request: Request) {
     coupon_id = result.coupon.id;
   }
 
-  let total_amount = subtotal_amount - discount_amount;
+  const discounted_subtotal = Math.max(0, subtotal_amount - discount_amount);
+  const shipping_amount = discounted_subtotal > FREE_SHIPPING_THRESHOLD ? 0 : DEFAULT_SHIPPING_FEE;
+  let total_amount = discounted_subtotal + shipping_amount;
   const payMethod = String(payment_method ?? '');
 
   total_amount = Math.round(total_amount * 100) / 100;
@@ -148,6 +153,7 @@ export async function POST(request: Request) {
       items,
       status: 'Pending Payment',
       subtotal_amount,
+      shipping_amount,
       discount_amount,
       coupon_code: applied_coupon_code,
       total_amount,
@@ -211,6 +217,7 @@ export async function POST(request: Request) {
     shipping_address: shipping_address ?? undefined,
     coupon_code: applied_coupon_code ?? undefined,
     discount_amount: discount_amount > 0 ? discount_amount : undefined,
+    shipping_amount,
   };
 
   if (baseUrl) {

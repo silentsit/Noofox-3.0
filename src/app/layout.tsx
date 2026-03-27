@@ -5,7 +5,6 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CartProvider } from '@/context/CartContext';
 import { SocialProofToaster } from '@/components/social-proof/SocialProofToaster';
-import { organizationJsonLd } from '@/lib/schema';
 import { SITE_LOGO_ALT, SITE_LOGO_HEIGHT, SITE_LOGO_SRC, SITE_LOGO_WIDTH } from '@/lib/branding';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://grabmoda.com';
@@ -85,12 +84,6 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen-safe min-w-0 flex flex-col font-sans antialiased overflow-x-hidden pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationJsonLd()),
-          }}
-        />
         <CartProvider>
           <a
             href="#main-content"

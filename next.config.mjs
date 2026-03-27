@@ -54,12 +54,12 @@ const nextConfig = {
       },
     ];
   },
-  webpack: (config, { dev }) => {
-    // Prevent intermittent Windows filesystem-cache corruption in dev
-    // (missing .next/server chunk files causing "Cannot find module './xxxx.js'").
-    if (dev) {
-      config.cache = false;
-    }
+  webpack: (config) => {
+    // Windows: persistent webpack filesystem cache can desync across HMR/rebuilds or
+    // concurrent dev servers, yielding missing chunk errors and *unstyled* pages that
+    // look like "layout broke". Disable persistent cache entirely (dev + `next build`).
+    // Trade-off: slower cold builds; reliability on Windows is worth it here.
+    config.cache = false;
     return config;
   },
 };

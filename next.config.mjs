@@ -54,6 +54,14 @@ const nextConfig = {
       },
     ];
   },
+  webpack: (config, { dev }) => {
+    // Prevent intermittent Windows filesystem-cache corruption in dev
+    // (missing .next/server chunk files causing "Cannot find module './xxxx.js'").
+    if (dev) {
+      config.cache = false;
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
